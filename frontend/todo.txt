@@ -1,0 +1,227 @@
+# Business Details
+    - Business Id (1001)
+    - Organization Name
+    - Woner Name
+    - TIN No
+    - Trade License No
+    - Tax Info
+        - Purchaser's Name
+        - Purchaser's BIN
+        - Purchaser's Address
+    - Office Address
+        - Street
+        - City
+        - Postal Code
+        - Country
+    - Bank Info
+        - Account Name
+        - Account Number
+        - Bank Name
+        - Branch Name
+        - Bank Routing 
+        - Bank Swift Code
+# Item/Product
+    - Name
+    - SKU/Part Code
+    - code (1000000001)
+    - Details
+    - UOM
+    - Safety Stock
+    - Last Price
+    - Avg. Price
+    - Group
+    - Type
+    - Shelf Life
+
+# Cost Center
+    - Name
+    - Code (100001)
+# UOM
+    - Name
+    - Code (4Digit)
+# Group
+    - Name
+    - Code (200001)
+# Type
+    - Name
+    - Code (4Digit)
+# Store
+    - Name
+    - Code (4Digit)
+# Transaction Type
+    - Name
+    - Code (101)
+# Vendor/Supplier
+    - Supplier Code (2000000001)
+    - Name
+    - Email(Multi)
+    - Phone (Multi)
+    - TIN No
+    - TAX Info
+        - Name of the Registered Person
+        - BIN of the Registered Person
+        - Address of Issuing Office
+    - Type (Local/Foreign)
+    - Office Address
+        - Street
+        - City
+        - Postal Code
+        - Country
+    - Bank Info
+        - Account Name
+        - Account Number
+        - Bank Name
+        - Branch Name
+        - Bank Routing 
+        - Bank Swift Code
+
+# Purchase Requisition/PR
+    - PR Date
+    - PR Number (3000000001)
+    - PR Ref.
+    - PR Type
+    - Dept.
+    - Name (ID)
+    - Email
+    - Phone
+    - Item Details
+        - Item Code
+        - Item Name
+        - Specification
+        - Brand
+        - UOM
+        - Unit Price (Aproximate)
+        - Req. Qty
+        - Req. Value
+        - On-Hand Stock
+        - Remarks
+        - Last 6 Month Used
+        - Consumption Rate (Unit/Cycle)
+        - Consume Plan
+        - Purpose
+        - Used on
+        - Approval Design
+    - Note
+    - Footer
+        - Requested By
+        - Confirmed By (Dept.)
+        - Checked By (Store)
+        - Approved By
+# Quotation/Bid
+
+# Purchase Order/PO
+    - PO Date
+    - PO Number (4000000001)
+    - Customer Sales Order Reference(CS Ref.)
+    - Approval Ref.
+    - Currency: BDT, USD
+    - Delivery Date
+    - Supplier Info
+        - Supplier Name
+        - Address
+        - BIN No
+        - TIN No
+        - Email
+        - Phone
+        - Attention/Note
+    - Byer Info
+        - Byer Name
+        - Address
+        - BIN No
+        - TIN No
+        - Attention/Note
+    - Item Detail
+        - SL
+        - PR Ref.
+        - Item Code
+        - Item Name
+        - Specification
+        - PO Qty
+        - UOM
+        - Unit Price
+        - Total Amount
+        in summery
+            - Sub Total
+            - VAT Amount
+            - Grand Total
+            - Grand toal in word
+    - Delivery
+        - Terms
+        - Delivery Location with contact details
+        - Bill Submission with contact details
+        - Required Documents
+        - Delivery Schedule
+        - Payment Terms
+        - Payment Method/Mode
+    - Footer
+        - Prepared By
+        - Authorized By
+        - Accepted By (Vendor)
+
+# Storage Location
+    - Name
+    - Code (Store | Block | Rack | Shelf | BIN)
+# Gate Note Recevie/GRN
+    - GRN Number (5000000001)
+    - GRN Date
+    - Supplier Number
+    - Supplier Name
+    - PO Number
+    - PO Date
+    - Delievry Note
+    - Bill of landing
+    - B/L Container
+    - Item Details
+        - SL
+        - Item Code
+        - Item Name
+        - UOM
+        - PO Qty
+        - Received Qty
+        - Remark
+    - Footer
+        - Rceeived By
+        - Checked By
+        - Approved By
+# Delivery Challan
+# Reservation/Move Order
+    - Reservation Number (0000000001)
+    - Date
+    - Order Type
+    - From Store
+    - Approved By
+    - Asset Tag
+    - Remarks
+    - Cost Center
+    - To Store
+    - Used By
+    - Carried By
+    - Department
+    - Accounts Name
+    - Item Details
+        - SL
+        - Source Location with Qty
+        - Transfer Location
+        - Item Code
+        - Item Name
+        - UOM
+        - Item Price
+        - Req. Qty
+        - Req. Value
+        - Recommandation Qty
+        - Issued Qty
+        - Issued Value
+        - Stock Qty
+        - All Stock Qty
+        - Used By
+        - Remarks
+    - Footer
+        - Created By
+        - Recommended By
+        - Approved By
+        - Received By
+        - Transaction/Issued By
+# Item Label
+# Item Ledger
+# Stock
+
