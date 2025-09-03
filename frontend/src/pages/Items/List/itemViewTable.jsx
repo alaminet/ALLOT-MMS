@@ -1,108 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, message, Table, Tooltip } from "antd";
+import { Button, Flex, message, Select, Table, Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
-import { usePermission } from "../../hooks/usePermission";
+import { usePermission } from "../../../hooks/usePermission";
 import {
   DeleteTwoTone,
   EditTwoTone,
   EyeTwoTone,
   InfoCircleTwoTone,
 } from "@ant-design/icons";
-import NotAuth from "../notAuth";
+import NotAuth from "../../notAuth";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import SizeTable from "../../components/sizeTable";
 
-const CategoryViewTable = () => {
+const ItemViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const search = useOutletContext();
   const navigate = useNavigate();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("category")) {
+  if (!canViewPage("product")) {
     return <NotAuth />;
   }
   // Get pathname
   const pathname = location.pathname;
   const lastSegment = pathname.split("/").filter(Boolean).pop();
-
-  const data = [
-    {
-      name: "Men",
-      code: "C001",
-      discription:
-        "lorem spam dummy tex, not a discription, it's just value check details",
-      size: [
-        {
-          name: "M",
-          value: [{ chest: 39 }, { length: 27.5 }, { sleeve: 8.5 }],
-        },
-        {
-          name: "L",
-          value: [{ chest: 39 }, { length: 27.5 }, { sleeves: 8.5 }],
-        },
-        {
-          name: "XL",
-          value: [{ chest: 39 }, { lengtht: 27.5 }, { sleeve: 8.5 }],
-        },
-      ],
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-    {
-      name: "Child",
-      code: "C002",
-      discription:
-        "lorem spam dummy tex, not a discription, it's just value check details",
-      size: [
-        {
-          name: "M",
-          value: [{ cover: 39 }, { solder: 27.5 }, { high: 8.5 }],
-        },
-        {
-          name: "L",
-          value: [{ cover: 39 }, { solder: 27.5 }, { high: 8.5 }],
-        },
-        {
-          name: "XL",
-          value: [{ cover: 39 }, { solder: 27.5 }, { high: 8.5 }],
-        },
-      ],
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-  ];
-
-  //   Table Row Span Functionality
-  const processedData = [];
-  const codeCountMap = {};
-
-  queryData?.forEach((item) => {
-    const code = item.code;
-    if (!codeCountMap[code]) {
-      codeCountMap[code] = 1;
-    } else {
-      codeCountMap[code]++;
-    }
-  });
-
-  const seen = {};
-
-  queryData?.forEach((item) => {
-    const code = item.code;
-    if (!seen[code]) {
-      processedData.push({ ...item, rowSpan: codeCountMap[code] });
-      seen[code] = true;
-    } else {
-      processedData.push({ ...item, rowSpan: 0 });
-    }
-  });
 
   const columns = [
     {
@@ -114,14 +37,18 @@ const CategoryViewTable = () => {
       responsive: ["lg"],
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      width: 50,
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: 200,
       responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
+    },
+    {
+      title: "SKU",
+      dataIndex: "SKU",
+      key: "SKU",
+
+      responsive: ["lg"],
       render: (_, record) => (
         <>
           <Flex gap={5}>
@@ -132,41 +59,67 @@ const CategoryViewTable = () => {
       ),
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: 200,
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
       responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
     },
     {
-      title: "Discriptions",
-      dataIndex: "discription",
-      key: "discription",
+      title: "Purchase Price",
+      dataIndex: "purchasePrice",
+      key: "purchasePrice",
       responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
-      render: (_, record) => <div dangerouslySetInnerHTML={{ __html: _ }} />,
     },
     {
-      title: "Mesurment Details",
-      align: "center",
-      dataIndex: "size",
-      key: "size",
-      width: 300,
+      title: "Sale Price",
+      dataIndex: "salePrice",
+      key: "salePrice",
       responsive: ["lg"],
-      render: (_, record) => (
-        <>
-          <SizeTable data={_} />
-        </>
-      ),
+    },
+    {
+      title: "Current Stock",
+      dataIndex: "currentStock",
+      key: "currentStock",
+      responsive: ["lg"],
+    },
+    {
+      title: "Low Stock",
+      dataIndex: "lowStock",
+      key: "lowStock",
+      responsive: ["lg"],
+    },
+    {
+      title: "Total Production",
+      dataIndex: "totalProduction",
+      key: "totalProduction",
+      responsive: ["lg"],
+    },
+    {
+      title: "Rating",
+      dataIndex: "rating",
+      key: "rating",
+      responsive: ["lg"],
+      // render: (_, record) => (
+      //   <Select
+      //     showSearch
+      //     placeholder="Category"
+      //     optionFilterProp="label"
+      //     defaultValue={_}
+      //     onChange={(e) => handleChange(record.action, "rating", e)}
+      //     style={{ width: "100px" }}
+      //     options={[
+      //       { label: "Best", value: "Best" },
+      //       { label: "Good", value: "Good" },
+      //       { label: "Regular", value: "Regular" },
+      //       { label: "Low", value: "Low" },
+      //     ]}
+      //   />
+      // ),
     },
     {
       title: "Action",
-      width: 50,
+      align: "center",
+      width: 100,
       key: "action",
       render: (_, record) => (
         <>
@@ -187,7 +140,7 @@ const CategoryViewTable = () => {
                   onClick={() =>
                     navigate("update", {
                       state: {
-                        categoryInfo: record.access,
+                        productInfo: record.access,
                       },
                     })
                   }
@@ -214,7 +167,7 @@ const CategoryViewTable = () => {
   const getTableData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/category/view`,
+        `${import.meta.env.VITE_API_URL}/api/product/view`,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -223,14 +176,17 @@ const CategoryViewTable = () => {
         }
       );
       message.success(res.data.message);
-      const tableArr = res?.data?.categories?.map((item, index) => ({
+      const tableArr = res?.data?.products?.map((item, index) => ({
         key: index,
         name: item?.name,
-        code: item?.code,
-        discription: item?.discription,
-        size: item?.size,
-        status: item?.status,
-        createdBy: item?.createdBy,
+        SKU: item?.code,
+        category: item?.category?.name,
+        purchasePrice: item?.purchasePrice,
+        salePrice: item?.salePrice,
+        currentStock: item?.closingStock,
+        lowStock: item?.safetyStock,
+        totalProduction: item?.totalProduction,
+        rating: item?.rating,
         createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
         updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
         access: item,
@@ -260,7 +216,7 @@ const CategoryViewTable = () => {
   const handleChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/category/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/product/update/${id}`,
         { [field]: data },
         {
           headers: {
@@ -282,17 +238,15 @@ const CategoryViewTable = () => {
   return (
     <>
       <Table
-        bordered
         columns={columns}
-        dataSource={processedData
-          ?.filter((item) =>
-            item?.code?.toLowerCase().includes(search?.toLowerCase())
-          )
-          .sort((a, b) => a.code.localeCompare(b.code))}
+        dataSource={queryData?.filter((item) =>
+          item?.SKU?.toLowerCase().includes(search?.toLowerCase())
+        )}
+        // title={() => "Header"}
         pagination={{ position: ["bottomRight"] }}
       />
     </>
   );
 };
 
-export default CategoryViewTable;
+export default ItemViewTable;

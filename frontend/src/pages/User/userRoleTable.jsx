@@ -22,36 +22,64 @@ const UserRoleTable = ({ data, setData }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "product",
-      module: "Product",
+      key: "master",
+      module: "Master Access",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "inventory",
-      module: "Inventory",
+      key: "item-list",
+      module: "Master Item",
       pageAccess: { view: true },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "value",
-      module: "Value",
+      key: "item-uom",
+      module: "Master UOM",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "category",
-      module: "Category",
+      key: "item-group",
+      module: "Master Item Group",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "customer",
-      module: "Customer",
+      key: "item-type",
+      module: "Master Item Type",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "costcenter",
+      module: "Master Cost Center",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "store-name",
+      module: "Master Store",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "store-location",
+      module: "Master Store Location",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "transaction-type",
+      module: "Master Transaction Type",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
@@ -150,8 +178,7 @@ const UserRoleTable = ({ data, setData }) => {
         pagination={false}
         // dataSource={data}
         dataSource={mergedValue}
-        rowSelection={rowSelection}
-      >
+        rowSelection={rowSelection}>
         <ColumnGroup title="Access Point">
           <Column title="Module" dataIndex="module" key="module" />
           <Column

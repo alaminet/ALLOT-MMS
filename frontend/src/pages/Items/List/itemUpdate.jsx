@@ -13,24 +13,32 @@ import {
   Typography,
 } from "antd";
 import { useSelector } from "react-redux";
-import HTMLTextarea from "../../components/htmlTextarea";
+import HTMLTextarea from "../../../components/htmlTextarea";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 const { Title } = Typography;
 
-const ProductAdd = () => {
+const ItemUpdate = () => {
+  const location = useLocation();
+  const { productInfo } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
-  const [prodDisc, setProdDisc] = useState(null);
+  const [prodDisc, setProdDisc] = useState(productInfo.discription);
   const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
 
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = { ...values, createdBy: user?.id, discription: prodDisc };
+    const formData = {
+      ...values,
+      discription: prodDisc,
+      updatedBy: user?.id,
+    };
+
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/product/new`,
+        `${import.meta.env.VITE_API_URL}/api/product/update/${formData.id}`,
         formData,
         {
           headers: {
@@ -41,7 +49,6 @@ const ProductAdd = () => {
       );
       message.success(res.data.message);
       setLoading(false);
-      form.resetFields();
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);
@@ -80,14 +87,17 @@ const ProductAdd = () => {
   return (
     <>
       <Title style={{ textAlign: "left" }} className="colorLink form-title">
-        Add New Product
+        Update Existing Product
       </Title>
       <Card>
         <Form
           form={form}
           name="new"
           layout="vertical"
-          initialValues={{ remember: true }}
+          initialValues={{
+            ...productInfo,
+            category: productInfo.category?._id, // override with just the ID
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -97,6 +107,19 @@ const ProductAdd = () => {
             <Col>
               <Row justify="space-between" gutter={16}>
                 <Col lg={8} xs={24}>
+                  <Form.Item
+                    hidden
+                    name="id"
+                    initialValue={productInfo._id}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Update ID Required!",
+                      },
+                    ]}
+                  >
+                    <Input />
+                  </Form.Item>
                   <Form.Item
                     label="Product Name"
                     name="name"
@@ -135,20 +158,26 @@ const ProductAdd = () => {
                     ]}
                     style={{ width: "100%", marginBottom: "35px" }}
                   >
-                    <Select
-                      style={{ width: "100%" }}
-                      allowClear
-                      options={categories}
-                      placeholder="select Category"
-                    />
+                    {categories.length > 0 && (
+                      <Select
+                        style={{ width: "100%" }}
+                        allowClear
+                        optionFilterProp="label"
+                        options={categories}
+                        placeholder="select Category"
+                      />
+                    )}
                   </Form.Item>
                 </Col>
                 <Col span={24}>
                   <Form.Item label="Product Discription" name="discripton">
-                    <HTMLTextarea onChange={setProdDisc} />
+                    <HTMLTextarea
+                      onChange={setProdDisc}
+                      defaultData={prodDisc}
+                    />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     label="Purchase Price"
                     name="purchasePrice"
@@ -163,7 +192,7 @@ const ProductAdd = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     label="Sale Price"
                     name="salePrice"
@@ -177,7 +206,7 @@ const ProductAdd = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
                     label="Low Stock Alert"
                     name="safetyStock"
@@ -188,6 +217,25 @@ const ProductAdd = () => {
                       type="number"
                       placeholder="100"
                       style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Rating"
+                    name="rating"
+                    style={{ width: "100%" }}
+                  >
+                    <Select
+                      showSearch
+                      placeholder="Category"
+                      optionFilterProp="label"
+                      options={[
+                        { label: "Best", value: "Best" },
+                        { label: "Good", value: "Good" },
+                        { label: "Regular", value: "Regular" },
+                        { label: "Low", value: "Low" },
+                      ]}
                     />
                   </Form.Item>
                 </Col>
@@ -203,7 +251,7 @@ const ProductAdd = () => {
                       block
                       style={{ borderRadius: "0px", padding: "10px 30px" }}
                     >
-                      Add Product
+                      Update Product
                     </Button>
                   </Form.Item>
                 </Col>
@@ -216,4 +264,4 @@ const ProductAdd = () => {
   );
 };
 
-export default ProductAdd;
+export default ItemUpdate;

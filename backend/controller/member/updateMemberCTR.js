@@ -30,7 +30,7 @@ async function updateMemberCTR(req, res, next) {
       const actionTex =
         Object.keys(updatedData) == "deleted"
           ? `"${updatedMember.name}" ${Object.keys(updatedData)}`
-          : `"${updatedMember.name}" ${Object.keys(updatedData)} updated`;
+          : `"${updatedMember.name}" updated`;
 
       const logData = {
         orgId: updatedMember.orgId,

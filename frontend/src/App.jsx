@@ -18,15 +18,10 @@ import UserUpdate from "./pages/User/userUpdate";
 import Inventory from "./pages/Inventory";
 import InventoryViewTable from "./pages/Inventory/inventoryViewTable";
 import InventoryAdd from "./pages/Inventory/inventoryAdd";
-import Product from "./pages/Product";
-import ProductAdd from "./pages/Product/productAdd";
-import ProductViewTable from "./pages/Product/productViewTable";
 import InventoryListView from "./pages/Inventory/inventoryListView";
-import Category from "./pages/Category";
-import CategoryViewTable from "./pages/Category/categoryViewTable";
-import CategoryAdd from "./pages/Category/categoryAdd";
-import CategoryUpdate from "./pages/Category/categoryUpdate";
-import ProductUpdate from "./pages/Product/productUpdate";
+import Items from "./pages/Items";
+import List from "./pages/Items/List";
+import ItemAdd from "./pages/Items/List/itemAdd";
 
 function App() {
   const router = createBrowserRouter(
@@ -49,17 +44,9 @@ function App() {
               <Route path="list" element={<InventoryListView />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
-            <Route path="/product" element={<Product />}>
-              <Route path="" element={<ProductViewTable />} />
-              <Route path="new" element={<ProductAdd />} />
-              <Route path="update" element={<ProductUpdate />} />
-              <Route path="logs" element={<LogActivites />} />
-            </Route>
-            <Route path="/category" element={<Category />}>
-              <Route path="" element={<CategoryViewTable />} />
-              <Route path="new" element={<CategoryAdd />} />
-              <Route path="update" element={<CategoryUpdate />} />
-              <Route path="logs" element={<LogActivites />} />
+            <Route path="/item-list" element={<Items />}>
+              <Route path="" element={<List />}></Route>
+              <Route path="new" element={<ItemAdd />}></Route>
             </Route>
           </Route>
         </Route>

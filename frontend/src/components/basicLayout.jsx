@@ -44,11 +44,21 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
-  getItem("Order", "order", <FileDoneOutlined />),
+  // getItem("Order", "order", <FileDoneOutlined />),
   getItem("User", "user", <TeamOutlined />),
   getItem("Inventory", "inventory", <ShopOutlined />),
-  getItem("Product", "product", <ProductOutlined />),
-  getItem("Category", "category", <GroupOutlined />),
+  getItem("Item", "item", <ProductOutlined />),
+  getItem("Master", "master", <ProductOutlined />, [
+    getItem("Item List", "item-list", <FileDoneOutlined />),
+    getItem("Item UOM", "item-uom", <FileDoneOutlined />),
+    getItem("Item Group", "item-group", <FileDoneOutlined />),
+    getItem("Item Type", "item-type", <FileDoneOutlined />),
+    getItem("Cost Center", "costcenter", <FileDoneOutlined />),
+    getItem("Store Name", "store-name", <FileDoneOutlined />),
+    getItem("Store Location", "store-location", <FileDoneOutlined />),
+    getItem("Transaction Type", "transaction-type", <FileDoneOutlined />),
+  ]),
+  // getItem("Category", "category", <GroupOutlined />),
 ];
 
 // Theme configure

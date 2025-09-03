@@ -1,19 +1,33 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const categorySchema = new Schema(
+const itemInfoSchema = new Schema(
   {
+    orgId: String,
+    code: Number,
     name: String,
-    code: String,
+    SKU: String,
+    UOM: String,
     discription: String,
-    size: {
-      type: Array,
+    group: String,
+    type: String,
+    safetyStock: {
+      type: Number,
+      default: null,
     },
+    isShelfLife: {
+      type: Boolean,
+      default: false,
+    },
+    lastPrice: Number,
+    avgPrice: Number,
+
+    // Common Schema
     status: {
       type: Boolean,
       default: true,
     },
-    deleted: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },
@@ -31,4 +45,4 @@ const categorySchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Category", categorySchema);
+module.exports = mongoose.model("Item_Info", itemInfoSchema);
