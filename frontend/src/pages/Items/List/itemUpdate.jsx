@@ -10,6 +10,7 @@ import {
   message,
   Row,
   Select,
+  Switch,
   Typography,
 } from "antd";
 import { useSelector } from "react-redux";
@@ -23,7 +24,6 @@ const ItemUpdate = () => {
   const { productInfo } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
-  const [prodDisc, setProdDisc] = useState(productInfo.discription);
   const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
 
@@ -32,13 +32,12 @@ const ItemUpdate = () => {
     setLoading(true);
     const formData = {
       ...values,
-      discription: prodDisc,
       updatedBy: user?.id,
     };
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/product/update/${formData.id}`,
+        `${import.meta.env.VITE_API_URL}/api/itemInfo/update/${formData.id}`,
         formData,
         {
           headers: {
@@ -101,118 +100,159 @@ const ItemUpdate = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="borderlessInput"
-        >
+          className="borderlessInput">
           <Row gutter={16}>
             <Col>
               <Row justify="space-between" gutter={16}>
-                <Col lg={8} xs={24}>
+                <Form.Item
+                  hidden
+                  name="id"
+                  initialValue={productInfo?._id}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Update ID Required!",
+                    },
+                  ]}>
+                  <Input />
+                </Form.Item>
+                <Col lg={12} xs={24}>
                   <Form.Item
-                    hidden
-                    name="id"
-                    initialValue={productInfo._id}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Update ID Required!",
-                      },
-                    ]}
-                  >
-                    <Input />
-                  </Form.Item>
-                  <Form.Item
-                    label="Product Name"
+                    label="Item Name"
                     name="name"
                     rules={[
                       {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%" }}
-                  >
-                    <Input placeholder="Product Name" />
+                    style={{ width: "100%" }}>
+                    <Input placeholder="Item Name" maxLength={50} showCount />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={12} xs={24}>
+                  <Form.Item
+                    label="Item Discription"
+                    name="discription"
+                    required
+                    style={{ width: "100%" }}>
+                    <Input
+                      placeholder="Discription/Specification"
+                      maxLength={50}
+                      showCount
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} xs={24}>
                   <Form.Item
                     label="SKU"
-                    name="code"
+                    name="SKU"
                     rules={[
                       {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%" }}
-                  >
-                    <Input placeholder="Product SKU" />
+                    style={{ width: "100%" }}>
+                    <Input placeholder="Item SKU/Part Code" />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={4} xs={24}>
                   <Form.Item
-                    label="Category"
-                    name="category"
+                    label="UOM"
+                    name="UOM"
                     rules={[
                       {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%", marginBottom: "35px" }}
-                  >
-                    {categories.length > 0 && (
-                      <Select
-                        style={{ width: "100%" }}
-                        allowClear
-                        optionFilterProp="label"
-                        options={categories}
-                        placeholder="select Category"
-                      />
-                    )}
-                  </Form.Item>
-                </Col>
-                <Col span={24}>
-                  <Form.Item label="Product Discription" name="discripton">
-                    <HTMLTextarea
-                      onChange={setProdDisc}
-                      defaultData={prodDisc}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Form.Item
-                    label="Purchase Price"
-                    name="purchasePrice"
-                    style={{ width: "100%" }}
-                    required
-                    rules={[{ required: true }, { type: "number", min: 0 }]}
-                  >
-                    <InputNumber
-                      type="number"
-                      placeholder="100"
+                    style={{ width: "100%", marginBottom: "35px" }}>
+                    <Select
                       style={{ width: "100%" }}
+                      allowClear
+                      options={[
+                        {
+                          value: "jack",
+                          label: "Jack",
+                        },
+                        {
+                          value: "lucy",
+                          label: "Lucy",
+                        },
+                        {
+                          value: "tom",
+                          label: "Tom",
+                        },
+                      ]}
+                      placeholder="Select UOM"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={4} xs={24}>
                   <Form.Item
-                    label="Sale Price"
-                    name="salePrice"
-                    style={{ width: "100%" }}
-                    rules={[{ required: true }, { type: "number", min: 0 }]}
-                  >
-                    <InputNumber
-                      type="number"
-                      placeholder="100"
+                    label="Group"
+                    name="group"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%", marginBottom: "35px" }}>
+                    <Select
                       style={{ width: "100%" }}
+                      allowClear
+                      options={[
+                        {
+                          value: "jack",
+                          label: "Jack",
+                        },
+                        {
+                          value: "lucy",
+                          label: "Lucy",
+                        },
+                        {
+                          value: "tom",
+                          label: "Tom",
+                        },
+                      ]}
+                      placeholder="Select Group"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={4} xs={24}>
+                  <Form.Item
+                    label="Type"
+                    name="type"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%", marginBottom: "35px" }}>
+                    <Select
+                      style={{ width: "100%" }}
+                      allowClear
+                      options={[
+                        {
+                          value: "jack",
+                          label: "Jack",
+                        },
+                        {
+                          value: "lucy",
+                          label: "Lucy",
+                        },
+                        {
+                          value: "tom",
+                          label: "Tom",
+                        },
+                      ]}
+                      placeholder="Select Type"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} xs={24}>
                   <Form.Item
                     label="Low Stock Alert"
                     name="safetyStock"
-                    style={{ width: "100%" }}
-                    rules={[{ required: true }, { type: "number", min: 0 }]}
-                  >
+                    style={{ width: "100%" }}>
                     <InputNumber
                       type="number"
                       placeholder="100"
@@ -220,22 +260,17 @@ const ItemUpdate = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
+                <Col lg={4} xs={24}>
                   <Form.Item
-                    label="Rating"
-                    name="rating"
+                    label="Shelf Life"
+                    name="isShelfLife"
                     style={{ width: "100%" }}
-                  >
-                    <Select
-                      showSearch
-                      placeholder="Category"
-                      optionFilterProp="label"
-                      options={[
-                        { label: "Best", value: "Best" },
-                        { label: "Good", value: "Good" },
-                        { label: "Regular", value: "Regular" },
-                        { label: "Low", value: "Low" },
-                      ]}
+                    required
+                    rules={{ required: true }}>
+                    <Switch
+                      checkedChildren="Applicable"
+                      unCheckedChildren="Not Applicable"
+                      defaultChecked={false}
                     />
                   </Form.Item>
                 </Col>
@@ -249,9 +284,8 @@ const ItemUpdate = () => {
                       htmlType="submit"
                       loading={loading}
                       block
-                      style={{ borderRadius: "0px", padding: "10px 30px" }}
-                    >
-                      Update Product
+                      style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                      Update Item
                     </Button>
                   </Form.Item>
                 </Col>

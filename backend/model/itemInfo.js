@@ -19,8 +19,14 @@ const itemInfoSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    lastPrice: Number,
-    avgPrice: Number,
+    lastPrice: {
+      type: Number,
+      default: 0,
+    },
+    avgPrice: {
+      type: Number,
+      default: 0,
+    },
 
     // Common Schema
     status: {

@@ -22,6 +22,8 @@ import InventoryListView from "./pages/Inventory/inventoryListView";
 import Items from "./pages/Items";
 import List from "./pages/Items/List";
 import ItemAdd from "./pages/Items/List/itemAdd";
+import ItemViewTable from "./pages/Items/List/itemViewTable";
+import ItemUpdate from "./pages/Items/List/itemUpdate";
 
 function App() {
   const router = createBrowserRouter(
@@ -45,8 +47,12 @@ function App() {
               <Route path="logs" element={<LogActivites />} />
             </Route>
             <Route path="/item-list" element={<Items />}>
-              <Route path="" element={<List />}></Route>
-              <Route path="new" element={<ItemAdd />}></Route>
+              <Route path="" element={<List />}>
+                <Route path="" element={<ItemViewTable />} />
+                <Route path="new" element={<ItemAdd />}></Route>
+                <Route path="update" element={<ItemUpdate />}></Route>
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
             </Route>
           </Route>
         </Route>

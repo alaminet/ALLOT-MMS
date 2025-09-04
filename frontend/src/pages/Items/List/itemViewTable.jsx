@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, message, Select, Table, Tooltip } from "antd";
+import { Button, Flex, message, Modal, Select, Table, Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
@@ -16,11 +16,13 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 const ItemViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const search = useOutletContext();
   const navigate = useNavigate();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("product")) {
+  if (!canViewPage("item-list")) {
     return <NotAuth />;
   }
   // Get pathname
@@ -34,88 +36,90 @@ const ItemViewTable = () => {
       key: "sl",
       width: 20,
       render: (text, record, index) => index + 1,
-      responsive: ["lg"],
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      filters: [...new Set(queryData?.map((item) => item.code))].map(
+        (code) => ({
+          text: code,
+          value: code,
+        })
+      ),
+      onFilter: (value, record) => record?.code === value,
+      filterSearch: true,
+    },
+    {
+      title: "SKU",
+      dataIndex: "SKU",
+      key: "SKU",
+      responsive: ["md"],
+      filters: [...new Set(queryData?.map((item) => item.SKU))].map((flt) => ({
+        text: flt,
+        value: flt,
+      })),
+      onFilter: (value, record) => record?.SKU === value,
+      filterSearch: true,
     },
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       width: 200,
-      responsive: ["lg"],
     },
     {
-      title: "SKU",
-      dataIndex: "SKU",
-      key: "SKU",
-
-      responsive: ["lg"],
-      render: (_, record) => (
-        <>
-          <Flex gap={5}>
-            {_}
-            <InfoCircleTwoTone />
-          </Flex>
-        </>
+      title: "UOM",
+      dataIndex: "UOM",
+      key: "UOM",
+      responsive: ["md"],
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      responsive: ["md"],
+      filters: [...new Set(queryData?.map((item) => item.type))].map((flt) => ({
+        text: flt,
+        value: flt,
+      })),
+      onFilter: (value, record) => record?.type === value,
+      filterSearch: true,
+    },
+    {
+      title: "Group",
+      dataIndex: "group",
+      key: "group",
+      responsive: ["md"],
+      filters: [...new Set(queryData?.map((item) => item.group))].map(
+        (flt) => ({
+          text: flt,
+          value: flt,
+        })
       ),
+      onFilter: (value, record) => record?.group === value,
+      filterSearch: true,
     },
     {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      responsive: ["lg"],
+      title: "Last Price",
+      dataIndex: "lastPrice",
+      key: "lastPrice",
+      responsive: ["md"],
+    },
+
+    {
+      title: "Avg. Price",
+      dataIndex: "avgPrice",
+      key: "avgPrice",
+      responsive: ["md"],
     },
     {
-      title: "Purchase Price",
-      dataIndex: "purchasePrice",
-      key: "purchasePrice",
-      responsive: ["lg"],
+      title: "Safety Stock",
+      dataIndex: "safetyStock",
+      key: "safetyStock",
+      responsive: ["md"],
     },
-    {
-      title: "Sale Price",
-      dataIndex: "salePrice",
-      key: "salePrice",
-      responsive: ["lg"],
-    },
-    {
-      title: "Current Stock",
-      dataIndex: "currentStock",
-      key: "currentStock",
-      responsive: ["lg"],
-    },
-    {
-      title: "Low Stock",
-      dataIndex: "lowStock",
-      key: "lowStock",
-      responsive: ["lg"],
-    },
-    {
-      title: "Total Production",
-      dataIndex: "totalProduction",
-      key: "totalProduction",
-      responsive: ["lg"],
-    },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "rating",
-      responsive: ["lg"],
-      // render: (_, record) => (
-      //   <Select
-      //     showSearch
-      //     placeholder="Category"
-      //     optionFilterProp="label"
-      //     defaultValue={_}
-      //     onChange={(e) => handleChange(record.action, "rating", e)}
-      //     style={{ width: "100px" }}
-      //     options={[
-      //       { label: "Best", value: "Best" },
-      //       { label: "Good", value: "Good" },
-      //       { label: "Regular", value: "Regular" },
-      //       { label: "Low", value: "Low" },
-      //     ]}
-      //   />
-      // ),
-    },
+
     {
       title: "Action",
       align: "center",
@@ -124,15 +128,15 @@ const ItemViewTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {/* {(canDoOther(lastSegment, "view") ||
+            {(canDoOther(lastSegment, "view") ||
               (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
               <Tooltip title="View">
                 <Button
-                  //   onClick={() => handleEdit(item)}
+                  onClick={() => handleView(record.access)}
                   icon={<EyeTwoTone />}
                 />
               </Tooltip>
-            )} */}
+            )}
             {(canDoOther(lastSegment, "edit") ||
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">
@@ -167,7 +171,7 @@ const ItemViewTable = () => {
   const getTableData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/product/view`,
+        `${import.meta.env.VITE_API_URL}/api/itemInfo/view`,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -176,17 +180,20 @@ const ItemViewTable = () => {
         }
       );
       message.success(res.data.message);
-      const tableArr = res?.data?.products?.map((item, index) => ({
+      const tableArr = res?.data?.items?.map((item, index) => ({
         key: index,
+        code: item?.code,
         name: item?.name,
-        SKU: item?.code,
-        category: item?.category?.name,
-        purchasePrice: item?.purchasePrice,
-        salePrice: item?.salePrice,
-        currentStock: item?.closingStock,
-        lowStock: item?.safetyStock,
-        totalProduction: item?.totalProduction,
-        rating: item?.rating,
+        SKU: item?.SKU,
+        UOM: item?.UOM,
+        discription: item?.discription,
+        type: item?.type,
+        group: item?.group,
+        lastPrice: item?.lastPrice,
+        avgPrice: item?.avgPrice,
+        safetyStock: item?.safetyStock,
+        isShelfLife: item?.isShelfLife,
+        status: item?.status,
         createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
         updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
         access: item,
@@ -210,6 +217,12 @@ const ItemViewTable = () => {
     } catch (error) {
       message.error(error.response.data.error);
     }
+  };
+
+  // Handle Veiw table data
+  const handleView = (values) => {
+    setSelectedRecord(values);
+    setIsModalVisible(true);
   };
 
   //   Update Functional
@@ -240,11 +253,26 @@ const ItemViewTable = () => {
       <Table
         columns={columns}
         dataSource={queryData?.filter((item) =>
-          item?.SKU?.toLowerCase().includes(search?.toLowerCase())
+          item.name?.toLowerCase().includes(search?.toLowerCase())
         )}
         // title={() => "Header"}
         pagination={{ position: ["bottomRight"] }}
       />
+      <Modal
+        title="View Details"
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        footer={null}
+        width={{
+          xs: "90%",
+          sm: "80%",
+          md: "70%",
+          lg: "60%",
+          xl: "50%",
+          xxl: "40%",
+        }}>
+        <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
+      </Modal>
     </>
   );
 };

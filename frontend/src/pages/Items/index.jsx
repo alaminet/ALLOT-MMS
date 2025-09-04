@@ -6,7 +6,7 @@ import NotAuth from "../notAuth";
 const Items = () => {
   // User Permission Check
   const { canViewPage, canDoOther } = usePermission();
-  if (!canViewPage("item-list")) {
+  if (!canViewPage("master")) {
     return <NotAuth />;
   }
 

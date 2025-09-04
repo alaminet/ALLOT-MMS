@@ -78,7 +78,8 @@ p {
   font-weight: bold !important;
 }
 
-.borderlessInput .ant-input-number-outlined {
+.borderlessInput .ant-input-number-outlined,
+.borderlessInput .ant-input-affix-wrapper {
   border-radius: 0px !important;
   border-color: var(--color-Brand) !important;
 }

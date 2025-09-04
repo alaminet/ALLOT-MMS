@@ -7,7 +7,8 @@ async function viewAllItemInfoCTR(req, res) {
       orgId: req.orgId,
     })
       .sort({ createdAt: -1 })
-      .populate({ path: "createdBy", select: "name" });
+      .populate({ path: "createdBy", select: "name" })
+      .populate({ path: "updatedBy", select: "name" });
     if (items.length === 0) {
       return res.status(404).send({ message: "No data found" });
     }

@@ -27,67 +27,6 @@ const List = () => {
     <>
       <Flex justify="space-between">
         <BreadCrumbCustom />
-        <Flex
-          gap={10}
-          style={{
-            marginBottom: "10px",
-            display: lastSegment !== "product" && "none",
-          }}>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              border: "1px solid #12121269",
-            }}>
-            <p>
-              Total Available <InfoCircleTwoTone />
-            </p>
-            <p className="colorLink">510215 Unit</p>
-          </div>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              border: "1px solid #12121269",
-            }}>
-            <p>Total Category</p>
-            <p className="colorLink">510215 Unit</p>
-          </div>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              border: "1px solid #12121269",
-            }}>
-            <p>Total Damage</p>
-            <p className="colorLink">510215 Unit</p>
-          </div>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              border: "1px solid #12121269",
-              display: !canViewPage("value") && "none",
-            }}>
-            <p>Total Stock Value</p>
-            <p className="colorLink">BDT 510215</p>
-          </div>
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              border: "1px solid #12121269",
-              display: !canViewPage("value") && "none",
-            }}>
-            <p>Total Purchase Value</p>
-            <p className="colorLink">BDT 510215</p>
-          </div>
-        </Flex>
         {lastSegment !== "new" && (
           <Button
             type="primary"
@@ -111,7 +50,7 @@ const List = () => {
             onClick={() =>
               navigate("logs", {
                 state: {
-                  model: "Product",
+                  model: "item-list",
                 },
               })
             }
@@ -125,7 +64,7 @@ const List = () => {
             onClick={() =>
               navigate("logs", {
                 state: {
-                  model: "Product",
+                  model: "Item_Info",
                 },
               })
             }>
@@ -136,9 +75,9 @@ const List = () => {
           className="search-field"
           style={{
             width: "300px",
-            display: lastSegment !== "product" && "none",
+            display: lastSegment !== "item-list" && "none",
           }}
-          placeholder="Search by code"
+          placeholder="Search by name"
           onChange={(e) => setSearch(e.target.value)}
           enterButton
         />

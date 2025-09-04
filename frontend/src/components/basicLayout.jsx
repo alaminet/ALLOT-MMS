@@ -87,15 +87,8 @@ const BasicLayout = () => {
 
   // handle Navigation
   const handleMenu = (e) => {
-    if (e === "Logout") {
-      message.warning("logout");
-      localStorage.removeItem("user");
-      dispatch(Loginuser(null));
-      navigate("/");
-    } else {
-      navigate(e.key);
-      setCurent(e.key);
-    }
+    navigate(e.key);
+    setCurent(e.key);
   };
 
   const handleLogout = () => {
@@ -145,7 +138,6 @@ const BasicLayout = () => {
       const payload = JSON.parse(atob(tokenParts[1]));
       if (payload.exp && Date.now() >= payload.exp * 1000) {
         // Token expired
-        message.error("Session expired. Please login again.");
         localStorage.removeItem("user");
         dispatch(Loginuser(null));
         navigate("/");
