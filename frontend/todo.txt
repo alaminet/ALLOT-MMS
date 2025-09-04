@@ -35,22 +35,22 @@
 
 # Cost Center
     - Name
-    - Code (1001)
+    - Code (7001)
 # UOM
     - Name
-    - Code (4Digit)
+    - Code (2001)
 # Group
     - Name
-    - Code (2001)
+    - Code (3001)
 # Type
     - Name
-    - Code (4Digit)
+    - Code (4001)
 # Store
     - Name
-    - Code (4Digit)
+    - Code (5001)
 # Transaction Type
     - Name
-    - Code (3001)
+    - Code (6001)
 # Vendor/Supplier
     - Supplier Code (2000000001)
     - Name
@@ -185,7 +185,7 @@
         - Approved By
 # Delivery Challan
 # Reservation/Move Order
-    - Reservation Number (0000000001)
+    - Reservation Number (10001)
     - Date
     - Order Type
     - From Store

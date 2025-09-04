@@ -50,6 +50,7 @@ const items = [
   getItem("Item", "item", <ProductOutlined />),
   getItem("Master", "master", <ProductOutlined />, [
     getItem("Item List", "item-list", <FileDoneOutlined />),
+    getItem("Item Details", "item-details", <FileDoneOutlined />),
     getItem("Item UOM", "item-uom", <FileDoneOutlined />),
     getItem("Item Group", "item-group", <FileDoneOutlined />),
     getItem("Item Type", "item-type", <FileDoneOutlined />),

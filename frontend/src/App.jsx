@@ -32,6 +32,8 @@ import ItemGroup from "./pages/Master/ItemGroup";
 import GroupAdd from "./pages/Master/ItemGroup/GroupAdd";
 import GroupUpdate from "./pages/Master/ItemGroup/GroupUpdate";
 import GroupViewTable from "./pages/Master/ItemGroup/GroupViewTable";
+import ItemDetails from "./pages/Master/ItemDetails";
+import ItemDetailsView from "./pages/Master/ItemDetails/ItemDetailsView";
 
 function App() {
   const router = createBrowserRouter(
@@ -69,6 +71,12 @@ function App() {
               </Route>
               <Route path="/item-group" element={<ItemGroup />}>
                 <Route path="" element={<GroupViewTable />} />
+                <Route path="new" element={<GroupAdd />}></Route>
+                <Route path="update" element={<GroupUpdate />}></Route>
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="/item-details" element={<ItemDetails />}>
+                <Route path="" element={<ItemDetailsView />} />
                 <Route path="new" element={<GroupAdd />}></Route>
                 <Route path="update" element={<GroupUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />

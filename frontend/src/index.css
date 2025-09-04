@@ -79,7 +79,8 @@ p {
 }
 
 .borderlessInput .ant-input-number-outlined,
-.borderlessInput .ant-input-affix-wrapper {
+.borderlessInput .ant-input-affix-wrapper,
+.borderlessInput .ant-picker-outlined {
   border-radius: 0px !important;
   border-color: var(--color-Brand) !important;
 }
