@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Button, Card, Col, Form, Input, message, Row, Typography } from "antd";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 const { Title } = Typography;
 
-const GroupAdd = () => {
+const GroupUpdate = () => {
+  const location = useLocation();
+  const { UpdateInfo } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -12,10 +15,16 @@ const GroupAdd = () => {
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = { ...values, createdBy: user?.id };
+    const formData = {
+      ...values,
+      updatedBy: user?.id,
+    };
+
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemGroup/new`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemGroup/update/${
+          UpdateInfo._id
+        }`,
         formData,
         {
           headers: {
@@ -26,7 +35,6 @@ const GroupAdd = () => {
       );
       message.success(res.data.message);
       setLoading(false);
-      form.resetFields();
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);
@@ -39,14 +47,16 @@ const GroupAdd = () => {
   return (
     <>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
-        Add New Group
+        Update Existing Group
       </Title>
       <Card>
         <Form
           form={form}
           name="new"
           layout="vertical"
-          initialValues={{ remember: true }}
+          initialValues={{
+            ...UpdateInfo, // override with just the ID
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -78,7 +88,7 @@ const GroupAdd = () => {
                       loading={loading}
                       block
                       style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Add Group
+                      Update Group
                     </Button>
                   </Form.Item>
                 </Col>
@@ -91,4 +101,4 @@ const GroupAdd = () => {
   );
 };
 
-export default GroupAdd;
+export default GroupUpdate;

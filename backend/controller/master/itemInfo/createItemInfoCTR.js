@@ -36,7 +36,7 @@ async function createItemInfoCTR(req, res, next) {
           orgId: newItemInfo.orgId,
           id: req.actionBy,
           refModel: "Item_Info",
-          action: `New item ${newItemInfo.name} created`,
+          action: `New item "${newItemInfo.name}" created`,
         };
         req.log = logData;
         next();

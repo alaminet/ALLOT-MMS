@@ -29,6 +29,9 @@ import UOMAdd from "./pages/Master/ItemUOM/UOMAdd";
 import UOMViewTable from "./pages/Master/ItemUOM/UOMViewTable";
 import UOMUpdate from "./pages/Master/ItemUOM/UOMUpdate";
 import ItemGroup from "./pages/Master/ItemGroup";
+import GroupAdd from "./pages/Master/ItemGroup/GroupAdd";
+import GroupUpdate from "./pages/Master/ItemGroup/GroupUpdate";
+import GroupViewTable from "./pages/Master/ItemGroup/GroupViewTable";
 
 function App() {
   const router = createBrowserRouter(
@@ -65,9 +68,9 @@ function App() {
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="/item-group" element={<ItemGroup />}>
-                <Route path="" element={<UOMViewTable />} />
-                <Route path="new" element={<UOMAdd />}></Route>
-                <Route path="update" element={<UOMUpdate />}></Route>
+                <Route path="" element={<GroupViewTable />} />
+                <Route path="new" element={<GroupAdd />}></Route>
+                <Route path="update" element={<GroupUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>

@@ -35,13 +35,13 @@
 
 # Cost Center
     - Name
-    - Code (100001)
+    - Code (1001)
 # UOM
     - Name
     - Code (4Digit)
 # Group
     - Name
-    - Code (200001)
+    - Code (2001)
 # Type
     - Name
     - Code (4Digit)
@@ -50,7 +50,7 @@
     - Code (4Digit)
 # Transaction Type
     - Name
-    - Code (101)
+    - Code (3001)
 # Vendor/Supplier
     - Supplier Code (2000000001)
     - Name

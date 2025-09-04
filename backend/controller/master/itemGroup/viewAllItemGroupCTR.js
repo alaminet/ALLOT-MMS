@@ -1,8 +1,8 @@
-const ItemUOM = require("../../../model/master/itemUOM");
+const ItemGroup = require("../../../model/master/itemGroup");
 
-async function viewAllItemUOMCTR(req, res) {
+async function viewAllItemGroupCTR(req, res) {
   try {
-    const items = await ItemUOM.find({
+    const items = await ItemGroup.find({
       isDeleted: { $ne: true },
       orgId: req.orgId,
     })
@@ -21,4 +21,4 @@ async function viewAllItemUOMCTR(req, res) {
   }
 }
 
-module.exports = viewAllItemUOMCTR;
+module.exports = viewAllItemGroupCTR;
