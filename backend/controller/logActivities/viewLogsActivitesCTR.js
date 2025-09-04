@@ -19,14 +19,14 @@ async function viewLogsActivitesCTR(req, res) {
       .populate({ path: "actionBy", select: "name" });
 
     if (Logs.length === 0) {
-      return res.status(404).send({ message: "No Logs found" });
+      return res.status(404).send({ error: "No Logs found" });
     }
     res.status(200).send({
       message: "Logs retrieved",
       logs: Logs,
     });
   } catch (error) {
-    res.status(500).send({ message: error.message || "Error retrieving" });
+    res.status(500).send({ error: error.message || "Error retrieving" });
   }
 }
 

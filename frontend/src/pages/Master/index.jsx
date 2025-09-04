@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
 
-const Items = () => {
+const Master = () => {
   // User Permission Check
   const { canViewPage, canDoOther } = usePermission();
   if (!canViewPage("master")) {
@@ -17,4 +17,4 @@ const Items = () => {
   );
 };
 
-export default Items;
+export default Master;

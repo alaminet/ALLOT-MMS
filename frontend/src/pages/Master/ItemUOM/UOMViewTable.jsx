@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, message, Modal, Select, Table, Tooltip } from "antd";
+import { Button, Flex, message, Modal,  Table, Tooltip } from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import { usePermission } from "../../../hooks/usePermission";
-import {
-  DeleteTwoTone,
-  EditTwoTone,
-  EyeTwoTone,
-  InfoCircleTwoTone,
-} from "@ant-design/icons";
+import { DeleteTwoTone, EditTwoTone, EyeTwoTone } from "@ant-design/icons";
 import NotAuth from "../../notAuth";
 import { useNavigate, useOutletContext } from "react-router-dom";
 
-const ItemViewTable = () => {
+const UOMViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -22,7 +17,7 @@ const ItemViewTable = () => {
   const navigate = useNavigate();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("item-list")) {
+  if (!canViewPage("item-uom")) {
     return <NotAuth />;
   }
   // Get pathname
@@ -41,6 +36,7 @@ const ItemViewTable = () => {
       title: "Code",
       dataIndex: "code",
       key: "code",
+      width: 100,
       filters: [...new Set(queryData?.map((item) => item.code))].map(
         (code) => ({
           text: code,
@@ -51,75 +47,10 @@ const ItemViewTable = () => {
       filterSearch: true,
     },
     {
-      title: "SKU",
-      dataIndex: "SKU",
-      key: "SKU",
-      responsive: ["md"],
-      filters: [...new Set(queryData?.map((item) => item.SKU))].map((flt) => ({
-        text: flt,
-        value: flt,
-      })),
-      onFilter: (value, record) => record?.SKU === value,
-      filterSearch: true,
-    },
-    {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
     },
-    {
-      title: "UOM",
-      dataIndex: "UOM",
-      key: "UOM",
-      responsive: ["md"],
-    },
-    {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
-      responsive: ["md"],
-      filters: [...new Set(queryData?.map((item) => item.type))].map((flt) => ({
-        text: flt,
-        value: flt,
-      })),
-      onFilter: (value, record) => record?.type === value,
-      filterSearch: true,
-    },
-    {
-      title: "Group",
-      dataIndex: "group",
-      key: "group",
-      responsive: ["md"],
-      filters: [...new Set(queryData?.map((item) => item.group))].map(
-        (flt) => ({
-          text: flt,
-          value: flt,
-        })
-      ),
-      onFilter: (value, record) => record?.group === value,
-      filterSearch: true,
-    },
-    {
-      title: "Last Price",
-      dataIndex: "lastPrice",
-      key: "lastPrice",
-      responsive: ["md"],
-    },
-
-    {
-      title: "Avg. Price",
-      dataIndex: "avgPrice",
-      key: "avgPrice",
-      responsive: ["md"],
-    },
-    {
-      title: "Safety Stock",
-      dataIndex: "safetyStock",
-      key: "safetyStock",
-      responsive: ["md"],
-    },
-
     {
       title: "Action",
       align: "center",
@@ -144,7 +75,7 @@ const ItemViewTable = () => {
                   onClick={() =>
                     navigate("update", {
                       state: {
-                        productInfo: record.access,
+                        UpdateInfo: record.access,
                       },
                     })
                   }
@@ -156,7 +87,9 @@ const ItemViewTable = () => {
             (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
               <Tooltip title="Delete">
                 <Button
-                  onClick={(e) => handleChange(record.action, "deleted", true)}
+                  onClick={(e) =>
+                    handleChange(record.action, "isDeleted", true)
+                  }
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
               </Tooltip>
@@ -171,7 +104,7 @@ const ItemViewTable = () => {
   const getTableData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/itemInfo/view`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemUOM/view`,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -179,20 +112,11 @@ const ItemViewTable = () => {
           },
         }
       );
-      message.success(res.data.message);
+      message.success(res?.data.message);
       const tableArr = res?.data?.items?.map((item, index) => ({
         key: index,
         code: item?.code,
         name: item?.name,
-        SKU: item?.SKU,
-        UOM: item?.UOM,
-        discription: item?.discription,
-        type: item?.type,
-        group: item?.group,
-        lastPrice: item?.lastPrice,
-        avgPrice: item?.avgPrice,
-        safetyStock: item?.safetyStock,
-        isShelfLife: item?.isShelfLife,
         status: item?.status,
         createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
         updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
@@ -229,7 +153,7 @@ const ItemViewTable = () => {
   const handleChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/product/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemUOM/update/${id}`,
         { [field]: data },
         {
           headers: {
@@ -277,4 +201,4 @@ const ItemViewTable = () => {
   );
 };
 
-export default ItemViewTable;
+export default UOMViewTable;

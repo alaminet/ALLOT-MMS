@@ -19,11 +19,16 @@ import Inventory from "./pages/Inventory";
 import InventoryViewTable from "./pages/Inventory/inventoryViewTable";
 import InventoryAdd from "./pages/Inventory/inventoryAdd";
 import InventoryListView from "./pages/Inventory/inventoryListView";
-import Items from "./pages/Items";
-import List from "./pages/Items/List";
-import ItemAdd from "./pages/Items/List/itemAdd";
-import ItemViewTable from "./pages/Items/List/itemViewTable";
-import ItemUpdate from "./pages/Items/List/itemUpdate";
+import Items from "./pages/Master";
+import ItemInfo from "./pages/Master/ItemInfo";
+import ItemAdd from "./pages/Master/ItemInfo/itemAdd";
+import ItemViewTable from "./pages/Master/ItemInfo/itemViewTable";
+import ItemUpdate from "./pages/Master/ItemInfo/itemUpdate";
+import ItemUOM from "./pages/Master/ItemUOM";
+import UOMAdd from "./pages/Master/ItemUOM/UOMAdd";
+import UOMViewTable from "./pages/Master/ItemUOM/UOMViewTable";
+import UOMUpdate from "./pages/Master/ItemUOM/UOMUpdate";
+import ItemGroup from "./pages/Master/ItemGroup";
 
 function App() {
   const router = createBrowserRouter(
@@ -46,11 +51,23 @@ function App() {
               <Route path="list" element={<InventoryListView />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
-            <Route path="/item-list" element={<Items />}>
-              <Route path="" element={<List />}>
+            <Route path="" element={<Items />}>
+              <Route path="/item-list" element={<ItemInfo />}>
                 <Route path="" element={<ItemViewTable />} />
                 <Route path="new" element={<ItemAdd />}></Route>
                 <Route path="update" element={<ItemUpdate />}></Route>
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="/item-uom" element={<ItemUOM />}>
+                <Route path="" element={<UOMViewTable />} />
+                <Route path="new" element={<UOMAdd />}></Route>
+                <Route path="update" element={<UOMUpdate />}></Route>
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="/item-group" element={<ItemGroup />}>
+                <Route path="" element={<UOMViewTable />} />
+                <Route path="new" element={<UOMAdd />}></Route>
+                <Route path="update" element={<UOMUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>

@@ -1,4 +1,4 @@
-const ItemInfo = require("../../model/itemInfo");
+const ItemInfo = require("../../../model/master/itemInfo");
 
 async function createItemInfoCTR(req, res, next) {
   const data = req.body;

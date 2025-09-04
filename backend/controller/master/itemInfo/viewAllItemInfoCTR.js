@@ -1,4 +1,4 @@
-const ItemInfo = require("../../model/itemInfo");
+const ItemInfo = require("../../../model/master/itemInfo");
 
 async function viewAllItemInfoCTR(req, res) {
   try {
@@ -10,14 +10,14 @@ async function viewAllItemInfoCTR(req, res) {
       .populate({ path: "createdBy", select: "name" })
       .populate({ path: "updatedBy", select: "name" });
     if (items.length === 0) {
-      return res.status(404).send({ message: "No data found" });
+      return res.status(404).send({ error: "No data found" });
     }
     res.status(200).send({
       message: "Data retrieved",
       items: items,
     });
   } catch (error) {
-    res.status(500).send({ message: error.message || "Error retrieving" });
+    res.status(500).send({ error: error.message || "Error retrieving" });
   }
 }
 

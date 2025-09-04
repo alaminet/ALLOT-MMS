@@ -1,4 +1,4 @@
-const ItemInfo = require("../../model/itemInfo");
+const ItemInfo = require("../../../model/master/itemInfo");
 
 async function updateItemInfoCTR(req, res, next) {
   const { id } = req.params;
@@ -6,7 +6,7 @@ async function updateItemInfoCTR(req, res, next) {
 
   try {
     if (!id) {
-      return res.status(400).send({ message: "ID is required" });
+      return res.status(400).send({ error: "ID is required" });
     }
     const dataExist = await ItemInfo.findOne({
       SKU: updatedData.SKU?.toLowerCase().trim(),
@@ -14,13 +14,13 @@ async function updateItemInfoCTR(req, res, next) {
       _id: { $ne: id },
     });
     if (dataExist) {
-      return res.status(400).send({ message: "SKU already exist" });
+      return res.status(400).send({ error: "SKU already exist" });
     } else {
       const changedData = await ItemInfo.findByIdAndUpdate(id, updatedData, {
         new: true,
       }); // Exclude sensitive fields
       if (!changedData) {
-        return res.status(404).send({ message: "Item not found" });
+        return res.status(404).send({ error: "Item not found" });
       }
       res.status(200).send({
         message: "Data updated",
@@ -42,7 +42,7 @@ async function updateItemInfoCTR(req, res, next) {
       next();
     }
   } catch (error) {
-    res.status(500).send({ message: error.message || "Error updating" });
+    res.status(500).send({ error: error.message || "Error updating" });
   }
 }
 module.exports = updateItemInfoCTR;

@@ -6,20 +6,20 @@ async function updateMemberCTR(req, res, next) {
 
   try {
     if (!id) {
-      return res.status(400).send({ message: "ID is required" });
+      return res.status(400).send({ error: "ID is required" });
     }
     const dataExist = await Member.findOne({
       email: updatedData?.email?.toLowerCase().trim(),
       _id: { $ne: id },
     });
     if (dataExist) {
-      return res.status(400).send({ message: "Email already exist" });
+      return res.status(400).send({ error: "Email already exist" });
     } else {
       const updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
         new: true,
       }).select("-password -otp -token"); // Exclude sensitive fields
       if (!updatedMember) {
-        return res.status(404).send({ message: "Member not found" });
+        return res.status(404).send({ error: "Member not found" });
       }
       res.status(200).send({
         message: "Member updated successfully",
@@ -42,7 +42,7 @@ async function updateMemberCTR(req, res, next) {
       next();
     }
   } catch (error) {
-    res.status(500).send({ message: error.message || "Error updating" });
+    res.status(500).send({ error: error.message || "Error updating" });
   }
 }
 module.exports = updateMemberCTR;

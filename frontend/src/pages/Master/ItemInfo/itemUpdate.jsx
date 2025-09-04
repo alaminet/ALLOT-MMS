@@ -14,7 +14,6 @@ import {
   Typography,
 } from "antd";
 import { useSelector } from "react-redux";
-import HTMLTextarea from "../../../components/htmlTextarea";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 const { Title } = Typography;
@@ -37,7 +36,7 @@ const ItemUpdate = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/itemInfo/update/${formData.id}`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemInfo/update/${formData.id}`,
         formData,
         {
           headers: {

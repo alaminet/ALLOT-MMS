@@ -9,14 +9,14 @@ async function viewAllMemberCTR(req, res) {
       .sort({ createdAt: -1 })
       .select("-password -otp -token"); // Exclude sensitive fields
     if (members.length === 0) {
-      return res.status(404).send({ message: "No members found" });
+      return res.status(404).send({ error: "No members found" });
     }
     res.status(200).send({
       message: "Members retrieved",
       members: members,
     });
   } catch (error) {
-    res.status(500).send({ message: error.message || "Error retrieving" });
+    res.status(500).send({ error: error.message || "Error retrieving" });
   }
 }
 
