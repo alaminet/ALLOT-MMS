@@ -24,6 +24,7 @@ const ItemDetailsView = () => {
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [findModel, setFindModel] = useState("");
   const search = useOutletContext();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -37,10 +38,56 @@ const ItemDetailsView = () => {
   const lastSegment = pathname.split("/").filter(Boolean).pop();
 
   // Table data get form
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
+    setQueryData([]);
     let startDate = new Date(values?.startDate?.$d).setHours(0, 0, 0);
     let endDate = new Date(values?.endDate?.$d).setHours(23, 59, 59);
-    console.log(moment(endDate).format());
+    let findModel = values?.model;
+    const findData = {
+      model: values?.model,
+      startDate: moment(startDate).format(),
+      endDate: moment(endDate).format(),
+    };
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/view`,
+        findData,
+        {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        }
+      );
+      message.success(res?.data.message);
+      const tableArr = res?.data?.items?.map((item, index) => ({
+        key: index,
+        code: item?.code,
+        name: item?.name,
+        status: item?.status,
+        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+        access: { ...item, model: findModel },
+        action: item?._id,
+      }));
+      if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
+        setQueryData(tableArr.filter((item) => item.action !== user.id));
+      } else if (
+        canDoOwn(lastSegment, "view") &&
+        !canDoOther(lastSegment, "view")
+      ) {
+        setQueryData(tableArr.filter((item) => item.action === user.id));
+      } else if (
+        canDoOther(lastSegment, "view") &&
+        canDoOwn(lastSegment, "view")
+      ) {
+        setQueryData(tableArr);
+      } else {
+        setQueryData([]);
+      }
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
   };
 
   const columns = [
@@ -120,47 +167,6 @@ const ItemDetailsView = () => {
       ),
     },
   ];
-  const getTableData = async () => {
-    try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/master/itemGroup/view`,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        }
-      );
-      message.success(res?.data.message);
-      const tableArr = res?.data?.items?.map((item, index) => ({
-        key: index,
-        code: item?.code,
-        name: item?.name,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        access: item,
-        action: item?._id,
-      }));
-      if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-        setQueryData(tableArr.filter((item) => item.action !== user.id));
-      } else if (
-        canDoOwn(lastSegment, "view") &&
-        !canDoOther(lastSegment, "view")
-      ) {
-        setQueryData(tableArr.filter((item) => item.action === user.id));
-      } else if (
-        canDoOther(lastSegment, "view") &&
-        canDoOwn(lastSegment, "view")
-      ) {
-        setQueryData(tableArr);
-      } else {
-        setQueryData([]);
-      }
-    } catch (error) {
-      message.error(error.response.data.error);
-    }
-  };
 
   // Handle Veiw table data
   const handleView = (values) => {
@@ -182,7 +188,6 @@ const ItemDetailsView = () => {
         }
       );
       message.success(res.data.message);
-      getTableData();
     } catch (error) {
       message.error(error.response.data.error);
     }

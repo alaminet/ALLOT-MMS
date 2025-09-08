@@ -42,55 +42,6 @@ const UserRoleTable = ({ data, setData }) => {
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
-    {
-      key: "item-uom",
-      module: "Master UOM",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "item-group",
-      module: "Master Item Group",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "item-type",
-      module: "Master Item Type",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "costcenter",
-      module: "Master Cost Center",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "store-name",
-      module: "Master Store",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "store-location",
-      module: "Master Store Location",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "transaction-type",
-      module: "Master Transaction Type",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
   ];
 
   const normalizeData = (data) => {

@@ -24,16 +24,10 @@ import ItemInfo from "./pages/Master/ItemInfo";
 import ItemAdd from "./pages/Master/ItemInfo/itemAdd";
 import ItemViewTable from "./pages/Master/ItemInfo/itemViewTable";
 import ItemUpdate from "./pages/Master/ItemInfo/itemUpdate";
-import ItemUOM from "./pages/Master/ItemUOM";
-import UOMAdd from "./pages/Master/ItemUOM/UOMAdd";
-import UOMViewTable from "./pages/Master/ItemUOM/UOMViewTable";
-import UOMUpdate from "./pages/Master/ItemUOM/UOMUpdate";
-import ItemGroup from "./pages/Master/ItemGroup";
-import GroupAdd from "./pages/Master/ItemGroup/GroupAdd";
-import GroupUpdate from "./pages/Master/ItemGroup/GroupUpdate";
-import GroupViewTable from "./pages/Master/ItemGroup/GroupViewTable";
+import ItemDetailsAdd from "./pages/Master/ItemDetails/itemDetailsAdd";
 import ItemDetails from "./pages/Master/ItemDetails";
 import ItemDetailsView from "./pages/Master/ItemDetails/ItemDetailsView";
+import ItemDetailsUpdate from "./pages/Master/ItemDetails/itemDetailsUpdate";
 
 function App() {
   const router = createBrowserRouter(
@@ -63,22 +57,10 @@ function App() {
                 <Route path="update" element={<ItemUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
-              <Route path="/item-uom" element={<ItemUOM />}>
-                <Route path="" element={<UOMViewTable />} />
-                <Route path="new" element={<UOMAdd />}></Route>
-                <Route path="update" element={<UOMUpdate />}></Route>
-                <Route path="logs" element={<LogActivites />} />
-              </Route>
-              <Route path="/item-group" element={<ItemGroup />}>
-                <Route path="" element={<GroupViewTable />} />
-                <Route path="new" element={<GroupAdd />}></Route>
-                <Route path="update" element={<GroupUpdate />}></Route>
-                <Route path="logs" element={<LogActivites />} />
-              </Route>
               <Route path="/item-details" element={<ItemDetails />}>
                 <Route path="" element={<ItemDetailsView />} />
-                <Route path="new" element={<GroupAdd />}></Route>
-                <Route path="update" element={<GroupUpdate />}></Route>
+                <Route path="new" element={<ItemDetailsAdd />}></Route>
+                <Route path="update" element={<ItemDetailsUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>

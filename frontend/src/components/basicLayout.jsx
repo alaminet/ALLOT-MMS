@@ -51,13 +51,6 @@ const items = [
   getItem("Master", "master", <ProductOutlined />, [
     getItem("Item List", "item-list", <FileDoneOutlined />),
     getItem("Item Details", "item-details", <FileDoneOutlined />),
-    getItem("Item UOM", "item-uom", <FileDoneOutlined />),
-    getItem("Item Group", "item-group", <FileDoneOutlined />),
-    getItem("Item Type", "item-type", <FileDoneOutlined />),
-    getItem("Cost Center", "costcenter", <FileDoneOutlined />),
-    getItem("Store Name", "store-name", <FileDoneOutlined />),
-    getItem("Store Location", "store-location", <FileDoneOutlined />),
-    getItem("Transaction Type", "transaction-type", <FileDoneOutlined />),
   ]),
   // getItem("Category", "category", <GroupOutlined />),
 ];
@@ -68,6 +61,21 @@ const customTheme = {
     colorPrimary: "#247F93",
     fontFamily: "Poppins, sans-serif",
   },
+};
+
+// Recursive Menu Filtering
+const filterMenuItems = (menuItems, allowedKeys) => {
+  return menuItems
+    .map((item) => {
+      if (item.children) {
+        const filteredChildren = filterMenuItems(item.children, allowedKeys);
+        if (filteredChildren.length > 0) {
+          return { ...item, children: filteredChildren };
+        }
+      }
+      return allowedKeys.includes(item.key) ? item : null;
+    })
+    .filter(Boolean);
 };
 
 const BasicLayout = () => {
@@ -121,33 +129,7 @@ const BasicLayout = () => {
     </div>
   );
 
-  useEffect(() => {
-    if (!user?.token) {
-      navigate("/");
-      return;
-    }
-
-    // Decode JWT to check expiry
-    const tokenParts = user?.token.split(".");
-    if (tokenParts.length !== 3) {
-      // Not a valid JWT
-      navigate("/");
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(atob(tokenParts[1]));
-      if (payload.exp && Date.now() >= payload.exp * 1000) {
-        // Token expired
-        localStorage.removeItem("user");
-        dispatch(Loginuser(null));
-        navigate("/");
-      }
-    } catch (e) {
-      // Invalid token
-      navigate("/");
-    }
-  }, [curent]);
+  console.log(items?.filter((item) => allowedKeys?.includes(item.key)));
 
   return (
     <>
@@ -192,7 +174,7 @@ const BasicLayout = () => {
               theme="light"
               defaultSelectedKeys={["1"]}
               mode="inline"
-              items={items?.filter((item) => allowedKeys?.includes(item.key))}
+              items={filterMenuItems(items, allowedKeys)}
               onClick={handleMenu}
             />
           </Sider>
