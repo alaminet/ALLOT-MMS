@@ -14,41 +14,33 @@ const modelMap = {
   Transaction,
 };
 
-async function viewItemDetailsCTR(req, res) {
+async function viewAllItemDetailsCTR(req, res) {
   const data = req.body;
   const modelName = req.body.model;
-  const Model = modelMap[modelName];
 
   try {
-    if (!Model || typeof Model.find !== "function") {
-      return res.status(400).send({ error: "Invalid model name" });
-    }
-
     //   Set a query filed
     const query = {
       isDeleted: { $ne: true },
       orgId: req.orgId,
     };
-    // Dynamically add createdAt filter
-    if (
-      data?.startDate !== "Invalid date" ||
-      data?.endDate !== "Invalid date"
-    ) {
-      query.createdAt = {};
 
-      if (data?.startDate !== "Invalid date") {
-        query.createdAt.$gte = new Date(data.startDate);
+    const itemDetails = modelName.map(async (model) => {
+      const Model = modelMap[model];
+      if (!Model || typeof Model.find !== "function") {
+        throw new Error(`Invalid model name: ${model}`);
       }
 
-      if (data?.endDate !== "Invalid date") {
-        query.createdAt.$lte = new Date(data.endDate);
-      }
-    }
-    const items = await Model.find(query)
-      .sort({ createdAt: -1 })
-      .populate({ path: "createdBy", select: "name" })
-      .populate({ path: "updatedBy", select: "name" })
-      .lean();
+      const results = await Model.find(query)
+        .sort({ createdAt: -1 })
+        .select("_id name code")
+        .lean();
+      return {
+        modelName: model,
+        data: results,
+      };
+    });
+    const items = await Promise.all(itemDetails);
     if (items.length === 0) {
       return res.status(404).send({ error: "No data found" });
     }
@@ -58,8 +50,10 @@ async function viewItemDetailsCTR(req, res) {
       items: items,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({ error: error.message || "Error retrieving" });
   }
 }
 
-module.exports = viewItemDetailsCTR;
+module.exports = viewAllItemDetailsCTR;

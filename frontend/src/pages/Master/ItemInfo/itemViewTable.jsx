@@ -187,10 +187,10 @@ const ItemViewTable = () => {
         code: item?.code,
         name: item?.name,
         SKU: item?.SKU,
-        UOM: item?.UOM,
+        UOM: item?.UOM?.name,
         discription: item?.discription,
-        type: item?.type,
-        group: item?.group,
+        type: item?.type?.name,
+        group: item?.group?.name,
         lastPrice: item?.lastPrice,
         avgPrice: item?.avgPrice,
         safetyStock: item?.safetyStock || "NA",
@@ -231,7 +231,7 @@ const ItemViewTable = () => {
   const handleChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/product/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemInfo/update/${id}`,
         { [field]: data },
         {
           headers: {

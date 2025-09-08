@@ -129,8 +129,6 @@ const BasicLayout = () => {
     </div>
   );
 
-  console.log(items?.filter((item) => allowedKeys?.includes(item.key)));
-
   return (
     <>
       <ConfigProvider theme={customTheme}>

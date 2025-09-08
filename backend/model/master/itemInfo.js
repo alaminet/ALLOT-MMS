@@ -7,15 +7,28 @@ const itemInfoSchema = new Schema(
     code: Number,
     name: String,
     SKU: String,
-    UOM: String,
     discription: String,
-    group: String,
-    type: String,
+    UOM: {
+      type: Schema.Types.ObjectId,
+      ref: "Item_UOM",
+    },
+    group: {
+      type: Schema.Types.ObjectId,
+      ref: "Item_Group",
+    },
+    type: {
+      type: Schema.Types.ObjectId,
+      ref: "Item_Type",
+    },
     safetyStock: {
       type: Number,
       default: null,
     },
     isShelfLife: {
+      type: Boolean,
+      default: false,
+    },
+    isSerialized: {
       type: Boolean,
       default: false,
     },

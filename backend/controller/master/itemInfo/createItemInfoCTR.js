@@ -24,6 +24,7 @@ async function createItemInfoCTR(req, res, next) {
           type: data.type,
           safetyStock: data.safetyStock,
           isShelfLife: data.isShelfLife,
+          isSerialized: data.isSerialized,
           createdBy: data.createdBy,
         });
         await newItemInfo.save();

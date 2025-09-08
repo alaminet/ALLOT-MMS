@@ -36,7 +36,9 @@ const ItemUpdate = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemInfo/update/${formData.id}`,
+        `${import.meta.env.VITE_API_URL}/api/master/itemInfo/update/${
+          formData.id
+        }`,
         formData,
         {
           headers: {
@@ -59,19 +61,29 @@ const ItemUpdate = () => {
   // Get Category List
   const getCategories = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/category/view`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
+        {
+          model: [
+            "ItemUOM",
+            "ItemGroup",
+            "ItemType",
+            "CostCenter",
+            "StoreLocation",
+            "Transaction",
+          ],
+        },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
+            token: user?.token,
           },
         }
       );
-      const tableArr = res?.data?.categories?.map((item, index) => ({
-        label: item.name,
-        value: item._id,
-      }));
+      const tableArr = res?.data?.items?.map((item, index) => {
+        item.data = item?.data?.map((i) => ({ value: i._id, label: i.name }));
+        return { ...item };
+      });
       setCategories(tableArr);
     } catch (error) {
       message.error(error.response.data.error);
@@ -87,212 +99,204 @@ const ItemUpdate = () => {
       <Title style={{ textAlign: "left" }} className="colorLink form-title">
         Update Existing Product
       </Title>
-      <Card>
-        <Form
-          form={form}
-          name="new"
-          layout="vertical"
-          initialValues={{
-            ...productInfo,
-            category: productInfo.category?._id, // override with just the ID
-          }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          autoComplete="off"
-          className="borderlessInput">
-          <Row gutter={16}>
-            <Col>
-              <Row justify="space-between" gutter={16}>
-                <Form.Item
-                  hidden
-                  name="id"
-                  initialValue={productInfo?._id}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Update ID Required!",
-                    },
-                  ]}>
-                  <Input />
-                </Form.Item>
-                <Col lg={12} xs={24}>
+      {categories?.length > 0 && (
+        <Card>
+          <Form
+            form={form}
+            name="new"
+            layout="vertical"
+            initialValues={{
+              ...productInfo,
+              UOM: productInfo.UOM._id,
+              group: productInfo.group._id,
+              type: productInfo.type._id,
+            }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            autoComplete="off"
+            className="borderlessInput">
+            <Row gutter={16}>
+              <Col>
+                <Row justify="space-between" gutter={16}>
                   <Form.Item
-                    label="Item Name"
-                    name="name"
+                    hidden
+                    name="id"
+                    initialValue={productInfo?._id}
                     rules={[
                       {
                         required: true,
+                        message: "Update ID Required!",
                       },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <Input placeholder="Item Name" maxLength={50} showCount />
+                    ]}>
+                    <Input />
                   </Form.Item>
-                </Col>
-                <Col lg={12} xs={24}>
-                  <Form.Item
-                    label="Item Discription"
-                    name="discription"
-                    required
-                    style={{ width: "100%" }}>
-                    <Input
-                      placeholder="Discription/Specification"
-                      maxLength={50}
-                      showCount
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="SKU"
-                    name="SKU"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <Input placeholder="Item SKU/Part Code" />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="UOM"
-                    name="UOM"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%", marginBottom: "35px" }}>
-                    <Select
-                      style={{ width: "100%" }}
-                      allowClear
-                      options={[
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      label="Item Name"
+                      name="name"
+                      rules={[
                         {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
+                          required: true,
                         },
                       ]}
-                      placeholder="Select UOM"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="Group"
-                    name="group"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%", marginBottom: "35px" }}>
-                    <Select
-                      style={{ width: "100%" }}
-                      allowClear
-                      options={[
+                      style={{ width: "100%" }}>
+                      <Input placeholder="Item Name" maxLength={50} showCount />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      label="Item Discription"
+                      name="discription"
+                      required
+                      style={{ width: "100%" }}>
+                      <Input
+                        placeholder="Discription/Specification"
+                        maxLength={50}
+                        showCount
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      label="SKU"
+                      name="SKU"
+                      rules={[
                         {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
+                          required: true,
                         },
                       ]}
-                      placeholder="Select Group"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="Type"
-                    name="type"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%", marginBottom: "35px" }}>
-                    <Select
-                      style={{ width: "100%" }}
-                      allowClear
-                      options={[
+                      style={{ width: "100%" }}>
+                      <Input placeholder="Item SKU/Part Code" />
+                    </Form.Item>
+                  </Col>
+
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      label="UOM"
+                      name="UOM"
+                      rules={[
                         {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
+                          required: true,
                         },
                       ]}
-                      placeholder="Select Type"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="Low Stock Alert"
-                    name="safetyStock"
-                    style={{ width: "100%" }}>
-                    <InputNumber
-                      type="number"
-                      placeholder="100"
+                      style={{ width: "100%", marginBottom: "35px" }}>
+                      <Select
+                        style={{ width: "100%" }}
+                        allowClear
+                        options={
+                          categories?.filter(
+                            (item) => item.modelName === "ItemUOM"
+                          )[0]?.data
+                        }
+                        placeholder="Select UOM"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      label="Group"
+                      name="group"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                      style={{ width: "100%", marginBottom: "35px" }}>
+                      <Select
+                        style={{ width: "100%" }}
+                        allowClear
+                        options={
+                          categories?.filter(
+                            (item) => item.modelName === "ItemGroup"
+                          )[0]?.data
+                        }
+                        placeholder="Select Group"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      label="Type"
+                      name="type"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                      style={{ width: "100%", marginBottom: "35px" }}>
+                      <Select
+                        style={{ width: "100%" }}
+                        allowClear
+                        options={
+                          categories?.filter(
+                            (item) => item.modelName === "ItemType"
+                          )[0]?.data
+                        }
+                        placeholder="Select Type"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={8} xs={24}>
+                    <Form.Item
+                      label="Low Stock"
+                      name="safetyStock"
+                      style={{ width: "100%" }}>
+                      <InputNumber
+                        type="number"
+                        placeholder="100"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Form.Item
+                      label="Shelf Life"
+                      name="isShelfLife"
                       style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={4} xs={24}>
-                  <Form.Item
-                    label="Shelf Life"
-                    name="isShelfLife"
-                    style={{ width: "100%" }}
-                    required
-                    rules={{ required: true }}>
-                    <Switch
-                      checkedChildren="Applicable"
-                      unCheckedChildren="Not Applicable"
-                      defaultChecked={false}
-                    />
-                  </Form.Item>
-                </Col>
-              </Row>
-              <Row justify="end">
-                <Col span={24}>
-                  <Form.Item label={null}>
-                    <Button
-                      size="large"
-                      type="primary"
-                      htmlType="submit"
-                      loading={loading}
-                      block
-                      style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Update Item
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Form>
-      </Card>
+                      required
+                      rules={{ required: true }}>
+                      <Switch
+                        checkedChildren="YES"
+                        unCheckedChildren="NO"
+                        defaultChecked={false}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Form.Item
+                      label="Serialized"
+                      name="isSerialized"
+                      style={{ width: "100%" }}
+                      required
+                      rules={{ required: true }}>
+                      <Switch
+                        checkedChildren="YES"
+                        unCheckedChildren="NO"
+                        defaultChecked={false}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row justify="end">
+                  <Col span={24}>
+                    <Form.Item label={null}>
+                      <Button
+                        size="large"
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        block
+                        style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                        Update Item
+                      </Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Form>
+        </Card>
+      )}
     </>
   );
 };

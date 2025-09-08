@@ -52,19 +52,32 @@ const ItemAdd = () => {
   // Get Category List
   const getCategories = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/category/view`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
+        {
+          model: [
+            "ItemUOM",
+            "ItemGroup",
+            "ItemType",
+            "CostCenter",
+            "StoreLocation",
+            "Transaction",
+          ],
+        },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
+            token: user?.token,
           },
         }
       );
-      const tableArr = res?.data?.categories?.map((item, index) => ({
-        label: item.name,
-        value: item._id,
-      }));
+      const tableArr = res?.data?.items?.map((item, index) => {
+        item.data = item?.data?.map((i) => ({
+          value: i._id,
+          label: item?.modelName === "ItemUOM" ? i.code : i.name,
+        }));
+        return { ...item };
+      });
       setCategories(tableArr);
     } catch (error) {
       message.error(error.response.data.error);
@@ -119,7 +132,7 @@ const ItemAdd = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="SKU"
                     name="SKU"
@@ -132,7 +145,7 @@ const ItemAdd = () => {
                     <Input placeholder="Item SKU/Part Code" />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="UOM"
                     name="UOM"
@@ -145,25 +158,16 @@ const ItemAdd = () => {
                     <Select
                       style={{ width: "100%" }}
                       allowClear
-                      options={[
-                        {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
-                        },
-                      ]}
+                      options={
+                        categories?.filter(
+                          (item) => item.modelName === "ItemUOM"
+                        )[0]?.data
+                      }
                       placeholder="Select UOM"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="Group"
                     name="group"
@@ -176,25 +180,16 @@ const ItemAdd = () => {
                     <Select
                       style={{ width: "100%" }}
                       allowClear
-                      options={[
-                        {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
-                        },
-                      ]}
+                      options={
+                        categories?.filter(
+                          (item) => item.modelName === "ItemGroup"
+                        )[0]?.data
+                      }
                       placeholder="Select Group"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="Type"
                     name="type"
@@ -207,27 +202,18 @@ const ItemAdd = () => {
                     <Select
                       style={{ width: "100%" }}
                       allowClear
-                      options={[
-                        {
-                          value: "jack",
-                          label: "Jack",
-                        },
-                        {
-                          value: "lucy",
-                          label: "Lucy",
-                        },
-                        {
-                          value: "tom",
-                          label: "Tom",
-                        },
-                      ]}
+                      options={
+                        categories?.filter(
+                          (item) => item.modelName === "ItemType"
+                        )[0]?.data
+                      }
                       placeholder="Select Type"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
-                    label="Low Stock Alert"
+                    label="Low Stock"
                     name="safetyStock"
                     style={{ width: "100%" }}>
                     <InputNumber
@@ -237,7 +223,7 @@ const ItemAdd = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={4} xs={24}>
+                <Col lg={4} xs={12}>
                   <Form.Item
                     label="Shelf Life"
                     name="isShelfLife"
@@ -245,8 +231,22 @@ const ItemAdd = () => {
                     required
                     rules={{ required: true }}>
                     <Switch
-                      checkedChildren="Applicable"
-                      unCheckedChildren="Not Applicable"
+                      checkedChildren="YES"
+                      unCheckedChildren="NO"
+                      defaultChecked={false}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={4} xs={12}>
+                  <Form.Item
+                    label="Serialized"
+                    name="isSerialized"
+                    style={{ width: "100%" }}
+                    required
+                    rules={{ required: true }}>
+                    <Switch
+                      checkedChildren="YES"
+                      unCheckedChildren="NO"
                       defaultChecked={false}
                     />
                   </Form.Item>
