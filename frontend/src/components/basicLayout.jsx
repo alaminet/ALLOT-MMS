@@ -59,6 +59,7 @@ const items = [
 const customTheme = {
   token: {
     colorPrimary: "#247F93",
+    colorDark: "#212121",
     fontFamily: "Poppins, sans-serif",
   },
 };
@@ -86,7 +87,7 @@ const BasicLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [resBroken, setResBroken] = useState(false);
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { colorBgContainer, colorDark, colorPrimary },
   } = theme.useToken();
 
   // Get Accessable menu
@@ -199,7 +200,15 @@ const BasicLayout = () => {
                 justify="space-between"
                 // gap={100}
                 style={{ width: "100%" }}>
-                <img src={logoDark} alt="aayaaz" width={120} />
+                {/* <img src={logoDark} alt="aayaaz" width={120} /> */}
+                <span
+                  style={{
+                    fontSize: "36px",
+                    fontWeight: "800",
+                    color: colorDark,
+                  }}>
+                  ALLOT
+                </span>
                 <Search
                   style={{ width: "500px" }}
                   size="large"

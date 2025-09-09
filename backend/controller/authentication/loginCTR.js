@@ -11,11 +11,11 @@ async function loginCTR(req, res, next) {
         .send({ error: "Email, and password are required" });
     } else {
       const existingMember = await Member.findOne({
-        email: data.email.toLowerCase().trim(),
+        email: data.email?.toLowerCase().trim(),
       });
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });
-      } else if (!existingMember.status) {
+      } else if (!existingMember?.status) {
         return res.status(403).send({ error: "Your Accounts is blocked" });
       } else {
         const isPasswordValid = await bcrypt.compare(
@@ -59,6 +59,8 @@ async function loginCTR(req, res, next) {
       }
     }
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({ error: error.message || "Error login" });
   }
 }

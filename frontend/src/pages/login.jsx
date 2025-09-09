@@ -43,10 +43,14 @@ const Login = () => {
           },
         }
       );
+      console.log(res);
+
       message.success(res.data.message);
       dispatch(Loginuser(res.data.member));
       localStorage.setItem("user", JSON.stringify(res.data.member));
     } catch (error) {
+      console.log(error);
+
       message.error(error.response.data.error);
     }
   };
@@ -64,31 +68,31 @@ const Login = () => {
             backgroundColor: "#212121",
           }}
           align="center"
-          justify="center"
-        >
+          justify="center">
           <Card
             variant="borderless"
             style={{
               width: 350,
               backgroundColor: "#121212",
               padding: "30px 20px",
-            }}
-          >
+            }}>
             <div style={{ textAlign: "center", padding: "20px 0" }}>
-              <img src={logoWhite} alt="Logo" style={{ width: 200 }} />
+              {/* <img src={logoWhite} alt="Logo" style={{ width: 200 }} /> */}
+              <span
+                style={{ color: "#fff", fontSize: "36px", fontWeight: "800" }}>
+                ALLOT
+              </span>
             </div>
             <Form
               name="login"
               initialValues={{ remember: true }}
               style={{ maxWidth: 360 }}
-              onFinish={onFinish}
-            >
+              onFinish={onFinish}>
               <Form.Item
                 name="email"
                 rules={[
                   { required: true, message: "Please input your email!" },
-                ]}
-              >
+                ]}>
                 <Input
                   size="large"
                   style={{
@@ -105,8 +109,7 @@ const Login = () => {
                 rules={[
                   { required: true, message: "Please input your Password!" },
                 ]}
-                style={{ margin: "0px" }}
-              >
+                style={{ margin: "0px" }}>
                 <Input
                   size="large"
                   style={{
@@ -120,7 +123,10 @@ const Login = () => {
                 />
               </Form.Item>
               <Form.Item>
-                <Flex justify="space-between" align="center" style={{marginTop:"5px"}}>
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  style={{ marginTop: "5px" }}>
                   <Form.Item name="remember" valuePropName="checked" noStyle>
                     <Checkbox className="colorLink">Remember</Checkbox>
                   </Form.Item>
@@ -136,8 +142,7 @@ const Login = () => {
                   block
                   type="primary"
                   htmlType="submit"
-                  style={{ borderRadius: "1px" }}
-                >
+                  style={{ borderRadius: "1px" }}>
                   Log in
                 </Button>
               </Form.Item>
