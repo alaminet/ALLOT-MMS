@@ -110,11 +110,7 @@ const ItemAdd = () => {
                   <Form.Item
                     label="Item Name"
                     name="name"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
+                    required
                     style={{ width: "100%" }}>
                     <Input placeholder="Item Name" maxLength={50} showCount />
                   </Form.Item>
@@ -123,7 +119,6 @@ const ItemAdd = () => {
                   <Form.Item
                     label="Item Discription"
                     name="discription"
-                    required
                     style={{ width: "100%" }}>
                     <Input
                       placeholder="Discription/Specification"
@@ -133,15 +128,7 @@ const ItemAdd = () => {
                   </Form.Item>
                 </Col>
                 <Col lg={8} xs={24}>
-                  <Form.Item
-                    label="SKU"
-                    name="SKU"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
+                  <Form.Item label="SKU" name="SKU" style={{ width: "100%" }}>
                     <Input placeholder="Item SKU/Part Code" />
                   </Form.Item>
                 </Col>
