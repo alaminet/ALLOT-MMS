@@ -43,7 +43,9 @@ p {
   color: #247f9370 !important;
 }
 
-.form-input-borderless .ant-input-prefix {
+.form-input-borderless .ant-input-prefix,
+.form-input-borderless .ant-select-prefix,
+.form-input-borderless .ant-select-selection-placeholder {
   color: var(--color-Brand) !important;
 }
 
@@ -51,6 +53,20 @@ p {
   border-radius: 1px !important;
   padding: 16px !important;
   border-color: var(--color-Brand) !important;
+}
+.form-input-borderless .ant-select-selector {
+  border-radius: 1px !important;
+  padding: 27px 16px !important;
+  border-color: var(--color-Brand) !important;
+}
+.form-input-borderless .ant-select-clear {
+  top: 90% !important;
+  right: 7% !important;
+  color: var(--color-Brand) !important;
+}
+.form-input-borderless .ant-select-arrow {
+  top: 90% !important;
+  color: var(--color-Brand) !important;
 }
 
 .borderlessInput .ant-select-selector {

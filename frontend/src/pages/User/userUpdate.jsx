@@ -1,11 +1,17 @@
 import React, { useState } from "react";
-import { Button, Flex, Form, Input, message, Switch } from "antd";
+import { Button, Flex, Form, Input, message, Select, Switch } from "antd";
 import axios from "axios";
 import Title from "antd/es/typography/Title";
-import { MailOutlined, PhoneOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  DollarOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const UserUpdate = () => {
   const location = useLocation();
@@ -13,11 +19,15 @@ const UserUpdate = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [roleData, setRoleData] = useState(userInfo.access);
+  const [costCenter, setCostCenter] = useState();
+  console.log(userInfo);
 
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
     const formData = { ...values, access: roleData };
+    console.log(formData);
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/member/update/${formData.id}`,
@@ -39,6 +49,38 @@ const UserUpdate = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  // Get Category List
+  const getCostCenter = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
+        {
+          model: ["CostCenter"],
+        },
+        {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        }
+      );
+      const tableArr = res?.data?.items?.map((item, index) => {
+        item.data = item?.data?.map((i) => ({
+          value: i._id,
+          label: item?.modelName === "ItemUOM" ? i.code : i.name,
+        }));
+        return { ...item };
+      });
+      setCostCenter(tableArr);
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
+
+  useEffect(() => {
+    getCostCenter();
+  }, []);
   return (
     <>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
@@ -50,12 +92,14 @@ const UserUpdate = () => {
           // labelCol={{ span: 8 }}
           // wrapperCol={{ span: 16 }}
           //   style={{ maxWidth: 600 }}
-          initialValues={{ remember: true }}
+          initialValues={{
+            ...userInfo,
+            costCenter: userInfo.costCenter,
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="form-input-borderless"
-        >
+          className="form-input-borderless">
           <Flex justify="center">
             <Form.Item style={{ minWidth: 350 }}>
               <Form.Item
@@ -67,8 +111,7 @@ const UserUpdate = () => {
                     required: true,
                     message: "Update User ID Required!",
                   },
-                ]}
-              >
+                ]}>
                 <Input prefix={<UserOutlined />} placeholder="User ID" />
               </Form.Item>
               <Form.Item
@@ -79,8 +122,7 @@ const UserUpdate = () => {
                     required: true,
                     message: "Your Name!",
                   },
-                ]}
-              >
+                ]}>
                 <Input prefix={<UserOutlined />} placeholder="Your name" />
               </Form.Item>
               <Form.Item
@@ -89,12 +131,24 @@ const UserUpdate = () => {
                 rules={[
                   { required: true, message: "Your email!" },
                   { type: "email", message: "Enter valid email!" },
-                ]}
-              >
+                ]}>
                 <Input prefix={<MailOutlined />} placeholder="Email" />
               </Form.Item>
               <Form.Item name="phone" initialValue={userInfo?.phone}>
                 <Input prefix={<PhoneOutlined />} placeholder="Phone" />
+              </Form.Item>
+              <Form.Item name="costCenter" style={{ marginBottom: "40px" }}>
+                <Select
+                  prefix={<DollarOutlined />}
+                  style={{ width: "100%" }}
+                  allowClear
+                  options={
+                    costCenter?.filter(
+                      (item) => item.modelName === "CostCenter"
+                    )[0]?.data
+                  }
+                  placeholder="Cost Center"
+                />
               </Form.Item>
             </Form.Item>
           </Flex>

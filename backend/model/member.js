@@ -7,6 +7,10 @@ const memberSchema = new Schema(
     name: String,
     email: String,
     password: String,
+    costCenter: {
+      type: Schema.Types.ObjectId,
+      ref: "Cost_Center",
+    },
     phone: {
       type: String,
       default: null,

@@ -21,6 +21,7 @@ async function createMemberCTR(req, res, next) {
             orgId: req.orgId,
             name: data.name.trim(),
             email: data.email.toLowerCase().trim(),
+            costCenter: data.costCenter,
             password: hash,
             phone: data.phone,
             access: data.access,

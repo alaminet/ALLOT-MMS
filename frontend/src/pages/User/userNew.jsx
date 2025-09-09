@@ -114,8 +114,9 @@ const UserNew = () => {
               <Form.Item name="phone">
                 <Input prefix={<PhoneOutlined />} placeholder="Phone" />
               </Form.Item>
-              <Form.Item name="costCenter">
+              <Form.Item name="costCenter" style={{ marginBottom: "40px" }}>
                 <Select
+                  prefix={<DollarOutlined />}
                   style={{ width: "100%" }}
                   allowClear
                   options={
