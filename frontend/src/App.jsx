@@ -28,6 +28,10 @@ import ItemDetailsAdd from "./pages/Master/ItemDetails/itemDetailsAdd";
 import ItemDetails from "./pages/Master/ItemDetails";
 import ItemDetailsView from "./pages/Master/ItemDetails/ItemDetailsView";
 import ItemDetailsUpdate from "./pages/Master/ItemDetails/itemDetailsUpdate";
+import Supplier from "./pages/Supplier";
+import SupplierAdd from "./pages/Supplier/supplierAdd";
+import SupplierViewTable from "./pages/Supplier/supplierViewTable";
+import SupplierUpdate from "./pages/Supplier/supplierUpdate";
 
 function App() {
   const router = createBrowserRouter(
@@ -48,6 +52,12 @@ function App() {
               <Route path="" element={<InventoryViewTable />} />
               <Route path="new" element={<InventoryAdd />} />
               <Route path="list" element={<InventoryListView />} />
+              <Route path="logs" element={<LogActivites />} />
+            </Route>
+            <Route path="/supplier" element={<Supplier />}>
+              <Route path="" element={<SupplierViewTable />} />
+              <Route path="new" element={<SupplierAdd />} />
+              <Route path="update" element={<SupplierUpdate />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
             <Route path="" element={<Items />}>

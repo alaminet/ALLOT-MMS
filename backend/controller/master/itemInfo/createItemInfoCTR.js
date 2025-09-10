@@ -8,6 +8,7 @@ async function createItemInfoCTR(req, res, next) {
     } else {
       const existingItemInfo = await ItemInfo.findOne({
         SKU: data.SKU?.toLowerCase().trim(),
+        orgId: req.orgId,
       });
       if (existingItemInfo) {
         return res.status(400).send({ error: "Item already exists" });
