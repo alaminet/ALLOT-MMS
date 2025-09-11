@@ -202,12 +202,16 @@ const ItemViewTable = () => {
         action: item?._id,
       }));
       if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-        setQueryData(tableArr.filter((item) => item.action !== user.id));
+        setQueryData(
+          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
+        );
       } else if (
         canDoOwn(lastSegment, "view") &&
         !canDoOther(lastSegment, "view")
       ) {
-        setQueryData(tableArr.filter((item) => item.action === user.id));
+        setQueryData(
+          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
+        );
       } else if (
         canDoOther(lastSegment, "view") &&
         canDoOwn(lastSegment, "view")

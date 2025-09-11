@@ -40,6 +40,7 @@ async function loginCTR(req, res, next) {
               name: existingMember.name,
               email: existingMember.email,
               phone: existingMember.phone,
+              costCenter: existingMember.costCenter,
               access: existingMember.access,
               isAdmin: existingMember.isAdmin,
               token: existingMember.token,

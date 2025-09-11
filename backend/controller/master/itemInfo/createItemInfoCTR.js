@@ -7,7 +7,7 @@ async function createItemInfoCTR(req, res, next) {
       return res.status(400).send({ error: "Name is required" });
     } else {
       const existingItemInfo = await ItemInfo.findOne({
-        SKU: data.SKU?.toLowerCase().trim(),
+        SKU: data.SKU?.trim(),
         orgId: req.orgId,
       });
       if (existingItemInfo) {
@@ -17,9 +17,9 @@ async function createItemInfoCTR(req, res, next) {
         const newItemInfo = new ItemInfo({
           orgId: req.orgId,
           code: lastItem?.code + 1 || 1000000001,
-          name: data.name.trim(),
-          discription: data.discription.trim(),
-          SKU: data.SKU.toLowerCase().trim(),
+          name: data.name?.trim(),
+          discription: data.discription?.trim(),
+          SKU: data.SKU?.trim(),
           UOM: data.UOM,
           group: data.group,
           type: data.type,

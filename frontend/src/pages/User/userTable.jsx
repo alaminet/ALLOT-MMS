@@ -172,9 +172,13 @@ const UserTable = () => {
         action: item?._id,
       }));
       if (!canDoOwn("user", "view") && canDoOther("user", "view")) {
-        setQueryData(tableArr.filter((item) => item.action !== user.id));
+        setQueryData(
+          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
+        );
       } else if (canDoOwn("user", "view") && !canDoOther("user", "view")) {
-        setQueryData(tableArr.filter((item) => item.action === user.id));
+        setQueryData(
+          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
+        );
       } else if (canDoOther("user", "view") && canDoOwn("user", "view")) {
         setQueryData(tableArr);
       } else {

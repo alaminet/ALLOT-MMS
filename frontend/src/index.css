@@ -83,6 +83,9 @@ p {
   padding: 10px 15px !important;
   color: var(--color-Brand) !important;
 }
+.borderlessInput .ant-input-affix-wrapper input {
+  padding: 6px 0px !important;
+}
 
 /* .borderlessInput input::placeholder, .borderlessInput textarea::placeholder{
     color: var(--color-Brand) !important;

@@ -32,6 +32,10 @@ import Supplier from "./pages/Supplier";
 import SupplierAdd from "./pages/Supplier/supplierAdd";
 import SupplierViewTable from "./pages/Supplier/supplierViewTable";
 import SupplierUpdate from "./pages/Supplier/supplierUpdate";
+import Purchase from "./pages/Purchase";
+import PurchaseRequisitiion from "./pages/Purchase/purchaseRequisitiion";
+import PurchaseReqViewTable from "./pages/Purchase/purchaseReqViewTable";
+import PurchaseRequisitiionUpdate from "./pages/Purchase/purchaseRequisitiionUpdate";
 
 function App() {
   const router = createBrowserRouter(
@@ -58,6 +62,12 @@ function App() {
               <Route path="" element={<SupplierViewTable />} />
               <Route path="new" element={<SupplierAdd />} />
               <Route path="update" element={<SupplierUpdate />} />
+              <Route path="logs" element={<LogActivites />} />
+            </Route>
+            <Route path="/purchase" element={<Purchase />}>
+              <Route path="" element={<PurchaseReqViewTable />} />
+              <Route path="new" element={<PurchaseRequisitiion />} />
+              <Route path="update" element={<PurchaseRequisitiionUpdate />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
             <Route path="" element={<Items />}>

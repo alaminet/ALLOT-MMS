@@ -43,14 +43,11 @@ const Login = () => {
           },
         }
       );
-      console.log(res);
-
       message.success(res.data.message);
       dispatch(Loginuser(res.data.member));
       localStorage.setItem("user", JSON.stringify(res.data.member));
     } catch (error) {
       console.log(error);
-
       message.error(error.response.data.error);
     }
   };

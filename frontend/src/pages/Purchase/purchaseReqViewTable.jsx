@@ -10,12 +10,11 @@ import {
   EyeTwoTone,
   InfoCircleTwoTone,
 } from "@ant-design/icons";
-
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
 
-const SupplierViewTable = () => {
+const PurchaseReqViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -24,7 +23,7 @@ const SupplierViewTable = () => {
   const navigate = useNavigate();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("supplier")) {
+  if (!canViewPage("purchase")) {
     return <NotAuth />;
   }
   // Get pathname
@@ -40,6 +39,17 @@ const SupplierViewTable = () => {
       render: (text, record, index) => index + 1,
     },
     {
+      title: "PR No",
+      dataIndex: "PR",
+      key: "PR",
+      filters: [...new Set(queryData?.map((item) => item.PR))].map((code) => ({
+        text: code,
+        value: code,
+      })),
+      onFilter: (value, record) => record?.PR === value,
+      filterSearch: true,
+    },
+    {
       title: "Code",
       dataIndex: "code",
       key: "code",
@@ -52,7 +62,6 @@ const SupplierViewTable = () => {
       onFilter: (value, record) => record?.code === value,
       filterSearch: true,
     },
-
     {
       title: "Name",
       dataIndex: "name",
@@ -60,21 +69,21 @@ const SupplierViewTable = () => {
       width: 200,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Req. Qty",
+      dataIndex: "reqQty",
+      key: "reqQty",
       responsive: ["md"],
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "Requested By",
+      dataIndex: "reqBy",
+      key: "reqBy",
       responsive: ["md"],
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
+      title: "Requested Dept.",
+      dataIndex: "reqDpt",
+      key: "reqDpt",
       responsive: ["md"],
     },
 
@@ -131,7 +140,7 @@ const SupplierViewTable = () => {
   const getTableData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/supplier/view`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/view`,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -139,32 +148,27 @@ const SupplierViewTable = () => {
           },
         }
       );
+      console.log(res);
+
       message.success(res.data.message);
-      const tableArr = res?.data?.items?.map((item, index) => ({
-        key: index,
-        code: item?.code,
-        name: item?.name,
-        email: (
-          <>
-            Office: {item?.email[0].office} <br />
-            Contact: {item?.email[0].contact} <br />
-            Alternate: {item?.email[0].alternate}
-          </>
-        ),
-        phone: (
-          <>
-            Office: {item?.phone[0].office} <br />
-            Contact: {item?.phone[0].contact} <br />
-            Alternate: {item?.phone[0].alternate}
-          </>
-        ),
-        type: item?.type,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        access: item,
-        action: item?._id,
-      }));
+      const tableArr = res?.data?.items?.flatMap((item) =>
+        item.itemDetails.map((list) => ({
+          key: list?._id,
+          PR: item?.code,
+          code: list?.code?.code || "NA",
+          name: list?.name,
+          reqQty: list?.reqQty,
+          reqBy: item?.requestedBy.name,
+          reqDpt: item?.costCenter?.name,
+          status: item?.status,
+          createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+          updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+          access: item,
+          action: list?._id,
+        }))
+      );
+      console.log(tableArr);
+
       if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
         setQueryData(
           tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
@@ -199,7 +203,7 @@ const SupplierViewTable = () => {
   const handleChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/update/${id}`,
         { [field]: data },
         {
           headers: {
@@ -247,4 +251,4 @@ const SupplierViewTable = () => {
   );
 };
 
-export default SupplierViewTable;
+export default PurchaseReqViewTable;

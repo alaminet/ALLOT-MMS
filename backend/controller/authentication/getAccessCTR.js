@@ -19,6 +19,7 @@ async function getAccessCTR(req, res) {
             name: existingMember.name,
             email: existingMember.email,
             phone: existingMember.phone,
+            costCenter: existingMember.costCenter,
             access: existingMember.access,
             isAdmin: existingMember.isAdmin,
             token: existingMember.token,
