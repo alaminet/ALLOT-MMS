@@ -15,7 +15,6 @@
   body {
     margin: 0;
     counter-reset: page;
-    -webkit-print-color-adjust: exact;
   }
 
   /* Hide everything by default */
