@@ -4,6 +4,53 @@
   --color-Dark: #212121;
 }
 
+/* Print CSS */
+@media print {
+  /* Page setup */
+  @page {
+    size: A4 landscape;
+  }
+
+  /* Reset and color fidelity */
+  body {
+    margin: 0;
+    counter-reset: page;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Hide everything by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only printable area */
+  .print-page,
+  .print-page * {
+    visibility: visible;
+  }
+
+  /* Printable container */
+  .print-page {
+    box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0 !important;
+    page-break-after: always;
+  }
+  .print-page .ant-table-cell {
+    font-size: 11px;
+  }
+
+  .print-page .ant-table-content table {
+    width: 100%;
+  }
+  /* Hide print button or other UI elements */
+  .no-print {
+    display: none !important;
+  }
+}
+
 p {
   margin: 0;
 }
@@ -143,4 +190,33 @@ p {
 .size-table .ant-table {
   margin: 0 !important;
   border: 1px solid rgba(0, 0, 0, 0.066);
+}
+
+/* table Style CSS */
+.cell-top-left {
+  text-align: left;
+  vertical-align: top;
+}
+
+.cell-top-right {
+  text-align: right;
+  vertical-align: top;
+}
+
+.text-nowrap {
+  text-wrap-mode: nowrap;
+}
+
+th.ant-table-cell {
+  text-align: center !important;
+  vertical-align: middle;
+}
+
+.purchase-table .ant-table-cell {
+  padding: 0 2px !important;
+  border: 1px solid black;
+  box-sizing: border-box;
+}
+.purchase-table .ant-table-content table {
+  border: 1px solid black !important;
 }

@@ -9,6 +9,7 @@ import {
   EditTwoTone,
   EyeTwoTone,
   InfoCircleTwoTone,
+  PrinterOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { usePermission } from "../../hooks/usePermission";
@@ -75,13 +76,25 @@ const PurchaseReqViewTable = () => {
       responsive: ["md"],
     },
     {
-      title: "Requested By",
+      title: "PO Qty",
+      dataIndex: "POQty",
+      key: "POQty",
+      responsive: ["md"],
+    },
+    {
+      title: "Received Qty",
+      dataIndex: "recQty",
+      key: "recQty",
+      responsive: ["md"],
+    },
+    {
+      title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
       responsive: ["md"],
     },
     {
-      title: "Requested Dept.",
+      title: "Req. Dept.",
       dataIndex: "reqDpt",
       key: "reqDpt",
       responsive: ["md"],
@@ -95,6 +108,19 @@ const PurchaseReqViewTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
+            <Tooltip title="View">
+              <Button
+                onClick={() =>
+                  navigate("print", {
+                    state: {
+                      refData: _.access,
+                    },
+                  })
+                }
+                icon={<PrinterOutlined />}
+              />
+            </Tooltip>
+
             {(canDoOther(lastSegment, "view") ||
               (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
               <Tooltip title="View">
@@ -148,8 +174,6 @@ const PurchaseReqViewTable = () => {
           },
         }
       );
-      console.log(res);
-
       message.success(res.data.message);
       const tableArr = res?.data?.items?.flatMap((item) =>
         item.itemDetails.map((list) => ({
@@ -158,6 +182,8 @@ const PurchaseReqViewTable = () => {
           code: list?.code?.code || "NA",
           name: list?.name,
           reqQty: list?.reqQty,
+          POQty: list?.POQty,
+          recQty: list?.recQty,
           reqBy: item?.requestedBy.name,
           reqDpt: item?.costCenter?.name,
           status: item?.status,
@@ -167,7 +193,6 @@ const PurchaseReqViewTable = () => {
           action: list?._id,
         }))
       );
-      console.log(tableArr);
 
       if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
         setQueryData(

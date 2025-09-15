@@ -16,9 +16,36 @@ async function updatePurchaseReqCTR(req, res, next) {
     if (dataExist) {
       return res.status(400).send({ error: "Data already exist" });
     } else {
-      const changedData = await PurchaseReq.findByIdAndUpdate(id, updatedData, {
-        new: true,
-      }); // Exclude sensitive fields
+      const changedData = await PurchaseReq.findByIdAndUpdate(
+        id,
+        {
+          orgId: updatedData.orgId,
+          code: updatedData?.code,
+          reference: updatedData.reference,
+          type: updatedData.type,
+          costCenter: updatedData.costCenter,
+          requestedBy: updatedData.requestedBy,
+          checkedBy: updatedData.checkedBy,
+          approvedBy: updatedData.approvedBy,
+          note: updatedData.note,
+          itemDetails: updatedData.itemDetails.map((dtl) => ({
+            name: dtl.name,
+            code: dtl.code !== "" ? dtl.code : null,
+            spec: dtl.spec,
+            UOM: dtl.UOM,
+            brand: dtl.brand,
+            unitPrice: dtl.unitPrice,
+            reqQty: dtl.reqQty,
+            onHandQty: dtl.onHandQty,
+            consumePlan: dtl.consumePlan,
+            remarks: dtl.remarks,
+          })),
+          updatedBy: updatedData.updatedBy,
+        },
+        {
+          new: true,
+        }
+      ); // Exclude sensitive fields
       if (!changedData) {
         return res.status(404).send({ error: "Data not found" });
       }
@@ -29,8 +56,8 @@ async function updatePurchaseReqCTR(req, res, next) {
       // Add Log activites
       const actionTex =
         Object.keys(updatedData) == "isDeleted"
-          ? `"${changedData.code}" deleted`
-          : `"${changedData.code}" updated`;
+          ? `PR "${changedData.code}" deleted`
+          : `PR "${changedData.code}" updated`;
 
       const logData = {
         orgId: req.orgId,
@@ -42,6 +69,8 @@ async function updatePurchaseReqCTR(req, res, next) {
       next();
     }
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({ error: error.message || "Error updating" });
   }
 }

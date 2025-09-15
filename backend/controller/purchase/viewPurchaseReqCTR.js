@@ -9,7 +9,7 @@ async function viewPurchaseReqCTR(req, res) {
       .sort({ createdAt: -1 })
       .populate({
         path: ["createdBy", "updatedBy", "costCenter", "itemDetails.code"],
-        select: "name code",
+        select: "name code SKU",
       })
       .lean();
     if (items.length === 0) {

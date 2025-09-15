@@ -36,6 +36,7 @@ import Purchase from "./pages/Purchase";
 import PurchaseRequisitiion from "./pages/Purchase/purchaseRequisitiion";
 import PurchaseReqViewTable from "./pages/Purchase/purchaseReqViewTable";
 import PurchaseRequisitiionUpdate from "./pages/Purchase/purchaseRequisitiionUpdate";
+import PurchaseReqPrintView from "./pages/Purchase/purchaseReqPrintView";
 
 function App() {
   const router = createBrowserRouter(
@@ -68,6 +69,7 @@ function App() {
               <Route path="" element={<PurchaseReqViewTable />} />
               <Route path="new" element={<PurchaseRequisitiion />} />
               <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+              <Route path="print" element={<PurchaseReqPrintView />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
             <Route path="" element={<Items />}>

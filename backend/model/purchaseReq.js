@@ -26,6 +26,10 @@ const purchaseReqSchema = new Schema(
       type: Object,
       default: null,
     },
+    confirmedBy: {
+      type: Object,
+      default: null,
+    },
     note: String,
     itemDetails: [
       {
@@ -40,7 +44,18 @@ const purchaseReqSchema = new Schema(
         brand: String,
         unitPrice: Number,
         reqQty: Number,
-        onHandQty: Number,
+        POQty: {
+          type: Number,
+          default: 0,
+        },
+        recQty: {
+          type: Number,
+          default: 0,
+        },
+        onHandQty: {
+          type: Number,
+          default: 0,
+        },
         consumePlan: String,
         remarks: String,
       },
