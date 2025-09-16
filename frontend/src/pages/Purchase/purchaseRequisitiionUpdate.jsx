@@ -25,6 +25,7 @@ const PurchaseRequisitiionUpdate = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState([]);
   const [costCenter, setCostCenter] = useState();
   const [form] = Form.useForm();
 
@@ -269,10 +270,20 @@ const PurchaseRequisitiionUpdate = () => {
                               ]}
                               style={{ width: "200px" }}>
                               <AutoComplete
-                                options={itemList.map((item) => ({
-                                  label: item.label,
-                                  value: item.label,
-                                }))}
+                                options={filteredOptions}
+                                onSearch={(searchText) => {
+                                  const filtered = itemList
+                                    .filter((item) =>
+                                      item.label
+                                        .toLowerCase()
+                                        .includes(searchText.toLowerCase())
+                                    )
+                                    .map((item) => ({
+                                      label: item.label,
+                                      value: item.label,
+                                    }));
+                                  setFilteredOptions(filtered);
+                                }}
                                 onSelect={(value) => {
                                   const matched = itemList.find(
                                     (i) => i.label === value

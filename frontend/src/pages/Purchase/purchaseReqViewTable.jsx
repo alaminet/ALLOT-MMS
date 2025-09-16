@@ -108,7 +108,7 @@ const PurchaseReqViewTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            <Tooltip title="View">
+            <Tooltip title="Print">
               <Button
                 onClick={() =>
                   navigate("print", {

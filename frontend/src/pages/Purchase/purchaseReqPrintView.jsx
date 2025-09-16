@@ -1,12 +1,25 @@
 import React, { useState } from "react";
-import { Button, Col, Row, Image, Upload, Table, Typography } from "antd";
+import {
+  Button,
+  Col,
+  Row,
+  Image,
+  Upload,
+  Table,
+  Typography,
+  Checkbox,
+  Input,
+  InputNumber,
+} from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
 const { Title, Text } = Typography;
+const { Column, ColumnGroup } = Table;
 const PurchaseReqPrintView = () => {
   const location = useLocation();
   const { refData } = location.state || {};
+  const [inputValues, setInputValues] = useState({});
   console.log(refData);
 
   // image upload
@@ -135,16 +148,14 @@ const PurchaseReqPrintView = () => {
         <Row justify="center">
           <Col>
             <Typography style={{ textAlign: "center" }}>
-              <Title style={{ margin: "10px 0" }}>
-                Fair Technology Limited
-              </Title>
+              <Title style={{ margin: "0" }}>Fair Technology Limited</Title>
               <Text style={{ display: "block" }}>
-                Plot -12/A & 12/B, Block-C, Kaliakoir Hi-Tech Park
+                Plot- 12/A & 12/B, Block-C, Kaliakoir Hi-Tech Park
               </Text>
               <Text style={{ display: "block" }}>
                 Kaliakoir, Gazipur, Dhaka. #+880 1787-670 786
               </Text>
-              <Title level={3} style={{ margin: "10px 0" }}>
+              <Title level={3} style={{ margin: "0" }}>
                 PURCHASE REQUISITION FORM
               </Title>
             </Typography>
@@ -200,7 +211,7 @@ const PurchaseReqPrintView = () => {
             );
 
             return (
-              <Table.Summary.Row style={{textAlign:"right"}}>
+              <Table.Summary.Row style={{ textAlign: "right" }}>
                 <Table.Summary.Cell index={0} colSpan={7}>
                   <strong>Total</strong>
                 </Table.Summary.Cell>
@@ -220,14 +231,17 @@ const PurchaseReqPrintView = () => {
           }}
         />
         <Row style={{ margin: "10px 0" }}>
-          <Col>
-            <strong>Note:</strong> {refData.note}
+          <Col span={6}>
+            <span style={{ display: "block" }}>
+              <strong>Note:</strong> {refData.note}
+            </span>
+            <span>
+              <strong>Referance: </strong>
+              {refData.reference}
+            </span>
           </Col>
-        </Row>
-        <Row>
           <Col>
-            <strong>Referance: {refData.reference}</strong>
-            <div style={{ marginTop: "10px" }}>
+            <div>
               <Upload
                 action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
                 listType="picture-card"
@@ -282,6 +296,135 @@ const PurchaseReqPrintView = () => {
             <span style={{ display: "block" }}>{refData.approvedBy?.name}</span>
           </Col>
         </Row>
+        <Table
+          bordered
+          className="justification-table"
+          pagination={false}
+          // dataSource={data}
+          dataSource={refData.itemDetails}>
+          <ColumnGroup title="Justification of Purchage Requisition">
+            <Column
+              title="Item Name"
+              dataIndex="name"
+              key="name"
+              width={200}
+              // render={(text, record, index) => index + 1}
+            />
+            <Column
+              align="center"
+              title="Last 6M Used"
+              dataIndex="L6MUsed"
+              key="L6MUsed"
+              render={(_, record) => <Input variant="borderless" />}
+            />
+            <Column
+              align="center"
+              title="Consumption Rate"
+              dataIndex="consumptionRate"
+              key="consumptionRate"
+              render={(_, record) => <Input variant="borderless" />}
+            />
+            <Column
+              align="center"
+              title="Stock in Hand [A]"
+              dataIndex="stockInHand"
+              key="stockInHand"
+              render={(_, record, index) => (
+                <InputNumber
+                  min={0}
+                  defaultValue={0}
+                  variant="borderless"
+                  onChange={(value) =>
+                    setInputValues((prev) => ({
+                      ...prev,
+                      [index]: {
+                        ...prev[index],
+                        stockInHand: value,
+                      },
+                    }))
+                  }
+                />
+              )}
+            />
+            <Column
+              align="center"
+              title="Stock in Store [B]"
+              dataIndex="onHandQty"
+              key="onHandQty"
+              render={(_, record, index) => (
+                <InputNumber
+                  min={0}
+                  defaultValue={_}
+                  onChange={(value) =>
+                    setInputValues((prev) => ({
+                      ...prev,
+                      [index]: {
+                        ...prev[index],
+                        onHandQty: value,
+                      },
+                    }))
+                  }
+                  variant="borderless"
+                />
+              )}
+            />
+            <Column
+              align="center"
+              title="Ordered Qty [C]"
+              dataIndex="POQty"
+              key="POQty"
+              render={(_, record, index) => (
+                <InputNumber
+                  min={0}
+                  defaultValue={_}
+                  onChange={(value) =>
+                    setInputValues((prev) => ({
+                      ...prev,
+                      [index]: {
+                        ...prev[index],
+                        POQty: value,
+                      },
+                    }))
+                  }
+                  variant="borderless"
+                />
+              )}
+            />
+            <Column
+              align="center"
+              title="Total [D=A+B+C]"
+              dataIndex="totalStock"
+              key="totalStock"
+              render={(_, record, index) => {
+                const values = inputValues[index] || {};
+                const stockInHand = values.stockInHand || 0; // A
+                const onHandQty = values.onHandQty || record?.onHandQty || 0; // B
+                const POQty = values.POQty || record?.POQty || 0; // C
+                const total = stockInHand + onHandQty + POQty;
+                return new Intl.NumberFormat("en-BD", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }).format(total);
+              }}
+            />
+            <Column
+              align="center"
+              title="Production Target"
+              dataIndex="consumePlan"
+              key="consumePlan"
+              render={(_, record) => (
+                <Input defaultValue={_} variant="borderless" />
+              )}
+            />
+            <Column
+              align="center"
+              title="Approved Design [Y/N]"
+              dataIndex="appDesign"
+              key="appDesign"
+              render={(_, record) => <Input variant="borderless" />}
+            />
+          </ColumnGroup>
+        </Table>
       </div>
       <Button
         type="primary"
