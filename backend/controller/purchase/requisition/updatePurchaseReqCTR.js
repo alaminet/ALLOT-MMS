@@ -19,11 +19,17 @@ async function updatePurchaseReqCTR(req, res, next) {
       if (updatedData.field === "isDeleted") {
         const changedData = await PurchaseReq.findOneAndUpdate(
           { "itemDetails._id": updatedData.lineID },
-          { $set: { [`itemDetails.$.${updatedData.field}`]: updatedData.data } }
+          {
+            $set: { "itemDetails.$.isDeleted": updatedData.data },
+            updatedBy: req.actionBy,
+          },
+          { new: true }
         );
         res.status(200).send({
           message: "Line Deleted",
         });
+
+        // matched line items
         const matchedItem = changedData.itemDetails.find(
           (item) => item._id.toString() === updatedData.lineID
         );
@@ -61,7 +67,7 @@ async function updatePurchaseReqCTR(req, res, next) {
               consumePlan: dtl.consumePlan,
               remarks: dtl.remarks,
             })),
-            updatedBy: updatedData.updatedBy,
+            updatedBy: req.actionBy,
           },
           {
             new: true,

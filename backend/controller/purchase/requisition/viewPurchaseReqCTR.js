@@ -14,11 +14,23 @@ async function viewPurchaseReqCTR(req, res) {
       .lean();
     if (items.length === 0) {
       return res.status(404).send({ error: "No data found" });
+    } else {
+      // Filtered Deleted line items
+      const filteredItems = items
+        .map((item) => {
+          const filteredDetails = item.itemDetails.filter(
+            (detail) => detail.isDeleted !== true
+          );
+          return filteredDetails.length > 0
+            ? { ...item, itemDetails: filteredDetails }
+            : null;
+        })
+        .filter(Boolean); // removes nulls
+      res.status(200).send({
+        message: "Data retrieved",
+        items: filteredItems,
+      });
     }
-    res.status(200).send({
-      message: "Data retrieved",
-      items: items,
-    });
   } catch (error) {
     res.status(500).send({ error: error.message || "Error retrieving" });
   }

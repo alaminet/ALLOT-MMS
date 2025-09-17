@@ -226,7 +226,6 @@ const PurchaseReqViewTable = () => {
 
   //   Update Functional
   const handleChange = async (id, lineID, field, data) => {
-    console.log(id, lineID, field, data);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${id}`,
