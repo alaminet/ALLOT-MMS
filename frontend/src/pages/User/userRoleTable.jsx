@@ -36,6 +36,20 @@ const UserRoleTable = ({ data, setData }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
+      key: "purchase-requisition",
+      module: "Purchase-Requisition",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "purchase-order",
+      module: "Purchase-Order",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "inventory",
       module: "Inventory",
       pageAccess: { view: false },

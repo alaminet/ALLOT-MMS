@@ -20,7 +20,6 @@ const UserUpdate = () => {
   const [loading, setLoading] = useState(false);
   const [roleData, setRoleData] = useState(userInfo.access);
   const [costCenter, setCostCenter] = useState();
-  console.log(userInfo);
 
   // Form submission
   const onFinish = async (values) => {

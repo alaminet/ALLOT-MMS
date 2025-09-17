@@ -38,7 +38,7 @@ const PurchaseRequisitiionUpdate = () => {
     };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/update/${refData._id}`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${refData._id}`,
         formData,
         {
           headers: {

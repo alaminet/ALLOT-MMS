@@ -33,10 +33,11 @@ import SupplierAdd from "./pages/Supplier/supplierAdd";
 import SupplierViewTable from "./pages/Supplier/supplierViewTable";
 import SupplierUpdate from "./pages/Supplier/supplierUpdate";
 import Purchase from "./pages/Purchase";
-import PurchaseRequisitiion from "./pages/Purchase/purchaseRequisitiion";
-import PurchaseReqViewTable from "./pages/Purchase/purchaseReqViewTable";
-import PurchaseRequisitiionUpdate from "./pages/Purchase/purchaseRequisitiionUpdate";
-import PurchaseReqPrintView from "./pages/Purchase/purchaseReqPrintView";
+import PurchaseRequisitiion from "./pages/Purchase/Requisition/purchaseRequisitiion";
+import PurchaseReqViewTable from "./pages/Purchase/Requisition/purchaseReqViewTable";
+import PurchaseRequisitiionUpdate from "./pages/Purchase/Requisition/purchaseRequisitiionUpdate";
+import PurchaseReqPrintView from "./pages/Purchase/Requisition/purchaseReqPrintView";
+import PurchaseRequisition from "./pages/Purchase/Requisition";
 
 function App() {
   const router = createBrowserRouter(
@@ -65,13 +66,18 @@ function App() {
               <Route path="update" element={<SupplierUpdate />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
-            <Route path="/purchase" element={<Purchase />}>
-              <Route path="" element={<PurchaseReqViewTable />} />
-              <Route path="new" element={<PurchaseRequisitiion />} />
-              <Route path="update" element={<PurchaseRequisitiionUpdate />} />
-              <Route path="print" element={<PurchaseReqPrintView />} />
-              <Route path="logs" element={<LogActivites />} />
+            <Route path="" element={<Purchase />}>
+              <Route
+                path="purchase-requisition"
+                element={<PurchaseRequisition />}>
+                <Route path="" element={<PurchaseReqViewTable />} />
+                <Route path="new" element={<PurchaseRequisitiion />} />
+                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+                <Route path="print" element={<PurchaseReqPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
             </Route>
+
             <Route path="" element={<Items />}>
               <Route path="/item-list" element={<ItemInfo />}>
                 <Route path="" element={<ItemViewTable />} />

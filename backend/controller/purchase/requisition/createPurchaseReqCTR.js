@@ -1,4 +1,4 @@
-const PurchaseReq = require("../../model/purchaseReq");
+const PurchaseReq = require("../../../model/purchaseReq");
 
 async function createPurchaseReqCTR(req, res, next) {
   const data = req.body;
@@ -42,7 +42,7 @@ async function createPurchaseReqCTR(req, res, next) {
       const logData = {
         orgId: req.orgId,
         id: req.actionBy,
-        refModel: "Purchase",
+        refModel: "Purchase-Requisition",
         action: `New purchase requisition "${newData.code}" created`,
       };
       req.log = logData;

@@ -1,4 +1,4 @@
-const PurchaseReq = require("../../model/purchaseReq");
+const PurchaseReq = require("../../../model/purchaseReq");
 
 async function viewPurchaseReqCTR(req, res) {
   try {

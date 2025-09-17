@@ -48,7 +48,10 @@ const items = [
   getItem("User", "user", <TeamOutlined />),
   getItem("Inventory", "inventory", <ShopOutlined />),
   getItem("Supplier", "supplier", <ShopOutlined />),
-  getItem("Purchase", "purchase", <ShopOutlined />),
+  getItem("Purchase", "purchase", <ShopOutlined />, [
+    getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
+    getItem("Order", "purchase-order", <FileDoneOutlined />),
+  ]),
   getItem("Item", "item", <ProductOutlined />),
   getItem("Master", "master", <ProductOutlined />, [
     getItem("Item List", "item-list", <FileDoneOutlined />),

@@ -58,6 +58,10 @@ const purchaseReqSchema = new Schema(
         },
         consumePlan: String,
         remarks: String,
+        isDeleted: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
 

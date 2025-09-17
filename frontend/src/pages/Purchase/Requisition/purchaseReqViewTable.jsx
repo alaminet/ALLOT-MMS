@@ -12,8 +12,8 @@ import {
   PrinterOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { usePermission } from "../../hooks/usePermission";
-import NotAuth from "../notAuth";
+import { usePermission } from "../../../hooks/usePermission";
+import NotAuth from "../../notAuth";
 
 const PurchaseReqViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -24,7 +24,7 @@ const PurchaseReqViewTable = () => {
   const navigate = useNavigate();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("purchase")) {
+  if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
   // Get pathname
@@ -150,7 +150,7 @@ const PurchaseReqViewTable = () => {
               <Tooltip title="Delete">
                 <Button
                   onClick={(e) =>
-                    handleChange(record.action, "isDeleted", true)
+                    handleChange(record.action, record.key, "isDeleted", true)
                   }
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
@@ -166,7 +166,7 @@ const PurchaseReqViewTable = () => {
   const getTableData = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/purchase/view`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/view`,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -190,7 +190,7 @@ const PurchaseReqViewTable = () => {
           createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
           updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
           access: item,
-          action: list?._id,
+          action: item?._id,
         }))
       );
 
@@ -225,11 +225,12 @@ const PurchaseReqViewTable = () => {
   };
 
   //   Update Functional
-  const handleChange = async (id, field, data) => {
+  const handleChange = async (id, lineID, field, data) => {
+    console.log(id, lineID, field, data);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/update/${id}`,
-        { [field]: data },
+        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${id}`,
+        { lineID, field, data },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
