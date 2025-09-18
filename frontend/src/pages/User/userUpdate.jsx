@@ -25,7 +25,6 @@ const UserUpdate = () => {
   const onFinish = async (values) => {
     setLoading(true);
     const formData = { ...values, access: roleData };
-    console.log(formData);
 
     try {
       const res = await axios.post(

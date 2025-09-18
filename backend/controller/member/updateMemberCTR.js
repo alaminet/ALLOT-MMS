@@ -15,6 +15,7 @@ async function updateMemberCTR(req, res, next) {
     if (dataExist) {
       return res.status(400).send({ error: "Email already exist" });
     } else {
+      updatedData.updatedBy = req.actionBy; // Track who made the update
       const updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
         new: true,
       }).select("-password -otp -token"); // Exclude sensitive fields

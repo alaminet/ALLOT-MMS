@@ -164,55 +164,59 @@ const PurchaseReqViewTable = () => {
     },
   ];
   const getTableData = async () => {
+    let payload = {};
+    if (canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
+      payload = { scope: "all" };
+    } else if (
+      canDoOwn(lastSegment, "view") &&
+      !canDoOther(lastSegment, "view")
+    ) {
+      payload = { scope: "own" };
+    } else if (
+      !canDoOwn(lastSegment, "view") &&
+      canDoOther(lastSegment, "view")
+    ) {
+      payload = { scope: "others" };
+    } else if (
+      !canDoOwn(lastSegment, "view") &&
+      !canDoOther(lastSegment, "view")
+    ) {
+      return setQueryData([]);
+    }
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/view`,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        }
-      );
-      message.success(res.data.message);
-      const tableArr = res?.data?.items?.flatMap((item) =>
-        item.itemDetails.map((list) => ({
-          key: list?._id,
-          PR: item?.code,
-          code: list?.code?.code || "NA",
-          name: list?.name,
-          reqQty: list?.reqQty,
-          POQty: list?.POQty,
-          recQty: list?.recQty,
-          reqBy: item?.requestedBy.name,
-          reqDpt: item?.costCenter?.name,
-          status: item?.status,
-          createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-          updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-          access: item,
-          action: item?._id,
-        }))
-      );
-
-      if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
-        );
-      } else if (
-        canDoOwn(lastSegment, "view") &&
-        !canDoOther(lastSegment, "view")
-      ) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
-        );
-      } else if (
-        canDoOther(lastSegment, "view") &&
-        canDoOwn(lastSegment, "view")
-      ) {
-        setQueryData(tableArr);
-      } else {
-        setQueryData([]);
-      }
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/requisition/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          const tableArr = res?.data?.items?.flatMap((item) =>
+            item.itemDetails.map((list) => ({
+              key: list?._id,
+              PR: item?.code,
+              code: list?.code?.code || "NA",
+              name: list?.name,
+              reqQty: list?.reqQty,
+              POQty: list?.POQty,
+              recQty: list?.recQty,
+              reqBy: item?.requestedBy.name,
+              reqDpt: item?.costCenter?.name,
+              status: item?.status,
+              createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+              updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              access: item,
+              action: item?._id,
+            }))
+          );
+          setQueryData(tableArr);
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }

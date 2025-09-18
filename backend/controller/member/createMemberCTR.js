@@ -25,6 +25,7 @@ async function createMemberCTR(req, res, next) {
             password: hash,
             phone: data.phone,
             access: data.access,
+            createdBy: req.actionBy,
           });
           await newMember.save();
           res.status(201).send({

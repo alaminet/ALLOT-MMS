@@ -24,6 +24,7 @@ const UserTable = () => {
   const navigate = useNavigate();
   const logout = useLogout();
   const [queryData, setQueryData] = useState([]);
+  const [findData, setFindData] = useState();
   const search = useOutletContext();
 
   // User Permission Check
@@ -148,42 +149,41 @@ const UserTable = () => {
     },
   ];
   const getUsers = async () => {
+    let payload = {};
+    if (canDoOwn("user", "view") && canDoOther("user", "view")) {
+      payload = { scope: "all" };
+    } else if (canDoOwn("user", "view") && !canDoOther("user", "view")) {
+      payload = { scope: "own" };
+    } else if (!canDoOwn("user", "view") && canDoOther("user", "view")) {
+      payload = { scope: "others" };
+    } else if (!canDoOwn("user", "view") && !canDoOther("user", "view")) {
+      return setQueryData([]);
+    }
+
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/member/view`,
-        {
+      await axios
+        .post(`${import.meta.env.VITE_API_URL}/api/member/view`, payload, {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
-      );
-      message.success(res.data.message);
-      const tableArr = res?.data?.members?.map((item, index) => ({
-        key: index,
-        name: item?.name,
-        email: item?.email,
-        phone: item?.phone,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        role: item?.isAdmin,
-        access: item,
-        action: item?._id,
-      }));
-      if (!canDoOwn("user", "view") && canDoOther("user", "view")) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
-        );
-      } else if (canDoOwn("user", "view") && !canDoOther("user", "view")) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
-        );
-      } else if (canDoOther("user", "view") && canDoOwn("user", "view")) {
-        setQueryData(tableArr);
-      } else {
-        setQueryData([]);
-      }
+        })
+        .then((res) => {
+          message.success(res.data.message);
+          const tableArr = res?.data?.members?.map((item, index) => ({
+            key: index,
+            name: item?.name,
+            email: item?.email,
+            phone: item?.phone,
+            status: item?.status,
+            createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+            updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+            role: item?.isAdmin,
+            access: item,
+            action: item?._id,
+          }));
+          setQueryData(tableArr);
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -205,17 +205,7 @@ const UserTable = () => {
       message.success(res.data.message);
       getUsers();
     } catch (error) {
-      if (
-        error.response.data.error === "Invalid Token" ||
-        error.response.data.error === "Token expired"
-      ) {
-        message.error("Your session expaired");
-        setTimeout(() => {
-          logout();
-        }, 3000);
-      } else {
-        message.error(error.response.data.error);
-      }
+      message.error(error.response.data.error);
     }
   };
 

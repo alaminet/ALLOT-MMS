@@ -7,7 +7,7 @@ const route = express.Router();
 
 route.post("/new", createPurchaseReqCTR);
 route.post("/update/:id", updatePurchaseReqCTR);
-route.get("/view", viewPurchaseReqCTR);
+route.post("/view", viewPurchaseReqCTR);
 // route.get("/view/:id", viewMemberController);
 
 module.exports = route;

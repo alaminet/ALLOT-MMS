@@ -33,6 +33,14 @@ const memberSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "Member",
+    },
+    updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "Member",
+    },
   },
   {
     timestamps: true,

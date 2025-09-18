@@ -1,13 +1,21 @@
 const Member = require("../../model/member");
 
 async function viewAllMemberCTR(req, res) {
+  const data = req.body;
+
   try {
-    const members = await Member.find({
+    const query = {
       deleted: { $ne: true },
       orgId: req.orgId,
-    })
+    };
+    if (data.scope === "own") {
+      query["createdBy"] = req.actionBy;
+    } else if (data.scope === "others") {
+      query["createdBy"] = { $ne: req.actionBy };
+    }
+    const members = await Member.find(query)
       .sort({ createdAt: -1 })
-      .select("-password -otp -token"); // Exclude sensitive fields
+      .select("name email phone status createdAt access"); // Exclude sensitive fields
     if (members.length === 0) {
       return res.status(404).send({ error: "No members found" });
     }

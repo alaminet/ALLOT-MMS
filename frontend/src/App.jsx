@@ -38,6 +38,7 @@ import PurchaseReqViewTable from "./pages/Purchase/Requisition/purchaseReqViewTa
 import PurchaseRequisitiionUpdate from "./pages/Purchase/Requisition/purchaseRequisitiionUpdate";
 import PurchaseReqPrintView from "./pages/Purchase/Requisition/purchaseReqPrintView";
 import PurchaseRequisition from "./pages/Purchase/Requisition";
+import Transaction from "./pages/Transaction";
 
 function App() {
   const router = createBrowserRouter(
@@ -66,6 +67,7 @@ function App() {
               <Route path="update" element={<SupplierUpdate />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
+            <Route path="/transaction" element={<Transaction />}></Route>
             <Route path="" element={<Purchase />}>
               <Route
                 path="purchase-requisition"

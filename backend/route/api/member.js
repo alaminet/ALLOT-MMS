@@ -15,7 +15,7 @@ route.post("/login", secureAPI, loginCTR);
 // route.post("/reset-password", resetPasswordController);
 // route.post("/forgot-password", forgotPasswordController);
 
-route.get("/view", secureAPI, secureJWT, viewAllMemberCTR);
+route.post("/view", secureAPI, secureJWT, viewAllMemberCTR);
 route.post("/access", secureAPI, secureJWT, getAccessCTR);
 // route.get("/view/:id", secureJWT, viewMemberController);
 
