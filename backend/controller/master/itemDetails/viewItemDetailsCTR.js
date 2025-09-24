@@ -26,9 +26,15 @@ async function viewItemDetailsCTR(req, res) {
 
     //   Set a query filed
     const query = {
-      isDeleted: { $ne: true },
+      isDeleted: false,
       orgId: req.orgId,
     };
+    // Dynamically add createdBy filter
+    if (data.scope === "own") {
+      query["createdBy"] = req.actionBy;
+    } else if (data.scope === "others") {
+      query["createdBy"] = { $ne: req.actionBy };
+    }
     // Dynamically add createdAt filter
     if (
       data?.startDate !== "Invalid date" ||
@@ -44,6 +50,8 @@ async function viewItemDetailsCTR(req, res) {
         query.createdAt.$lte = new Date(data.endDate);
       }
     }
+    console.log(query);
+
     const items = await Model.find(query)
       .sort({ createdAt: -1 })
       .populate({ path: "createdBy", select: "name" })

@@ -7,7 +7,7 @@ const route = express.Router();
 
 route.post("/new", createSupplierCTR);
 route.post("/update/:id", updateSupplierCTR);
-route.get("/view", viewSupplierCTR);
+route.post("/view", viewSupplierCTR);
 // route.get("/view/:id", viewMemberController);
 
 module.exports = route;

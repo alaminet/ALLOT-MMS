@@ -70,7 +70,7 @@ const LogActivites = () => {
       const tableArr = res?.data?.logs?.map((item, index) => ({
         key: index,
         action: item?.action,
-        actionBy: item?.actionBy.name,
+        actionBy: item?.actionBy?.name,
         createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
       }));
 

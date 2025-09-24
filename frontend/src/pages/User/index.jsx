@@ -28,8 +28,7 @@ const User = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOther("user", "create")}
-          >
+            disabled={!canDoOther("user", "create")}>
             Add User
           </Button>
         )}
@@ -40,20 +39,18 @@ const User = () => {
           marginBottom: "10px",
           display:
             (lastSegment === "new" || lastSegment === "update") && "none",
-        }}
-      >
+        }}>
         <Button
-          className="borderBrand colorLink"
+          lassName="borderBrand"
           style={{ borderRadius: "0px" }}
-          type="text"
+          type={lastSegment === "logs" ? "primary" : "default"}
           onClick={() =>
             navigate("logs", {
               state: {
                 model: "Member",
               },
             })
-          }
-        >
+          }>
           Logs
         </Button>
         <Search

@@ -22,14 +22,18 @@ const PurchaseReqViewTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const search = useOutletContext();
   const navigate = useNavigate();
+
+  // Get pathname
+  const pathname = location.pathname;
+  const lastSegment = pathname.split("/").filter(Boolean).pop();
+
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
-  // Get pathname
-  const pathname = location.pathname;
-  const lastSegment = pathname.split("/").filter(Boolean).pop();
+  const own = canDoOwn(lastSegment, "view");
+  const others = canDoOther(lastSegment, "view");
 
   const columns = [
     {
@@ -164,25 +168,15 @@ const PurchaseReqViewTable = () => {
     },
   ];
   const getTableData = async () => {
-    let payload = {};
-    if (canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-      payload = { scope: "all" };
-    } else if (
-      canDoOwn(lastSegment, "view") &&
-      !canDoOther(lastSegment, "view")
-    ) {
-      payload = { scope: "own" };
-    } else if (
-      !canDoOwn(lastSegment, "view") &&
-      canDoOther(lastSegment, "view")
-    ) {
-      payload = { scope: "others" };
-    } else if (
-      !canDoOwn(lastSegment, "view") &&
-      !canDoOther(lastSegment, "view")
-    ) {
-      return setQueryData([]);
+    const scope =
+      own && others ? "all" : own ? "own" : others ? "others" : null;
+    if (!scope) {
+      setQueryData([]);
+      message.warning("You are not authorized");
+      return; // stop execution
     }
+    const payload = { scope };
+
     try {
       await axios
         .post(
@@ -216,7 +210,8 @@ const PurchaseReqViewTable = () => {
             }))
           );
           setQueryData(tableArr);
-        });
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -253,14 +248,19 @@ const PurchaseReqViewTable = () => {
   }, []);
   return (
     <>
-      <Table
-        columns={columns}
-        dataSource={queryData?.filter((item) =>
-          item.name?.toLowerCase().includes(search?.toLowerCase())
-        )}
-        // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
-      />
+      {!own && !others ? (
+        <NotAuth />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={queryData?.filter((item) =>
+            item.name?.toLowerCase().includes(search?.toLowerCase())
+          )}
+          // title={() => "Header"}
+          pagination={{ position: ["bottomRight"] }}
+        />
+      )}
+
       <Modal
         title="View Details"
         open={isModalVisible}

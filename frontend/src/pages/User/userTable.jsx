@@ -27,11 +27,18 @@ const UserTable = () => {
   const [findData, setFindData] = useState();
   const search = useOutletContext();
 
+  // Get pathname
+  const pathname = location.pathname;
+  const lastSegment = pathname.split("/").filter(Boolean).pop();
+
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("user")) {
     return <NotAuth />;
   }
+  const own = canDoOwn(lastSegment, "view");
+  const others = canDoOther(lastSegment, "view");
+
   const columns = [
     {
       title: "SL",
@@ -149,16 +156,14 @@ const UserTable = () => {
     },
   ];
   const getUsers = async () => {
-    let payload = {};
-    if (canDoOwn("user", "view") && canDoOther("user", "view")) {
-      payload = { scope: "all" };
-    } else if (canDoOwn("user", "view") && !canDoOther("user", "view")) {
-      payload = { scope: "own" };
-    } else if (!canDoOwn("user", "view") && canDoOther("user", "view")) {
-      payload = { scope: "others" };
-    } else if (!canDoOwn("user", "view") && !canDoOther("user", "view")) {
-      return setQueryData([]);
+    const scope =
+      own && others ? "all" : own ? "own" : others ? "others" : null;
+    if (!scope) {
+      setQueryData([]);
+      message.warning("You are not authorized");
+      return; // stop execution
     }
+    const payload = { scope };
 
     try {
       await axios
@@ -183,7 +188,8 @@ const UserTable = () => {
             action: item?._id,
           }));
           setQueryData(tableArr);
-        });
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -214,19 +220,23 @@ const UserTable = () => {
   }, []);
   return (
     <>
-      <Table
-        columns={columns}
-        dataSource={queryData?.filter((item) =>
-          item?.name?.toLowerCase().includes(search?.toLowerCase())
-        )}
-        pagination={{ position: ["bottomRight"] }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <UserRoleViewTable data={record?.access?.access} />
-          ),
-          rowExpandable: (record) => record.access !== "Not Expandable",
-        }}
-      />
+      {!own && !others ? (
+        <NotAuth />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={queryData?.filter((item) =>
+            item?.name?.toLowerCase().includes(search?.toLowerCase())
+          )}
+          pagination={{ position: ["bottomRight"] }}
+          expandable={{
+            expandedRowRender: (record) => (
+              <UserRoleViewTable data={record?.access?.access} />
+            ),
+            rowExpandable: (record) => record.access !== "Not Expandable",
+          }}
+        />
+      )}
     </>
   );
 };

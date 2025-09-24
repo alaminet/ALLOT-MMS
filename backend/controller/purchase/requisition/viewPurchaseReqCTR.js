@@ -5,7 +5,7 @@ async function viewPurchaseReqCTR(req, res) {
 
   try {
     const query = {
-      deleted: { $ne: true },
+      isDeleted: false,
       orgId: req.orgId,
     };
     if (data.scope === "own") {
@@ -24,16 +24,13 @@ async function viewPurchaseReqCTR(req, res) {
       return res.status(404).send({ error: "No data found" });
     } else {
       // Filtered Deleted line items
-      const filteredItems = items
-        .map((item) => {
-          const filteredDetails = item.itemDetails.filter(
-            (detail) => detail.isDeleted !== true
-          );
-          return filteredDetails.length > 0
-            ? { ...item, itemDetails: filteredDetails }
-            : null;
-        })
-        .filter(Boolean); // removes nulls
+      const filteredItems = items.reduce((acc, item) => {
+        const filteredDetails = item.itemDetails.filter((d) => !d.isDeleted);
+        if (filteredDetails.length > 0) {
+          acc.push({ ...item, itemDetails: filteredDetails });
+        }
+        return acc;
+      }, []);
       res.status(200).send({
         message: "Data retrieved",
         items: filteredItems,

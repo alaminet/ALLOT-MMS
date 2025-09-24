@@ -1,11 +1,18 @@
 const Supplier = require("../../model/supplier");
 
 async function viewSupplierCTR(req, res) {
+  const data = req.body;
   try {
-    const items = await Supplier.find({
-      isDeleted: { $ne: true },
+    const query = {
+      isDeleted: false,
       orgId: req.orgId,
-    })
+    };
+    if (data.scope === "own") {
+      query["createdBy"] = req.actionBy;
+    } else if (data.scope === "others") {
+      query["createdBy"] = { $ne: req.actionBy };
+    }
+    const items = await Supplier.find(query)
       .sort({ createdAt: -1 })
       .populate({
         path: ["createdBy", "updatedBy"],

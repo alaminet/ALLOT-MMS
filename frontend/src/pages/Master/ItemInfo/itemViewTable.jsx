@@ -20,14 +20,18 @@ const ItemViewTable = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const search = useOutletContext();
   const navigate = useNavigate();
+
+  // Get pathname
+  const pathname = location.pathname;
+  const lastSegment = pathname.split("/").filter(Boolean).pop();
+
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("item-list")) {
     return <NotAuth />;
   }
-  // Get pathname
-  const pathname = location.pathname;
-  const lastSegment = pathname.split("/").filter(Boolean).pop();
+  const own = canDoOwn(lastSegment, "view");
+  const others = canDoOther(lastSegment, "view");
 
   const columns = [
     {
@@ -171,55 +175,46 @@ const ItemViewTable = () => {
     },
   ];
   const getTableData = async () => {
+    const scope =
+      own && others ? "all" : own ? "own" : others ? "others" : null;
+    if (!scope) return setQueryData([]);
+    const payload = { scope };
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/master/itemInfo/view`,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        }
-      );
-      message.success(res.data.message);
-      const tableArr = res?.data?.items?.map((item, index) => ({
-        key: index,
-        code: item?.code,
-        name: item?.name,
-        SKU: item?.SKU,
-        UOM: item?.UOM?.name,
-        discription: item?.discription,
-        type: item?.type?.name,
-        group: item?.group?.name,
-        lastPrice: item?.lastPrice,
-        avgPrice: item?.avgPrice,
-        safetyStock: item?.safetyStock || "NA",
-        isShelfLife: item?.isShelfLife,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        access: item,
-        action: item?._id,
-      }));
-      if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
-        );
-      } else if (
-        canDoOwn(lastSegment, "view") &&
-        !canDoOther(lastSegment, "view")
-      ) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
-        );
-      } else if (
-        canDoOther(lastSegment, "view") &&
-        canDoOwn(lastSegment, "view")
-      ) {
-        setQueryData(tableArr);
-      } else {
-        setQueryData([]);
-      }
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/master/itemInfo/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          const tableArr = res?.data?.items?.map((item, index) => ({
+            key: index,
+            code: item?.code,
+            name: item?.name,
+            SKU: item?.SKU,
+            UOM: item?.UOM?.name,
+            discription: item?.discription,
+            type: item?.type?.name,
+            group: item?.group?.name,
+            lastPrice: item?.lastPrice,
+            avgPrice: item?.avgPrice,
+            safetyStock: item?.safetyStock || "NA",
+            isShelfLife: item?.isShelfLife,
+            status: item?.status,
+            createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+            updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+            access: item,
+            action: item?._id,
+          }));
+          setQueryData(tableArr);
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -256,14 +251,18 @@ const ItemViewTable = () => {
   }, []);
   return (
     <>
-      <Table
-        columns={columns}
-        dataSource={queryData?.filter((item) =>
-          item.name?.toLowerCase().includes(search?.toLowerCase())
-        )}
-        // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
-      />
+      {!own && !others ? (
+        <NotAuth />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={queryData?.filter((item) =>
+            item.name?.toLowerCase().includes(search?.toLowerCase())
+          )}
+          // title={() => "Header"}
+          pagination={{ position: ["bottomRight"] }}
+        />
+      )}
       <Modal
         title="View Details"
         open={isModalVisible}

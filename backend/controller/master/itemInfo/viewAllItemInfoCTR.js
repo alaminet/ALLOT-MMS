@@ -1,11 +1,18 @@
 const ItemInfo = require("../../../model/master/itemInfo");
 
 async function viewAllItemInfoCTR(req, res) {
+  const data = req.body;
   try {
-    const items = await ItemInfo.find({
-      isDeleted: { $ne: true },
+    const query = {
+      isDeleted: false,
       orgId: req.orgId,
-    })
+    };
+    if (data.scope === "own") {
+      query["createdBy"] = req.actionBy;
+    } else if (data.scope === "others") {
+      query["createdBy"] = { $ne: req.actionBy };
+    }
+    const items = await ItemInfo.find(query)
       .sort({ createdAt: -1 })
       .populate({
         path: ["UOM", "group", "type", "createdBy", "updatedBy"],

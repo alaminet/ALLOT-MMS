@@ -28,18 +28,28 @@ const ItemDetailsView = () => {
   const search = useOutletContext();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+
+  // Get pathname
+  const pathname = location.pathname;
+  const lastSegment = pathname.split("/").filter(Boolean).pop();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("item-details")) {
     return <NotAuth />;
   }
-  // Get pathname
-  const pathname = location.pathname;
-  const lastSegment = pathname.split("/").filter(Boolean).pop();
+  const own = canDoOwn(lastSegment, "view");
+  const others = canDoOther(lastSegment, "view");
 
   // Table data get form
   const onFinish = async (values) => {
     setQueryData([]);
+    const scope =
+      own && others ? "all" : own ? "own" : others ? "others" : null;
+    if (!scope) {
+      setQueryData([]);
+      message.warning("You are not authorized");
+      return; // stop execution
+    }
     let startDate = new Date(values?.startDate?.$d).setHours(0, 0, 0);
     let endDate = new Date(values?.endDate?.$d).setHours(23, 59, 59);
     let findModel = values?.model;
@@ -47,48 +57,36 @@ const ItemDetailsView = () => {
       model: values?.model,
       startDate: moment(startDate).format(),
       endDate: moment(endDate).format(),
+      scope: scope,
     };
+
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/view`,
-        findData,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user?.token,
-          },
-        }
-      );
-      message.success(res?.data.message);
-      const tableArr = res?.data?.items?.map((item, index) => ({
-        key: index,
-        code: item?.code,
-        name: item?.name,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        access: { ...item, model: findModel },
-        action: item?._id,
-      }));
-      if (!canDoOwn(lastSegment, "view") && canDoOther(lastSegment, "view")) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id !== user.id)
-        );
-      } else if (
-        canDoOwn(lastSegment, "view") &&
-        !canDoOther(lastSegment, "view")
-      ) {
-        setQueryData(
-          tableArr.filter((item) => item.access?.createdBy?._id === user.id)
-        );
-      } else if (
-        canDoOther(lastSegment, "view") &&
-        canDoOwn(lastSegment, "view")
-      ) {
-        setQueryData(tableArr);
-      } else {
-        setQueryData([]);
-      }
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/master/itemDetails/view`,
+          findData,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res?.data.message);
+          const tableArr = res?.data?.items?.map((item, index) => ({
+            key: index,
+            code: item?.code,
+            name: item?.name,
+            status: item?.status,
+            createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+            updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+            access: { ...item, model: findModel },
+            action: item?._id,
+          }));
+          setQueryData(tableArr);
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
