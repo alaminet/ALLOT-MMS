@@ -32,6 +32,7 @@ async function createPurchaseReqCTR(req, res, next) {
           remarks: dtl.remarks,
         })),
         createdBy: req.actionBy,
+        updatedBy: req.actionBy,
       });
       await newData.save();
       res.status(201).send({

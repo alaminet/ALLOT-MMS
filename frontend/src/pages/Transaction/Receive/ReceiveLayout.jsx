@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import {
   Button,
   Card,
   Col,
-  Flex,
+  DatePicker,
   Form,
   Input,
   Space,
@@ -13,12 +14,16 @@ import {
   Typography,
   AutoComplete,
   message,
+  InputNumber,
 } from "antd";
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
-
-const PurchaseRequisitiion = () => {
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+const dateFormat = "YYYY-MM-DD";
+const ReceiveLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
@@ -28,11 +33,16 @@ const PurchaseRequisitiion = () => {
 
   // Form submission
   const onFinish = async (values) => {
+    const formData = {
+      ...values,
+      documentAt: values.documentAt.$d,
+      receivedAt: values.receivedAt.$d,
+      createdBy: user?.id,
+    };
     setLoading(true);
-    const formData = { ...values, createdBy: user?.id };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/new`,
+        `${import.meta.env.VITE_API_URL}/api/transaction/receive/new`,
         formData,
         {
           headers: {
@@ -72,8 +82,7 @@ const PurchaseRequisitiion = () => {
         code: item?.code,
         UOM: item?.UOM?.name,
         price: item?.avgPrice,
-        onHandQty: item?.onHandQty,
-        spec: item?.discription,
+        SKU: item?.SKU,
       }));
       setItemList(tableArr);
     } catch (error) {
@@ -87,7 +96,7 @@ const PurchaseRequisitiion = () => {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
         {
-          model: ["CostCenter"],
+          model: ["StoreLocation"],
           scope: "all",
         },
         {
@@ -97,9 +106,10 @@ const PurchaseRequisitiion = () => {
           },
         }
       );
+
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
-          value: i._id,
+          value: item?.modelName === "ItemUOM" ? i.code : i.name,
           label: item?.modelName === "ItemUOM" ? i.code : i.name,
         }));
         return { ...item };
@@ -113,42 +123,30 @@ const PurchaseRequisitiion = () => {
   useEffect(() => {
     getItems();
     getCostCenter();
-  }, []);
+  }, [onFinish]);
 
   return (
     <>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
-        New Purchase Requisition
+        Goods Movement
       </Title>
       <Card>
         <Form
           form={form}
           name="new"
           layout="vertical"
-          initialValues={{ remember: true }}
+          initialValues={{ receivedAt: dayjs(), documentAt: dayjs() }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           className="borderlessInput">
           <Row gutter={16}>
-            <Col>
-              <Row justify="space-between" gutter={16}>
-                <Col lg={8} xs={24}>
+            <Col span={24}>
+              <Row gutter={16}>
+                <Col lg={6} xs={24}>
                   <Form.Item
-                    label="PR Referance"
-                    name="reference"
-                    style={{ width: "100%" }}>
-                    <Input
-                      placeholder="PR Referance"
-                      maxLength={30}
-                      showCount
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    label="Type"
-                    name="type"
+                    label="Transaction Type"
+                    name="tnxType"
                     rules={[
                       {
                         required: true,
@@ -158,88 +156,104 @@ const PurchaseRequisitiion = () => {
                     <Select
                       style={{ width: "100%" }}
                       allowClear
+                      options={["PO GRN", "Initial Balance", "Others"].map(
+                        (item) => ({
+                          label: item,
+                          value: item,
+                        })
+                      )}
+                      placeholder="Transaction Type"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Source Type"
+                    name="sourceType"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%" }}>
+                    <Select
+                      style={{ width: "100%" }}
+                      allowClear
                       options={[
                         { name: "Local", value: "Local" },
                         { name: "Import", value: "Import" },
                       ]}
-                      placeholder="Supplier Type"
+                      placeholder="Source Type"
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
-                    label="PR Note"
-                    name="note"
+                    label="Source Referance"
+                    name="sourceRef"
                     style={{ width: "100%" }}>
-                    <Input
-                      placeholder="PR Referance"
-                      maxLength={50}
-                      showCount
+                    <Input placeholder="Source Ref." maxLength={50} showCount />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Document Date"
+                    name="documentAt"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%" }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      maxDate={dayjs()}
+                      format={dateFormat}
+                      style={{ width: "100%" }}
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={24} xs={24}>
+                <Col lg={6} xs={24}>
                   <Form.Item
-                    label="Requester Details"
-                    style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
-                      <Form.Item
-                        name={["requestedBy", "name"]}
-                        initialValue={user.name}
-                        noStyle
-                        rules={[
-                          {
-                            required: true,
-                            message: "Name is required",
-                          },
-                        ]}>
-                        <Input placeholder="Requester Name" />
-                      </Form.Item>
-                      <Form.Item
-                        name={["requestedBy", "contact"]}
-                        initialValue={user.phone}
-                        noStyle
-                        rules={[
-                          {
-                            required: true,
-                            message: "Contact number is required",
-                          },
-                        ]}>
-                        <Input placeholder="Contact Number" />
-                      </Form.Item>
-                      <Form.Item
-                        name={["requestedBy", "email"]}
-                        initialValue={user.email}
-                        noStyle
-                        rules={[
-                          {
-                            required: true,
-                            message: "Email is required",
-                          },
-                        ]}>
-                        <Input placeholder="Email Address" />
-                      </Form.Item>
-                      <Form.Item
-                        name="costCenter"
-                        initialValue={user.costCenter}
-                        noStyle
-                        rules={[
-                          {
-                            required: true,
-                            message: "Cost Center required",
-                          },
-                        ]}>
-                        <Select
-                          allowClear
-                          options={
-                            costCenter?.filter(
-                              (item) => item.modelName === "CostCenter"
-                            )[0]?.data
-                          }
-                          placeholder="Cost Center"
-                        />
-                      </Form.Item>
-                    </Flex>
+                    label="Receive Date"
+                    name="receivedAt"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%" }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      minDate={dayjs().subtract(1, "month")}
+                      maxDate={dayjs()}
+                      format={dateFormat}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Header Text"
+                    name="headerText"
+                    style={{ width: "100%" }}>
+                    <Input placeholder="Source Ref." maxLength={50} showCount />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Invoice No"
+                    name="invoiceNo"
+                    style={{ width: "100%" }}>
+                    <Input placeholder="Source Ref." maxLength={50} showCount />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="BL/MUSHOK No"
+                    name="TaxNo"
+                    style={{ width: "100%" }}>
+                    <Input placeholder="Source Ref." maxLength={50} showCount />
                   </Form.Item>
                 </Col>
               </Row>
@@ -261,10 +275,9 @@ const PurchaseRequisitiion = () => {
                               rules={[
                                 {
                                   required: true,
-                                  message: "Item name",
                                 },
                               ]}
-                              style={{ width: "200px" }}>
+                              style={{ width: "300px" }}>
                               <AutoComplete
                                 options={filteredOptions}
                                 onSearch={(searchText) => {
@@ -291,19 +304,15 @@ const PurchaseRequisitiion = () => {
                                     );
                                     form.setFieldValue(
                                       ["itemDetails", name, "code"],
-                                      matched.value
+                                      matched.code
                                     );
                                     form.setFieldValue(
                                       ["itemDetails", name, "unitPrice"],
                                       matched.price
                                     );
                                     form.setFieldValue(
-                                      ["itemDetails", name, "onHandQty"],
-                                      matched.onHandQty
-                                    );
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "spec"],
-                                      matched.spec
+                                      ["itemDetails", name, "SKU"],
+                                      matched.SKU
                                     );
                                   }
                                 }}
@@ -325,11 +334,7 @@ const PurchaseRequisitiion = () => {
                                       ""
                                     ); // clear unitPrice for manual input
                                     form.setFieldValue(
-                                      ["itemDetails", name, "onHandQty"],
-                                      ""
-                                    ); // clear unitPrice for manual input
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "spec"],
+                                      ["itemDetails", name, "SKU"],
                                       ""
                                     ); // clear unitPrice for manual input
                                   }
@@ -337,58 +342,62 @@ const PurchaseRequisitiion = () => {
                                 placeholder="Item name"
                               />
                             </Form.Item>
-                            <Form.Item
-                              hidden
-                              {...restField}
-                              name={[name, "code"]}>
-                              <Input placeholder="Code" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "spec"]}
-                              style={{ width: "150px" }}>
-                              <Input placeholder="Specification" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "brand"]}
-                              style={{ width: "80px" }}>
-                              <Input placeholder="Brand" />
+                            <Form.Item {...restField} name={[name, "SKU"]}>
+                              <Input disabled placeholder="SKU/Code" />
                             </Form.Item>
                             <Form.Item
                               {...restField}
                               name={[name, "UOM"]}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
                               style={{ width: "70px" }}>
                               <Input placeholder="UOM" />
                             </Form.Item>
                             <Form.Item
                               {...restField}
                               name={[name, "unitPrice"]}
-                              style={{ width: "70px" }}>
-                              <Input placeholder="Price" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "onHandQty"]}
                               style={{ width: "100px" }}>
-                              <Input placeholder="On Hand" />
+                              <InputNumber placeholder="Price" />
                             </Form.Item>
                             <Form.Item
                               {...restField}
-                              name={[name, "reqQty"]}
+                              name={[name, "receiveQty"]}
                               rules={[
                                 {
                                   required: true,
-                                  message: "Req. Qty",
                                 },
                               ]}
-                              style={{ width: "90px" }}>
-                              <Input placeholder="Req. Qty" />
+                              style={{ width: "100px" }}>
+                              <InputNumber placeholder="Req. Qty" />
                             </Form.Item>
                             <Form.Item
                               {...restField}
-                              name={[name, "consumePlan"]}>
-                              <Input placeholder="Consume Plan" />
+                              name={[name, "location"]}
+                              rules={[
+                                {
+                                  required: true,
+                                },
+                              ]}
+                              style={{ minWidth: "150px" }}>
+                              <Select
+                                style={{ width: "100%" }}
+                                allowClear
+                                showSearch
+                                options={
+                                  costCenter?.filter(
+                                    (item) => item.modelName === "StoreLocation"
+                                  )[0]?.data
+                                }
+                                placeholder="Location"
+                                filterOption={(input, option) =>
+                                  (option?.label ?? "")
+                                    .toLowerCase()
+                                    .includes(input.toLowerCase())
+                                }
+                              />
                             </Form.Item>
                             <Form.Item {...restField} name={[name, "remarks"]}>
                               <Input placeholder="Remarks" />
@@ -430,4 +439,4 @@ const PurchaseRequisitiion = () => {
   );
 };
 
-export default PurchaseRequisitiion;
+export default ReceiveLayout;

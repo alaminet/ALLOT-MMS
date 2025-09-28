@@ -1,12 +1,12 @@
 import React from "react";
-import { usePermission } from "../../hooks/usePermission";
-import NotAuth from "../notAuth";
+import { usePermission } from "../../../hooks/usePermission";
+import NotAuth from "../../notAuth";
 import { Outlet } from "react-router-dom";
 
-const Transaction = () => {
+const Receive = () => {
   // User Permission Check
   const { canViewPage, canDoOther } = usePermission();
-  if (!canViewPage("transaction")) {
+  if (!canViewPage("receive")) {
     return <NotAuth />;
   }
 
@@ -17,4 +17,4 @@ const Transaction = () => {
   );
 };
 
-export default Transaction;
+export default Receive;

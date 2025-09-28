@@ -56,6 +56,7 @@ async function createItemDetailsCTR(req, res, next) {
       }
 
       query.createdBy = req.actionBy;
+      query.updatedBy = req.actionBy;
       const newData = new Model(query);
       await newData.save();
       res.status(201).send({

@@ -40,10 +40,14 @@ const itemInfoSchema = new Schema(
       type: Number,
       default: 0,
     },
-    onHandQty: {
-      type: Number,
-      default: 0,
-    },
+    stock: [
+      {
+        location: String,
+        recQty: { type: Number, default: 0 },
+        issueQty: { type: Number, default: 0 },
+        onHandQty: { type: Number, default: 0 },
+      },
+    ],
 
     // Common Schema
     status: {

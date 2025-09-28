@@ -39,6 +39,8 @@ import PurchaseRequisitiionUpdate from "./pages/Purchase/Requisition/purchaseReq
 import PurchaseReqPrintView from "./pages/Purchase/Requisition/purchaseReqPrintView";
 import PurchaseRequisition from "./pages/Purchase/Requisition";
 import Transaction from "./pages/Transaction";
+import Receive from "./pages/Transaction/Receive";
+import ReceiveLayout from "./pages/Transaction/Receive/ReceiveLayout";
 
 function App() {
   const router = createBrowserRouter(
@@ -67,7 +69,15 @@ function App() {
               <Route path="update" element={<SupplierUpdate />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
-            <Route path="/transaction" element={<Transaction />}></Route>
+            <Route path="" element={<Transaction />}>
+              <Route path="receive" element={<Receive />}>
+                <Route path="" element={<ReceiveLayout />} />
+                <Route path="new" element={<PurchaseRequisitiion />} />
+                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+                <Route path="print" element={<PurchaseReqPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+            </Route>
             <Route path="" element={<Purchase />}>
               <Route
                 path="purchase-requisition"
