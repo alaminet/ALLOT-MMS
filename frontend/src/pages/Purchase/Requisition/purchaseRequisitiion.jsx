@@ -23,7 +23,7 @@ const PurchaseRequisitiion = () => {
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
-  const [costCenter, setCostCenter] = useState();
+  const [itemDetails, setItemDetails] = useState();
   const [form] = Form.useForm();
 
   // Form submission
@@ -70,7 +70,7 @@ const PurchaseRequisitiion = () => {
         label: item?.name,
         value: item?._id,
         code: item?.code,
-        UOM: item?.UOM?.name,
+        UOM: item?.UOM?.code,
         price: item?.avgPrice,
         onHandQty: item?.onHandQty,
         spec: item?.discription,
@@ -82,7 +82,7 @@ const PurchaseRequisitiion = () => {
   };
 
   // Get Category List
-  const getCostCenter = async () => {
+  const getItemInfo = async () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
@@ -104,7 +104,7 @@ const PurchaseRequisitiion = () => {
         }));
         return { ...item };
       });
-      setCostCenter(tableArr);
+      setItemDetails(tableArr);
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -112,7 +112,7 @@ const PurchaseRequisitiion = () => {
 
   useEffect(() => {
     getItems();
-    getCostCenter();
+    getItemInfo();
   }, []);
 
   return (
@@ -232,7 +232,7 @@ const PurchaseRequisitiion = () => {
                         <Select
                           allowClear
                           options={
-                            costCenter?.filter(
+                            itemDetails?.filter(
                               (item) => item.modelName === "CostCenter"
                             )[0]?.data
                           }

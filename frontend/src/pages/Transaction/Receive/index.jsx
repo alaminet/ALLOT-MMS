@@ -1,9 +1,9 @@
 import React from "react";
-import { usePermission } from "../../../hooks/usePermission";
-import NotAuth from "../../notAuth";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button, Flex } from "antd";
+import { usePermission } from "../../../hooks/usePermission";
 import BreadCrumbCustom from "../../../components/breadCrumbCustom";
+import NotAuth from "../../notAuth";
 
 const Receive = () => {
   const navigate = useNavigate();

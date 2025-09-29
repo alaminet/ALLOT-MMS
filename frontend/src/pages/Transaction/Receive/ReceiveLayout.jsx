@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import {
   Button,
   Card,
@@ -57,7 +56,7 @@ const ReceiveLayout = () => {
       message.success(res.data.message);
       setLoading(false);
       getItems();
-      getCostCenter();
+      getItemInfo();
       form.resetFields();
     } catch (error) {
       setLoading(false);
@@ -96,7 +95,7 @@ const ReceiveLayout = () => {
   };
 
   // Get Category List
-  const getCostCenter = async () => {
+  const getItemInfo = async () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
@@ -127,7 +126,7 @@ const ReceiveLayout = () => {
 
   useEffect(() => {
     getItems();
-    getCostCenter();
+    getItemInfo();
   }, []);
 
   return (
@@ -250,7 +249,11 @@ const ReceiveLayout = () => {
                     label="Invoice No"
                     name="invoiceNo"
                     style={{ width: "100%" }}>
-                    <Input placeholder="Source Ref." maxLength={50} showCount />
+                    <Input
+                      placeholder="Invoice Ref."
+                      maxLength={50}
+                      showCount
+                    />
                   </Form.Item>
                 </Col>
                 <Col lg={6} xs={24}>
@@ -258,7 +261,11 @@ const ReceiveLayout = () => {
                     label="BL/MUSHOK No"
                     name="TaxNo"
                     style={{ width: "100%" }}>
-                    <Input placeholder="Source Ref." maxLength={50} showCount />
+                    <Input
+                      placeholder="BL/MUSHOK Ref."
+                      maxLength={50}
+                      showCount
+                    />
                   </Form.Item>
                 </Col>
               </Row>
@@ -372,7 +379,13 @@ const ReceiveLayout = () => {
                               name={[name, "receiveQty"]}
                               rules={[
                                 {
-                                  required: true,
+                                  type: "number",
+                                  validator: (_, value) =>
+                                    value > 0
+                                      ? Promise.resolve()
+                                      : Promise.reject(
+                                          new Error("Greater then 0")
+                                        ),
                                 },
                               ]}
                               style={{ width: "100px" }}>

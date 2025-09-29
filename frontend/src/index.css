@@ -158,6 +158,10 @@ p {
   margin-top: 10px;
 }
 
+.borderlessInput .ant-form-item {
+  margin-bottom: 10px;
+}
+
 .borderlessInput .ant-picker .ant-picker-input > input {
   padding: 0px !important;
 }
@@ -181,12 +185,12 @@ p {
   border-color: #247f9320;
 }
 
-.ant-message {
+/* .ant-message {
   top: auto !important;
   bottom: 24px !important;
   right: 24px !important;
   left: 90% !important;
-}
+} */
 
 .search-field button,
 .search-field input {

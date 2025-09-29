@@ -1,9 +1,9 @@
 const express = require("express");
 const route = express.Router();
 const receiveApi = require("./receive");
-// const itemDetailsApi = require("./itemDetails");
+const issueApi = require("./issue");
 
 route.use("/receive", receiveApi);
-// route.use("/itemDetails", itemDetailsApi);
+route.use("/issue", issueApi);
 
 module.exports = route;

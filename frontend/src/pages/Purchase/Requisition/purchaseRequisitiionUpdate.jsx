@@ -26,7 +26,7 @@ const PurchaseRequisitiionUpdate = () => {
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
-  const [costCenter, setCostCenter] = useState();
+  const [itemInfo, setItemInfo] = useState();
   const [form] = Form.useForm();
 
   // Form submission
@@ -38,7 +38,9 @@ const PurchaseRequisitiionUpdate = () => {
     };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${refData._id}`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${
+          refData._id
+        }`,
         formData,
         {
           headers: {
@@ -61,8 +63,9 @@ const PurchaseRequisitiionUpdate = () => {
   // Get item details
   const getItems = async () => {
     try {
-      const res = await axios.get(
+      const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/master/itemInfo/view`,
+        { scope: "all" },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -74,7 +77,7 @@ const PurchaseRequisitiionUpdate = () => {
         label: item?.name,
         value: item?._id,
         code: item?.code,
-        UOM: item?.UOM?.name,
+        UOM: item?.UOM?.code,
         price: item?.avgPrice,
         onHandQty: item?.onHandQty,
         spec: item?.discription,
@@ -86,12 +89,13 @@ const PurchaseRequisitiionUpdate = () => {
   };
 
   // Get Category List
-  const getCostCenter = async () => {
+  const getItemInfo = async () => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
         {
           model: ["CostCenter"],
+          scope: "all",
         },
         {
           headers: {
@@ -107,7 +111,7 @@ const PurchaseRequisitiionUpdate = () => {
         }));
         return { ...item };
       });
-      setCostCenter(tableArr);
+      setItemInfo(tableArr);
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -115,8 +119,9 @@ const PurchaseRequisitiionUpdate = () => {
 
   useEffect(() => {
     getItems();
-    getCostCenter();
+    getItemInfo();
   }, []);
+  console.log(itemList);
 
   return (
     <>
@@ -131,7 +136,6 @@ const PurchaseRequisitiionUpdate = () => {
           layout="vertical"
           initialValues={{
             ...refData,
-
             costCenter: refData.costCenter?._id,
           }}
           onFinish={onFinish}
@@ -236,7 +240,7 @@ const PurchaseRequisitiionUpdate = () => {
                         <Select
                           allowClear
                           options={
-                            costCenter?.filter(
+                            itemInfo?.filter(
                               (item) => item.modelName === "CostCenter"
                             )[0]?.data
                           }
