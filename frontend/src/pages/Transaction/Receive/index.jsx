@@ -1,9 +1,17 @@
 import React from "react";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Button, Flex } from "antd";
+import BreadCrumbCustom from "../../../components/breadCrumbCustom";
 
 const Receive = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get pathname
+  const pathname = location.pathname;
+  const lastSegment = pathname.split("/").filter(Boolean).pop();
   // User Permission Check
   const { canViewPage, canDoOther } = usePermission();
   if (!canViewPage("receive")) {
@@ -12,6 +20,26 @@ const Receive = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+        {lastSegment === "logs" ? (
+          ""
+        ) : (
+          <Button
+            className="borderBrand"
+            style={{ borderRadius: "0px" }}
+            type="default"
+            onClick={() =>
+              navigate("logs", {
+                state: {
+                  model: "Goods-Receive",
+                },
+              })
+            }>
+            Logs
+          </Button>
+        )}
+      </Flex>
       <Outlet /> {/* Outlet for New and update layout */}
     </>
   );

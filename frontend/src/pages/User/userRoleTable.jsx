@@ -37,7 +37,14 @@ const UserRoleTable = ({ data, setData }) => {
     },
     {
       key: "receive",
-      module: "Receive - Trnx",
+      module: "Goods Receive",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "issue",
+      module: "Goods Issue",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },

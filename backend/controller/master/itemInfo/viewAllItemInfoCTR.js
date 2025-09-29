@@ -16,7 +16,7 @@ async function viewAllItemInfoCTR(req, res) {
       .sort({ createdAt: -1 })
       .populate({
         path: ["UOM", "group", "type", "createdBy", "updatedBy"],
-        select: "name",
+        select: "name code",
       })
       .lean();
     if (items.length === 0) {

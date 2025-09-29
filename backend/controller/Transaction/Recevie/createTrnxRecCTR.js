@@ -108,8 +108,8 @@ async function createTrnxRecCTR(req, res, next) {
       const logData = {
         orgId: req.orgId,
         id: req.actionBy,
-        refModel: "Transaction-Receive",
-        action: `New transaction receive "${newData.code}" created`,
+        refModel: "Goods-Receive",
+        action: `New goods "${newData.code}" received`,
       };
       req.log = logData;
       next();

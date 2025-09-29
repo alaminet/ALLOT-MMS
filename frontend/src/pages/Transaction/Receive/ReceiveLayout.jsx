@@ -15,16 +15,19 @@ import {
   AutoComplete,
   message,
   InputNumber,
+  Flex,
 } from "antd";
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useNavigate } from "react-router-dom";
 dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
 const ReceiveLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -53,6 +56,8 @@ const ReceiveLayout = () => {
       );
       message.success(res.data.message);
       setLoading(false);
+      getItems();
+      getCostCenter();
       form.resetFields();
     } catch (error) {
       setLoading(false);
@@ -80,7 +85,7 @@ const ReceiveLayout = () => {
         label: item?.name,
         value: item?._id,
         code: item?.code,
-        UOM: item?.UOM?.name,
+        UOM: item?.UOM?.code,
         price: item?.avgPrice,
         SKU: item?.SKU,
       }));
@@ -123,12 +128,12 @@ const ReceiveLayout = () => {
   useEffect(() => {
     getItems();
     getCostCenter();
-  }, [onFinish]);
+  }, []);
 
   return (
     <>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
-        Goods Movement
+        Goods Receive
       </Title>
       <Card>
         <Form
