@@ -149,6 +149,43 @@ const ReceiveLayout = () => {
               <Row gutter={16}>
                 <Col lg={6} xs={24}>
                   <Form.Item
+                    label="Document Date"
+                    name="documentAt"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%" }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      maxDate={dayjs()}
+                      format={dateFormat}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Receive Date"
+                    name="receivedAt"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                    style={{ width: "100%" }}>
+                    <DatePicker
+                      defaultValue={dayjs()}
+                      minDate={dayjs().subtract(1, "month")}
+                      maxDate={dayjs()}
+                      format={dateFormat}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
                     label="Transaction Type"
                     name="tnxType"
                     rules={[
@@ -199,43 +236,7 @@ const ReceiveLayout = () => {
                     <Input placeholder="Source Ref." maxLength={50} showCount />
                   </Form.Item>
                 </Col>
-                <Col lg={6} xs={24}>
-                  <Form.Item
-                    label="Document Date"
-                    name="documentAt"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <DatePicker
-                      defaultValue={dayjs()}
-                      maxDate={dayjs()}
-                      format={dateFormat}
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={6} xs={24}>
-                  <Form.Item
-                    label="Receive Date"
-                    name="receivedAt"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <DatePicker
-                      defaultValue={dayjs()}
-                      minDate={dayjs().subtract(1, "month")}
-                      maxDate={dayjs()}
-                      format={dateFormat}
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
+
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Header Text"

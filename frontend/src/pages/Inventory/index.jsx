@@ -99,14 +99,6 @@ const Inventory = () => {
             <p className="colorLink">BDT 510215</p>
           </div>
         </Flex>
-        {lastSegment !== "new" && (
-          <Button
-            type="primary"
-            onClick={() => navigate("new")}
-            disabled={!canDoOther("inventory", "create")}>
-            Add Inventory
-          </Button>
-        )}
       </Flex>
       <div
         style={{
@@ -124,33 +116,6 @@ const Inventory = () => {
               type={lastSegment === "inventory" ? "primary" : "default"}
               onClick={() => navigate("/inventory")}>
               Stock
-            </Button>
-            <Button
-              className="borderBrand"
-              style={{ borderRadius: "0px" }}
-              type={lastSegment === "logs" ? "primary" : "default"}
-              onClick={() =>
-                navigate("logs", {
-                  state: {
-                    model: "product",
-                  },
-                })
-              }>
-              Logs
-            </Button>
-            <Button
-              className="borderBrand"
-              style={{ borderRadius: "0px" }}
-              type={lastSegment === "" ? "primary" : "default"}
-              // onClick={() =>
-              //   navigate("logs", {
-              //     state: {
-              //       model: "product",
-              //     },
-              //   })
-              // }
-              icon={<FilterOutlined />}>
-              Filter
             </Button>
             <Button
               className="borderBrand"

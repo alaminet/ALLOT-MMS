@@ -109,7 +109,7 @@ async function createTrnxRecCTR(req, res, next) {
         orgId: req.orgId,
         id: req.actionBy,
         refModel: "Goods-Receive",
-        action: `New goods "${newData.code}" received`,
+        action: `Goods received ID #${newData.code}`,
       };
       req.log = logData;
       next();

@@ -162,7 +162,7 @@ async function creatTrnxIssueCTR(req, res, next) {
         orgId: req.orgId,
         id: req.actionBy,
         refModel: "Goods-Issue",
-        action: `New goods "${newData.code}" issued`,
+        action: `Goods issued ID #${newData.code}`,
       };
       req.log = logData;
       next();

@@ -26,75 +26,12 @@ const InventoryListView = () => {
   const pathname = location.pathname;
   const lastSegment = pathname.split("/").filter(Boolean).pop();
 
-  const data = [
-    {
-      name: "Shirt",
-      code: "C001",
-      size: "M",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-    {
-      name: "Shirt",
-      code: "C002",
-      size: "XXL",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Best",
-    },
-    {
-      name: "Shirt",
-      code: "C001",
-      size: "L",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-    {
-      name: "Shirt",
-      code: "C001",
-      size: "M",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-    {
-      name: "Shirt",
-      code: "C002",
-      size: "XXL",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: 100,
-    },
-    {
-      name: "Shirt",
-      code: "C001",
-      size: "L",
-      sizeStock: 100,
-      totalStock: 100,
-      sizeProduction: 100,
-      totalProduction: 100,
-      rating: "Regular",
-    },
-  ];
-
   //   Table Row Span Functionality
   const processedData = [];
   const codeCountMap = {};
 
-  data.forEach((item) => {
-    const code = item.code;
+  queryData.forEach((item) => {
+    const code = item?.code;
     if (!codeCountMap[code]) {
       codeCountMap[code] = 1;
     } else {
@@ -104,8 +41,8 @@ const InventoryListView = () => {
 
   const seen = {};
 
-  data.forEach((item) => {
-    const code = item.code;
+  queryData.forEach((item) => {
+    const code = item?.code;
     if (!seen[code]) {
       processedData.push({ ...item, rowSpan: codeCountMap[code] });
       seen[code] = true;
@@ -134,9 +71,9 @@ const InventoryListView = () => {
       }),
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
+      title: "SKU/Part",
+      dataIndex: "SKU",
+      key: "SKU",
       responsive: ["lg"],
       onCell: (record) => ({
         rowSpan: record.rowSpan,
@@ -151,130 +88,81 @@ const InventoryListView = () => {
       ),
     },
     {
-      title: "Size",
-      dataIndex: "size",
-      key: "size",
+      title: "UOM",
+      dataIndex: "UOM",
+      key: "UOM",
       responsive: ["lg"],
     },
     {
-      title: "Size Stock",
-      dataIndex: "sizeStock",
-      key: "sizeStock",
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
       responsive: ["lg"],
     },
     {
-      title: "Total Stock",
-      dataIndex: "totalStock",
-      key: "totalStock",
+      title: "On-Hand Qty",
+      dataIndex: "locQty",
+      key: "locQty",
+      responsive: ["lg"],
+    },
+    {
+      title: "Closing Qty",
+      dataIndex: "onHandQty",
+      key: "onHandQty",
       responsive: ["lg"],
       onCell: (record) => ({
         rowSpan: record.rowSpan,
       }),
     },
-    {
-      title: "Size Production",
-      dataIndex: "sizeProduction",
-      key: "sizeProduction",
-      responsive: ["lg"],
-    },
-    {
-      title: "Total Production",
-      dataIndex: "totalProduction",
-      key: "totalProduction",
-      responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
-    },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "ratig",
-      responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
-    },
-    // {
-    //   title: "Action",
-    //   key: "action",
-    //   render: (_, record) => (
-    //     <>
-    //       <Flex gap={4} justify="end">
-    //         {(canDoOther(lastSegment, "view") ||
-    //           (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
-    //           <Tooltip title="View">
-    //             <Button
-    //               //   onClick={() => handleEdit(item)}
-    //               icon={<EyeTwoTone />}
-    //             />
-    //           </Tooltip>
-    //         )}
-    //         {(canDoOther(lastSegment, "edit") ||
-    //           (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
-    //           <Tooltip title="Edit">
-    //             <Button
-    //               //   onClick={() => handleEdit(item)}
-    //               icon={<EditTwoTone />}
-    //             />
-    //           </Tooltip>
-    //         )}
-    //         {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-    //         (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
-    //           <Tooltip title="Delete">
-    //             <Button
-    //               //   onClick={() => handleDelete(record)}
-    //               icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
-    //             />
-    //           </Tooltip>
-    //         ) : (
-    //           ""
-    //         )}
-    //       </Flex>
-    //     </>
-    //   ),
-    // },
   ];
-  const getUsers = async () => {
+  const getTableData = async () => {
+    const payload = { scope: "all" };
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/member/view`,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        }
-      );
-      message.success(res.data.message);
-      const tableArr = res?.data?.members?.map((item, index) => ({
-        key: index,
-        name: item?.name,
-        email: item?.email,
-        phone: item?.phone,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        role: item?.isAdmin,
-        access: item,
-        action: item?._id,
-      }));
-      // if (!canDoOther("user", "view")) {
-      //   const wonData = tableArr.filter((item) => item.action == user.id);
-      //   setQueryData(wonData);
-      // } else {
-      //   console.log("can");
-      //   setQueryData(tableArr);
-      // }
-      setQueryData(tableArr);
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/master/itemInfo/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
+        .then((res) => {
+          // message.success(res.data.message);
+          const tableArr = res?.data?.items?.flatMap((item) =>
+            item.stock?.map((stock) => ({
+              key: stock?._id,
+              name: item?.name,
+              code: item?.code,
+              SKU: item?.SKU,
+              UOM: item?.UOM?.code,
+              location: stock?.location,
+              locQty: stock?.onHandQty || 0,
+              onHandQty:
+                item?.stock?.reduce(
+                  (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
+                  0
+                ) || 0,
+              safetyStock: item?.safetyStock || 0,
+              type: item?.type?.name,
+              access: item,
+              action: item?._id,
+            }))
+          );
+          setQueryData(tableArr);
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
   };
 
   useEffect(() => {
-    getUsers();
+    getTableData();
   }, []);
+
   return (
     <>
       <Table
@@ -282,9 +170,9 @@ const InventoryListView = () => {
         columns={columns}
         dataSource={processedData
           ?.filter((item) =>
-            item?.code?.toLowerCase().includes(search?.toLowerCase())
+            item?.name?.toLowerCase().includes(search?.toLowerCase())
           )
-          .sort((a, b) => a.code.localeCompare(b.code))} //.sort((a, b) => a.code.localeCompare(b.code))
+          .sort((a, b) => a.name.localeCompare(b.name))} //.sort((a, b) => a.code.localeCompare(b.code))
         // title={() => "Header"}
         pagination={{ position: ["bottomRight"] }}
       />

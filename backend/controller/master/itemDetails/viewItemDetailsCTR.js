@@ -50,7 +50,6 @@ async function viewItemDetailsCTR(req, res) {
         query.createdAt.$lte = new Date(data.endDate);
       }
     }
-    console.log(query);
 
     const items = await Model.find(query)
       .sort({ createdAt: -1 })

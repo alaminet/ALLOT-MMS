@@ -26,30 +26,6 @@ const InventoryViewTable = () => {
   const pathname = location.pathname;
   const lastSegment = pathname.split("/").filter(Boolean).pop();
 
-  const data = [
-    {
-      name: "Shirt",
-      code: "C001",
-      stockProcess: 100,
-      stockAvailable: 100,
-      stockShipping: 100,
-      stockReturn: 100,
-      stockValue: 100,
-      purchaseCost: 100,
-      category: "MEN",
-    },
-    {
-      name: "Pant",
-      code: "C002",
-      stockProcess: 100,
-      stockAvailable: 100,
-      stockShipping: 100,
-      stockReturn: 100,
-      stockValue: 100,
-      purchaseCost: 100,
-      category: "WOMEN",
-    },
-  ];
   const columns = [
     {
       title: "SL",
@@ -68,8 +44,8 @@ const InventoryViewTable = () => {
     },
     {
       title: "Code",
-      dataIndex: "code",
-      key: "code",
+      dataIndex: "SKU",
+      key: "SKU",
 
       // responsive: ["lg"],
       render: (_, record) => (
@@ -82,148 +58,95 @@ const InventoryViewTable = () => {
       ),
     },
     {
-      title: "Processing Stock",
-      dataIndex: "stockProcess",
-      key: "stockProcess",
-      responsive: ["lg"],
-    },
-    {
-      title: "Avilable Stock",
-      dataIndex: "stockAvailable",
-      key: "stockAvailable",
+      title: "Received Qty",
+      dataIndex: "recQty",
+      key: "recQty",
       // responsive: ["lg"],
     },
     {
-      title: "Shipping Stock",
-      dataIndex: "stockShipping",
-      key: "stockShipping",
-      responsive: ["lg"],
+      title: "Issued Qty",
+      dataIndex: "issueQty",
+      key: "issueQty",
+      // responsive: ["lg"],
     },
     {
-      title: "Return Stock",
-      dataIndex: "stockReturn",
-      key: "stockReturn",
-      responsive: ["lg"],
+      title: "On-Hand Qty",
+      dataIndex: "onHandQty",
+      key: "onHandQty",
+      // responsive: ["lg"],
     },
     {
-      title: "Stock Value",
-      dataIndex: "stockValue",
-      key: "stockValue",
-      responsive: ["lg"],
+      title: "Safety Stock",
+      dataIndex: "safetyStock",
+      key: "safetyStock",
+      // responsive: ["lg"],
     },
     {
-      title: "Purchase Cost",
-      dataIndex: "purchaseCost",
-      key: "purchaseCost",
+      title: "Item Group",
+      dataIndex: "group",
+      key: "group",
       responsive: ["lg"],
-    },
-    {
-      title: "Category",
-      dataIndex: "category",
-      key: "category",
-      responsive: ["lg"],
-    },
-    // {
-    //   title: "Status",
-    //   dataIndex: "status",
-    //   key: "status",
-    //   responsive: ["lg"],
-    //   render: (_, action) => (
-    //     <Switch
-    //       disabled={action.role}
-    //       checkedChildren="Active"
-    //       unCheckedChildren="Inactive"
-    //       defaultValue={_}
-    //       onChange={(e) => handleUserChange(action.action, "status", e)}
-    //     />
-    //   ),
-    // },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <>
-          <Flex gap={4} justify="end">
-            {(canDoOther(lastSegment, "view") ||
-              (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
-              <Tooltip title="View">
-                <Button
-                  //   onClick={() => handleEdit(item)}
-                  icon={<EyeTwoTone />}
-                />
-              </Tooltip>
-            )}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
-              <Tooltip title="Edit">
-                <Button
-                  //   onClick={() => handleEdit(item)}
-                  icon={<EditTwoTone />}
-                />
-              </Tooltip>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
-              <Tooltip title="Delete">
-                <Button
-                  //   onClick={() => handleDelete(record)}
-                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
-                />
-              </Tooltip>
-            ) : (
-              ""
-            )}
-          </Flex>
-        </>
-      ),
     },
   ];
-  const getUsers = async () => {
+  const getTableData = async () => {
+    const payload = { scope: "all" };
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/member/view`,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        }
-      );
-      message.success(res.data.message);
-      const tableArr = res?.data?.members?.map((item, index) => ({
-        key: index,
-        name: item?.name,
-        email: item?.email,
-        phone: item?.phone,
-        status: item?.status,
-        createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-        updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-        role: item?.isAdmin,
-        access: item,
-        action: item?._id,
-      }));
-      // if (!canDoOther("user", "view")) {
-      //   const wonData = tableArr.filter((item) => item.action == user.id);
-      //   setQueryData(wonData);
-      // } else {
-      //   console.log("can");
-      //   setQueryData(tableArr);
-      // }
-      setQueryData(tableArr);
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/master/itemInfo/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
+        .then((res) => {
+          // message.success(res.data.message);
+          const tableArr = res?.data?.items?.flatMap((item) => ({
+            key: item._id,
+            name: item?.name,
+            SKU: item?.SKU,
+            UOM: item?.UOM?.code,
+            group: item?.group?.name,
+            issueQty:
+              item?.stock?.reduce(
+                (sum, stock) => sum + (Number(stock?.issueQty) || 0),
+                0
+              ) || 0,
+            recQty:
+              item?.stock?.reduce(
+                (sum, stock) => sum + (Number(stock?.recQty) || 0),
+                0
+              ) || 0,
+            onHandQty:
+              item?.stock?.reduce(
+                (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
+                0
+              ) || 0,
+            safetyStock: item?.safetyStock || 0,
+            type: item?.type.name,
+            access: item,
+            action: item?._id,
+          }));
+          setQueryData(tableArr);
+        })
+        .catch((err) => console.log(err));
     } catch (error) {
       message.error(error.response.data.error);
     }
   };
 
   useEffect(() => {
-    getUsers();
+    getTableData();
   }, []);
   return (
     <>
       <Table
         columns={columns}
-        dataSource={data?.filter((item) =>
-          item?.code?.toLowerCase().includes(search?.toLowerCase())
+        dataSource={queryData?.filter((item) =>
+          item?.name?.toLowerCase().includes(search?.toLowerCase())
         )}
         // title={() => "Header"}
         pagination={{ position: ["bottomRight"] }}

@@ -55,6 +55,7 @@ const items = [
   getItem("Transaction", "transaction", <ShopOutlined />, [
     getItem("Receive", "receive", <FileDoneOutlined />),
     getItem("Issue", "issue", <FileDoneOutlined />),
+    getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),
   ]),
   getItem("Item", "item", <ProductOutlined />),
   getItem("Master", "master", <ProductOutlined />, [
@@ -257,19 +258,19 @@ const BasicLayout = () => {
             <Content style={{ margin: collapsed ? "0px" : "0 16px" }}>
               <div
                 style={{
-                  padding: 24,
+                  padding: "24px 0",
                   minHeight: 360,
                 }}>
                 <Outlet />
               </div>
             </Content>
-            {/* <Footer style={{ textAlign: "center" }}>
-              All rights Reserved ©AAYAAZ {new Date().getFullYear()} | Developed
+            <Footer style={{ textAlign: "center" }}>
+              All rights Reserved ©ALLOT {new Date().getFullYear()} | Developed
               by{" "}
               <Link to="https://github.com/alaminet" target="_blank">
                 Al Amin ET
               </Link>
-            </Footer> */}
+            </Footer>
           </Layout>
         </Layout>
       </ConfigProvider>

@@ -17,7 +17,6 @@ import LogActivites from "./components/logActivites";
 import UserUpdate from "./pages/User/userUpdate";
 import Inventory from "./pages/Inventory";
 import InventoryViewTable from "./pages/Inventory/inventoryViewTable";
-import InventoryAdd from "./pages/Inventory/inventoryAdd";
 import InventoryListView from "./pages/Inventory/inventoryListView";
 import Items from "./pages/Master";
 import ItemInfo from "./pages/Master/ItemInfo";
@@ -43,6 +42,8 @@ import Receive from "./pages/Transaction/Receive";
 import ReceiveLayout from "./pages/Transaction/Receive/ReceiveLayout";
 import Issue from "./pages/Transaction/Issue";
 import IssueLayout from "./pages/Transaction/Issue/IssueLayout";
+import TnxReport from "./pages/Transaction/Report";
+import TnxReportLayout from "./pages/Transaction/Report/tnxReportLayout";
 
 function App() {
   const router = createBrowserRouter(
@@ -61,7 +62,6 @@ function App() {
             </Route>
             <Route path="/inventory" element={<Inventory />}>
               <Route path="" element={<InventoryViewTable />} />
-              <Route path="new" element={<InventoryAdd />} />
               <Route path="list" element={<InventoryListView />} />
               <Route path="logs" element={<LogActivites />} />
             </Route>
@@ -78,6 +78,10 @@ function App() {
               </Route>
               <Route path="issue" element={<Issue />}>
                 <Route path="" element={<IssueLayout />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="tnx-report" element={<TnxReport />}>
+                <Route path="" element={<TnxReportLayout />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>
