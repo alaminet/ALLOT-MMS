@@ -86,6 +86,8 @@ const TnxReportLayout = () => {
             name: item?.itemName,
             UOM: item?.itemUOM,
             location: item?.location,
+            remarks: item?.remarks,
+            costCenter: item?.costCenter,
             unitPrice: Number(item?.itemPrice).toFixed(2),
             tnxQty: Number(item?.tnxQty).toFixed(2),
             tnxPrice: Number(item?.tnxQty * item?.itemPrice).toFixed(2),
@@ -96,7 +98,7 @@ const TnxReportLayout = () => {
           }));
           setQueryData(tableArr);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => message.error(err.response.data.error));
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -107,26 +109,24 @@ const TnxReportLayout = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
       title: "Tnx. Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 240,
+      width: 120,
     },
     {
       title: "Tnx. Ref.",
       dataIndex: "tnxRef",
       key: "tnxRef",
-      width: 160,
     },
     {
       title: "Tnx. Type",
       dataIndex: "tnxType",
       key: "tnxType",
-      width: 150,
       filters: [...new Set(queryData?.map((item) => item?.tnxType))].map(
         (item) => ({
           text: item,
@@ -140,7 +140,6 @@ const TnxReportLayout = () => {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 100,
       filters: [...new Set(queryData?.map((item) => item?.code))].map(
         (code) => ({
           text: code,
@@ -154,7 +153,6 @@ const TnxReportLayout = () => {
       title: "SKU",
       dataIndex: "SKU",
       key: "SKU",
-      width: 150,
       filters: [...new Set(queryData?.map((item) => item?.SKU))].map(
         (code) => ({
           text: code,
@@ -168,7 +166,7 @@ const TnxReportLayout = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 150,
+      width: 250,
       filters: [...new Set(queryData?.map((item) => item?.name))].map(
         (code) => ({
           text: code,
@@ -182,7 +180,6 @@ const TnxReportLayout = () => {
       title: "UOM",
       dataIndex: "UOM",
       key: "UOM",
-      width: 150,
       filters: [...new Set(queryData?.map((item) => item?.UOM))].map(
         (code) => ({
           text: code,
@@ -196,31 +193,44 @@ const TnxReportLayout = () => {
       title: "Unit Price",
       dataIndex: "unitPrice",
       key: "unitPrice",
-      width: 150,
     },
     {
       title: "Trnx. Qty",
       dataIndex: "tnxQty",
       key: "tnxQty",
-      width: 150,
     },
     {
       title: "Trnx. Value",
       dataIndex: "tnxPrice",
       key: "tnxPrice",
-      width: 150,
     },
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
-      width: 150,
+    },
+    {
+      title: "Remarks",
+      dataIndex: "remarks",
+      key: "remarks",
+    },
+    {
+      title: "Used On",
+      dataIndex: "costCenter",
+      key: "costCenter",
+      filters: [...new Set(queryData?.map((item) => item?.costCenter))].map(
+        (item) => ({
+          text: item,
+          value: item,
+        })
+      ),
+      onFilter: (value, record) => record?.costCenter === value,
+      filterSearch: true,
     },
     {
       title: "Trnx. By",
       dataIndex: "createdBy",
       key: "createdBy",
-      width: 150,
     },
   ];
 
@@ -361,7 +371,11 @@ const TnxReportLayout = () => {
         columns={columns}
         dataSource={queryData}
         // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
+        sticky
+        pagination
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
       <Modal
         title="View Details"

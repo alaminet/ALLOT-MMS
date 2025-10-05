@@ -40,7 +40,7 @@ const PurchaseReqViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
@@ -106,9 +106,10 @@ const PurchaseReqViewTable = () => {
 
     {
       title: "Action",
-      align: "center",
-      width: 100,
       key: "action",
+      align: "center",
+      width: 150,
+      fixed: "right",
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
@@ -257,7 +258,11 @@ const PurchaseReqViewTable = () => {
             item.name?.toLowerCase().includes(search?.toLowerCase())
           )}
           // title={() => "Header"}
-          pagination={{ position: ["bottomRight"] }}
+          sticky
+          pagination
+          scroll={{
+            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+          }}
         />
       )}
 

@@ -97,14 +97,14 @@ const ItemDetailsView = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: 100,
+      width: 150,
       filters: [...new Set(queryData?.map((item) => item.code))].map(
         (code) => ({
           text: code,
@@ -121,9 +121,9 @@ const ItemDetailsView = () => {
     },
     {
       title: "Action",
-      align: "center",
-      width: 100,
       key: "action",
+      align: "center",
+      width: 150,
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
@@ -255,7 +255,11 @@ const ItemDetailsView = () => {
           item.name?.toLowerCase().includes(search?.toLowerCase())
         )}
         // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
+        sticky
+        pagination
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
       <Modal
         title="View Details"

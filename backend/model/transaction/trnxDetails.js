@@ -13,6 +13,8 @@ const trnxDetailsSchema = new Schema(
     itemPrice: Number,
     tnxQty: Number,
     location: String,
+    remarks: String,
+    costCenter: String,
 
     // Common Schema
     status: {

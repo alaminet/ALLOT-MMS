@@ -47,6 +47,7 @@ async function createTrnxRecCTR(req, res, next) {
         itemPrice: item.unitPrice,
         tnxQty: item.receiveQty,
         location: item.location,
+        remarks: item.remarks,
         createdBy: newData.createdBy,
         updatedBy: newData.updatedBy,
       }));

@@ -39,12 +39,13 @@ const SupplierViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
       title: "Code",
       dataIndex: "code",
+      width: 130,
       key: "code",
       filters: [...new Set(queryData?.map((item) => item.code))].map(
         (code) => ({
@@ -79,12 +80,13 @@ const SupplierViewTable = () => {
       dataIndex: "type",
       key: "type",
       responsive: ["md"],
+      width: 80,
     },
 
     {
       title: "Action",
       align: "center",
-      width: 100,
+      width: 150,
       key: "action",
       render: (_, record) => (
         <>
@@ -220,7 +222,11 @@ const SupplierViewTable = () => {
           item.name?.toLowerCase().includes(search?.toLowerCase())
         )}
         // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
+        sticky
+        pagination
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
       <Modal
         title="View Details"

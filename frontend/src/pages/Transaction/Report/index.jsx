@@ -22,7 +22,7 @@ const TnxReport = () => {
     <>
       <Flex justify="space-between">
         <BreadCrumbCustom />
-        {lastSegment === "logs" ? (
+        {/* {lastSegment === "logs" ? (
           ""
         ) : (
           <Button
@@ -38,7 +38,7 @@ const TnxReport = () => {
             }>
             Logs
           </Button>
-        )}
+        )} */}
       </Flex>
       <Outlet /> {/* Outlet for New and update layout */}
     </>
