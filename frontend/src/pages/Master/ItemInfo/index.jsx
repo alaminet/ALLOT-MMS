@@ -35,6 +35,14 @@ const ItemInfo = () => {
             Add Item
           </Button>
         )}
+        {lastSegment === "new" && (
+          <Button
+            type="primary"
+            onClick={() => navigate("new-bulk")}
+            disabled={!user.isAdmin}>
+            Bulk Add
+          </Button>
+        )}
       </Flex>
       <Flex
         justify="space-between"

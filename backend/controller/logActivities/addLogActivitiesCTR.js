@@ -4,8 +4,15 @@ async function addLogActivitiesCTR(req, res) {
   const log = req.log;
 
   try {
-    if (!log.id || !log.refModel || !log.action || !log.orgId) {
-      return res.status(400).send({ error: "id, Model & Action are required" });
+    if (Array.isArray(log)) {
+      await Log.insertMany(
+        log.map((l) => ({
+          orgId: l.orgId,
+          action: l.action,
+          actionBy: l.id,
+          refModel: l.refModel,
+        }))
+      );
     } else {
       const addLog = new Log({
         orgId: log.orgId,

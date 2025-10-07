@@ -44,6 +44,8 @@ import Issue from "./pages/Transaction/Issue";
 import IssueLayout from "./pages/Transaction/Issue/IssueLayout";
 import TnxReport from "./pages/Transaction/Report";
 import TnxReportLayout from "./pages/Transaction/Report/tnxReportLayout";
+import ItemAddBulk from "./pages/Master/ItemInfo/itemAddBulk";
+import ItemDetailsBulkAdd from "./pages/Master/ItemDetails/itemDetailsBulkAdd.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -101,12 +103,14 @@ function App() {
               <Route path="/item-list" element={<ItemInfo />}>
                 <Route path="" element={<ItemViewTable />} />
                 <Route path="new" element={<ItemAdd />}></Route>
+                <Route path="new-bulk" element={<ItemAddBulk />}></Route>
                 <Route path="update" element={<ItemUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="/item-details" element={<ItemDetails />}>
                 <Route path="" element={<ItemDetailsView />} />
                 <Route path="new" element={<ItemDetailsAdd />}></Route>
+                <Route path="new-bulk" element={<ItemDetailsBulkAdd />}></Route>
                 <Route path="update" element={<ItemDetailsUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
