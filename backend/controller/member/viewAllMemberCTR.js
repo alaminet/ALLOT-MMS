@@ -15,7 +15,7 @@ async function viewAllMemberCTR(req, res) {
     }
     const members = await Member.find(query)
       .sort({ createdAt: -1 })
-      .select("name email phone status createdAt access"); // Exclude sensitive fields
+      .select("email isAdmin name phone status createdAt costCenter access"); // Exclude sensitive fields
     if (members.length === 0) {
       return res.status(404).send({ error: "No members found" });
     }

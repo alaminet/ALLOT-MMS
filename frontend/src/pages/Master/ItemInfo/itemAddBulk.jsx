@@ -142,7 +142,7 @@ const ItemAddBulk = () => {
                     required
                     style={{ width: "100%" }}>
                     <TextArea
-                      placeholder="Name | Discription | SKU | UOM | Group | Type | Low Stock | Shelf Life | Serialized"
+                      placeholder="Name | Discription | SKU | UOM_id | Group_id | Type_id | Low Stock | Shelf Life(ture/false) | Serialized(ture/false)"
                       rows={16}
                     />
                   </Form.Item>
