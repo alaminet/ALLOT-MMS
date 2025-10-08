@@ -5,7 +5,7 @@ const { Column, ColumnGroup } = Table;
 const UserRoleViewTable = ({ data }) => {
   return (
     <>
-      <Table bordered pagination={false} dataSource={data}>
+      <Table bordered pagination={false} dataSource={data} sticky>
         <ColumnGroup title="Access Point">
           <Column title="Module" dataIndex="module" key="module" />
           <Column

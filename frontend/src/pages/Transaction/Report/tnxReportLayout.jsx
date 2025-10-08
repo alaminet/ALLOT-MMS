@@ -97,8 +97,7 @@ const TnxReportLayout = () => {
             action: item,
           }));
           setQueryData(tableArr);
-        })
-        .catch((err) => message.error(err.response.data.error));
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -198,11 +197,29 @@ const TnxReportLayout = () => {
       title: "Trnx. Qty",
       dataIndex: "tnxQty",
       key: "tnxQty",
+      render: (value) => (
+        <div
+          style={{
+            backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
+            padding: "4px 8px", // optional for spacing
+          }}>
+          {value}
+        </div>
+      ),
     },
     {
       title: "Trnx. Value",
       dataIndex: "tnxPrice",
       key: "tnxPrice",
+      render: (value) => (
+        <div
+          style={{
+            backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
+            padding: "4px 8px", // optional for spacing
+          }}>
+          {value}
+        </div>
+      ),
     },
     {
       title: "Location",

@@ -31,7 +31,7 @@ const InventoryViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
       responsive: ["lg"],
     },
@@ -39,7 +39,7 @@ const InventoryViewTable = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 300,
       // responsive: ["lg"],
     },
     {
@@ -131,8 +131,7 @@ const InventoryViewTable = () => {
             action: item?._id,
           }));
           setQueryData(tableArr);
-        })
-        .catch((err) => console.log(err));
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -149,7 +148,11 @@ const InventoryViewTable = () => {
           item?.name?.toLowerCase().includes(search?.toLowerCase())
         )}
         // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
+        sticky
+        pagination
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
     </>
   );

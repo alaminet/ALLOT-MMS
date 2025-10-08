@@ -211,8 +211,7 @@ const PurchaseReqViewTable = () => {
             }))
           );
           setQueryData(tableArr);
-        })
-        .catch((err) => console.log(err));
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }

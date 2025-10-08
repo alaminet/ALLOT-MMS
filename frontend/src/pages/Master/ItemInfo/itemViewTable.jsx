@@ -38,7 +38,7 @@ const ItemViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
@@ -214,8 +214,7 @@ const ItemViewTable = () => {
             action: item?._id,
           }));
           setQueryData(tableArr);
-        })
-        .catch((err) => console.log(err));
+        });
     } catch (error) {
       message.error(error.response.data.error);
     }

@@ -1,18 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Row,
-  Select,
-  Switch,
-  Typography,
-} from "antd";
+import { Button, Card, Col, Form, message, Row, Typography } from "antd";
 import { useSelector } from "react-redux";
 import TextArea from "antd/es/input/TextArea";
 const { Title } = Typography;
@@ -20,7 +8,6 @@ const { Title } = Typography;
 const ItemAddBulk = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
 
   // Form submission
@@ -34,7 +21,7 @@ const ItemAddBulk = () => {
         UOM,
         group,
         type,
-        lowStock,
+        safetyStock,
         shelfLife,
         serialized,
       ] = item.split("\t").map((i) => i.trim());
@@ -45,7 +32,7 @@ const ItemAddBulk = () => {
         UOM,
         group,
         type,
-        lowStock: Number(lowStock) || 0,
+        safetyStock: Number(safetyStock) || 0,
         shelfLife: shelfLife?.toLowerCase() === "true",
         serialized: serialized?.toLowerCase() === "true",
       };
@@ -77,45 +64,6 @@ const ItemAddBulk = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
-  // Get Category List
-  const getCategories = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
-        {
-          model: [
-            "ItemUOM",
-            "ItemGroup",
-            "ItemType",
-            "CostCenter",
-            "StoreLocation",
-            "Transaction",
-          ],
-        },
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user?.token,
-          },
-        }
-      );
-      const tableArr = res?.data?.items?.map((item, index) => {
-        item.data = item?.data?.map((i) => ({
-          value: i._id,
-          label: item?.modelName === "ItemUOM" ? i.code : i.name,
-        }));
-        return { ...item };
-      });
-      setCategories(tableArr);
-    } catch (error) {
-      message.error(error.response.data.error);
-    }
-  };
-
-  useEffect(() => {
-    getCategories();
-  }, []);
 
   return (
     <>
