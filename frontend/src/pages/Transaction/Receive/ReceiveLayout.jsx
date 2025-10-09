@@ -277,7 +277,7 @@ const ReceiveLayout = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row gutter={8}>
+                        <Row justify="space-between">
                           <Col span={7} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
@@ -299,9 +299,10 @@ const ReceiveLayout = () => {
                           <Col span={4} style={{ fontWeight: "600" }}>
                             Remarks
                           </Col>
+                          <Col span={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
-                          <Row key={key} justify="space-between" gutter={8}>
+                          <Row key={key} justify="space-between">
                             <Col span={7}>
                               <Form.Item
                                 {...restField}
@@ -397,7 +398,10 @@ const ReceiveLayout = () => {
                               <Form.Item
                                 {...restField}
                                 name={[name, "unitPrice"]}>
-                                <InputNumber placeholder="Price" />
+                                <InputNumber
+                                  placeholder="Price"
+                                  style={{ width: "100%" }}
+                                />
                               </Form.Item>
                             </Col>
                             <Col span={2}>
@@ -415,7 +419,10 @@ const ReceiveLayout = () => {
                                           ),
                                   },
                                 ]}>
-                                <InputNumber placeholder="Req. Qty" />
+                                <InputNumber
+                                  placeholder="Req. Qty"
+                                  style={{ width: "100%" }}
+                                />
                               </Form.Item>
                             </Col>
                             <Col span={3}>
@@ -458,6 +465,7 @@ const ReceiveLayout = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 height: "42px",
+                                justifyContent: "center",
                               }}>
                               <MinusCircleOutlined
                                 onClick={() => remove(name)}

@@ -267,7 +267,7 @@ const IssueLayout = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row gutter={8}>
+                        <Row justify="space-between">
                           <Col span={6} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
@@ -289,14 +289,11 @@ const IssueLayout = () => {
                           <Col span={4} style={{ fontWeight: "600" }}>
                             Remarks
                           </Col>
+                          <Col span={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
                           <>
-                            <Row
-                              key={key}
-                              justify="space-between"
-                              align="top"
-                              gutter={8}>
+                            <Row key={key} justify="space-between" align="top">
                               <Col span={6}>
                                 <Form.Item
                                   {...restField}
@@ -474,7 +471,10 @@ const IssueLayout = () => {
                                             ),
                                     },
                                   ]}>
-                                  <InputNumber placeholder="Issue Qty" />
+                                  <InputNumber
+                                    placeholder="Issue Qty"
+                                    style={{ width: "100%" }}
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={4}>
@@ -490,6 +490,7 @@ const IssueLayout = () => {
                                   display: "flex",
                                   alignItems: "center",
                                   height: "42px",
+                                  justifyContent: "center",
                                 }}>
                                 <MinusCircleOutlined
                                   onClick={() => remove(name)}

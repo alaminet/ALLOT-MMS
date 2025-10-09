@@ -72,7 +72,10 @@ const PurchaseRequisitiion = () => {
         code: item?.code,
         UOM: item?.UOM?.code,
         price: item?.avgPrice,
-        onHandQty: item?.onHandQty,
+        onHandQty: item?.stock?.reduce(
+          (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
+          0
+        ),
         spec: item?.discription,
       }));
       setItemList(tableArr);
@@ -250,152 +253,197 @@ const PurchaseRequisitiion = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
+                        <Row justify="space-between">
+                          <Col span={4} style={{ fontWeight: "600" }}>
+                            Name
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "600" }}>
+                            Specification
+                          </Col>
+                          <Col span={2} style={{ fontWeight: "600" }}>
+                            Brand
+                          </Col>
+                          <Col span={2} style={{ fontWeight: "600" }}>
+                            UOM
+                          </Col>
+                          <Col span={2} style={{ fontWeight: "600" }}>
+                            Unit Price
+                          </Col>
+                          <Col span={2} style={{ fontWeight: "600" }}>
+                            On-Hand Qty
+                          </Col>
+                          <Col span={2} style={{ fontWeight: "600" }}>
+                            Req. Qty
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "600" }}>
+                            Plan
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "600" }}>
+                            Remarks
+                          </Col>
+                          <Col span={1} style={{ fontWeight: "600" }}></Col>
+                        </Row>
                         {fields.map(({ key, name, ...restField }) => (
-                          <Space
-                            key={key}
-                            justify="space-between"
-                            align="baseline">
-                            <Form.Item
-                              {...restField}
-                              name={[name, "name"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Item name",
-                                },
-                              ]}
-                              style={{ width: "200px" }}>
-                              <AutoComplete
-                                options={filteredOptions}
-                                onSearch={(searchText) => {
-                                  const filtered = itemList
-                                    .filter((item) =>
-                                      item.label
-                                        .toLowerCase()
-                                        .includes(searchText.toLowerCase())
-                                    )
-                                    .map((item) => ({
-                                      label: item.label,
-                                      value: item.label,
-                                    }));
-                                  setFilteredOptions(filtered);
-                                }}
-                                onSelect={(value) => {
-                                  const matched = itemList.find(
-                                    (i) => i.label === value
-                                  );
-                                  if (matched) {
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "UOM"],
-                                      matched.UOM
+                          <Row key={key} justify="space-between" align="top">
+                            <Col span={4}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "name"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Item name",
+                                  },
+                                ]}>
+                                <AutoComplete
+                                  options={filteredOptions}
+                                  onSearch={(searchText) => {
+                                    const filtered = itemList
+                                      .filter((item) =>
+                                        item.label
+                                          .toLowerCase()
+                                          .includes(searchText.toLowerCase())
+                                      )
+                                      .map((item) => ({
+                                        label: item.label,
+                                        value: item.label,
+                                      }));
+                                    setFilteredOptions(filtered);
+                                  }}
+                                  onSelect={(value) => {
+                                    const matched = itemList.find(
+                                      (i) => i.label === value
                                     );
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "code"],
-                                      matched.value
+                                    if (matched) {
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "UOM"],
+                                        matched.UOM
+                                      );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "code"],
+                                        matched.value
+                                      );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "unitPrice"],
+                                        matched.price
+                                      );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "onHandQty"],
+                                        matched.onHandQty
+                                      );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "spec"],
+                                        matched.spec
+                                      );
+                                    }
+                                  }}
+                                  onChange={(value) => {
+                                    const matched = itemList.find(
+                                      (i) => i.label === value
                                     );
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "unitPrice"],
-                                      matched.price
-                                    );
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "onHandQty"],
-                                      matched.onHandQty
-                                    );
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "spec"],
-                                      matched.spec
-                                    );
-                                  }
-                                }}
-                                onChange={(value) => {
-                                  const matched = itemList.find(
-                                    (i) => i.label === value
-                                  );
-                                  if (!matched) {
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "UOM"],
-                                      ""
-                                    ); // clear UOM for manual input
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "code"],
-                                      ""
-                                    ); // clear code for manual input
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "unitPrice"],
-                                      ""
-                                    ); // clear unitPrice for manual input
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "onHandQty"],
-                                      ""
-                                    ); // clear unitPrice for manual input
-                                    form.setFieldValue(
-                                      ["itemDetails", name, "spec"],
-                                      ""
-                                    ); // clear unitPrice for manual input
-                                  }
-                                }}
-                                placeholder="Item name"
-                              />
-                            </Form.Item>
-                            <Form.Item
-                              hidden
-                              {...restField}
-                              name={[name, "code"]}>
-                              <Input placeholder="Code" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "spec"]}
-                              style={{ width: "150px" }}>
-                              <Input placeholder="Specification" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "brand"]}
-                              style={{ width: "80px" }}>
-                              <Input placeholder="Brand" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "UOM"]}
-                              style={{ width: "70px" }}>
-                              <Input placeholder="UOM" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "unitPrice"]}
-                              style={{ width: "70px" }}>
-                              <Input placeholder="Price" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "onHandQty"]}
-                              style={{ width: "100px" }}>
-                              <Input placeholder="On Hand" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "reqQty"]}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Req. Qty",
-                                },
-                              ]}
-                              style={{ width: "90px" }}>
-                              <Input placeholder="Req. Qty" />
-                            </Form.Item>
-                            <Form.Item
-                              {...restField}
-                              name={[name, "consumePlan"]}>
-                              <Input placeholder="Consume Plan" />
-                            </Form.Item>
-                            <Form.Item {...restField} name={[name, "remarks"]}>
-                              <Input placeholder="Remarks" />
-                            </Form.Item>
+                                    if (!matched) {
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "UOM"],
+                                        ""
+                                      ); // clear UOM for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "code"],
+                                        ""
+                                      ); // clear code for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "unitPrice"],
+                                        ""
+                                      ); // clear unitPrice for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "onHandQty"],
+                                        ""
+                                      ); // clear unitPrice for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "spec"],
+                                        ""
+                                      ); // clear unitPrice for manual input
+                                    }
+                                  }}
+                                  placeholder="Item name"
+                                />
+                              </Form.Item>
+                              <Form.Item
+                                hidden
+                                {...restField}
+                                name={[name, "code"]}>
+                                <Input placeholder="Code" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                              <Form.Item {...restField} name={[name, "spec"]}>
+                                <Input placeholder="Specification" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={2}>
+                              <Form.Item {...restField} name={[name, "brand"]}>
+                                <Input placeholder="Brand" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={2}>
+                              <Form.Item {...restField} name={[name, "UOM"]}>
+                                <Input placeholder="UOM" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={2}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "unitPrice"]}>
+                                <Input placeholder="Price" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={2}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "onHandQty"]}>
+                                <Input placeholder="On Hand" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={2}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "reqQty"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Req. Qty",
+                                  },
+                                ]}>
+                                <Input placeholder="Req. Qty" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "consumePlan"]}>
+                                <Input placeholder="Consume Plan" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "remarks"]}>
+                                <Input placeholder="Remarks" />
+                              </Form.Item>
+                            </Col>
 
-                            <MinusCircleOutlined onClick={() => remove(name)} />
-                          </Space>
+                            <Col
+                              span={1}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                height: "42px",
+                                justifyContent: "center",
+                              }}>
+                              <MinusCircleOutlined
+                                onClick={() => remove(name)}
+                              />
+                            </Col>
+                          </Row>
                         ))}
                         <Form.Item>
                           <Button type="primary" onClick={() => add()} block>
