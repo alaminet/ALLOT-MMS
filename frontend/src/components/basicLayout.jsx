@@ -255,16 +255,16 @@ const BasicLayout = () => {
                 </Flex>
               </Flex>
             </Header>
-            <Content style={{ margin: collapsed ? "0px" : "0 16px" }}>
+            <Content style={{ margin: collapsed ? "0px 5px" : "0 16px" }}>
               <div
                 style={{
-                  padding: "24px 0",
+                  padding: "20px 0",
                   minHeight: 360,
                 }}>
                 <Outlet />
               </div>
             </Content>
-            <Footer style={{ textAlign: "center" }}>
+            <Footer style={{ textAlign: "center", padding: "0 0 10px 0" }}>
               All rights Reserved ©ALLOT {new Date().getFullYear()} | Developed
               by{" "}
               <Link to="https://github.com/alaminet" target="_blank">
