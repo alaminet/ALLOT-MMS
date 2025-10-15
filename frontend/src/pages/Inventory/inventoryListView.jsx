@@ -56,7 +56,7 @@ const InventoryListView = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 20,
+      width: 50,
       render: (text, record, index) => index + 1,
       responsive: ["lg"],
     },
@@ -173,7 +173,11 @@ const InventoryListView = () => {
           )
           .sort((a, b) => a.name.localeCompare(b.name))} //.sort((a, b) => a.code.localeCompare(b.code))
         // title={() => "Header"}
-        pagination={{ position: ["bottomRight"] }}
+        sticky
+        pagination
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
     </>
   );
