@@ -500,7 +500,7 @@ const IssueLayout = () => {
                           </>
                         ))}
                         <Form.Item>
-                          <Button type="primary" onClick={() => add()} block>
+                          <Button type="primary" onClick={() => add()} block style={{ borderRadius: "0px", padding: "10px 30px" }}>
                             + Add Item
                           </Button>
                         </Form.Item>

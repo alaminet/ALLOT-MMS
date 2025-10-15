@@ -62,23 +62,21 @@ const Login = () => {
           style={{
             height: "100vh",
             flexDirection: "column",
-            backgroundColor: "#212121",
+            backgroundColor: "#e6e6e6ff",
           }}
           align="center"
           justify="center">
           <Card
-            variant="borderless"
+            // variant="outlined"
             style={{
-              width: 350,
-              backgroundColor: "#121212",
-              padding: "30px 20px",
+              width: 450,
+              // backgroundColor: "#121212",
+              padding: "20px",
+              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
             }}>
-            <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ textAlign: "center", padding: "0 0 30px 0" }}>
               {/* <img src={logoWhite} alt="Logo" style={{ width: 200 }} /> */}
-              <span
-                style={{ color: "#fff", fontSize: "36px", fontWeight: "800" }}>
-                ALLOT
-              </span>
+              <span style={{ fontSize: "36px", fontWeight: "800" }}>ALLOT</span>
             </div>
             <Form
               name="login"

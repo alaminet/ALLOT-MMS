@@ -291,7 +291,7 @@ const ReceiveLayout = () => {
                             Unit Price
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
-                            Req. Qty
+                            Rec. Qty
                           </Col>
                           <Col span={3} style={{ fontWeight: "600" }}>
                             Location
@@ -474,7 +474,7 @@ const ReceiveLayout = () => {
                           </Row>
                         ))}
                         <Form.Item>
-                          <Button type="primary" onClick={() => add()} block>
+                          <Button type="primary" onClick={() => add()} block style={{ borderRadius: "0px", padding: "10px 30px" }}>
                             + Add Item
                           </Button>
                         </Form.Item>
