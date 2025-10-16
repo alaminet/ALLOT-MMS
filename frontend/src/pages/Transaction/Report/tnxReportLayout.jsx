@@ -37,9 +37,6 @@ const TnxReportLayout = () => {
   const lastSegment = pathname.split("/").filter(Boolean).pop();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("item-details")) {
-    return <NotAuth />;
-  }
   const own = canDoOwn(lastSegment, "view");
   const others = canDoOther(lastSegment, "view");
 

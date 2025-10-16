@@ -64,7 +64,6 @@ const InventoryListView = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
       responsive: ["lg"],
       onCell: (record) => ({
         rowSpan: record.rowSpan,
@@ -74,6 +73,7 @@ const InventoryListView = () => {
       title: "SKU/Part",
       dataIndex: "SKU",
       key: "SKU",
+      width: 150,
       responsive: ["lg"],
       onCell: (record) => ({
         rowSpan: record.rowSpan,
@@ -91,6 +91,7 @@ const InventoryListView = () => {
       title: "UOM",
       dataIndex: "UOM",
       key: "UOM",
+      width: 100,
       responsive: ["lg"],
     },
     {
@@ -103,12 +104,14 @@ const InventoryListView = () => {
       title: "On-Hand Qty",
       dataIndex: "locQty",
       key: "locQty",
+      width: 150,
       responsive: ["lg"],
     },
     {
       title: "Closing Qty",
       dataIndex: "onHandQty",
       key: "onHandQty",
+      width: 150,
       responsive: ["lg"],
       onCell: (record) => ({
         rowSpan: record.rowSpan,

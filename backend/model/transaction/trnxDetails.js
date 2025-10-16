@@ -15,6 +15,8 @@ const trnxDetailsSchema = new Schema(
     location: String,
     remarks: String,
     costCenter: String,
+    documentAt: Date,
+    issuedAt: Date,
 
     // Common Schema
     status: {

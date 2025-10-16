@@ -103,6 +103,8 @@ async function creatTrnxIssueCTR(req, res, next) {
         location: item.location,
         remarks: item.remarks,
         costCenter: newData.costCenter,
+        documentAt: newData.documentAt,
+        issuedAt: newData.issuedAt,
         createdBy: newData.createdBy,
         updatedBy: newData.updatedBy,
       }));
