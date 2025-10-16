@@ -14,14 +14,13 @@ import {
 } from "antd";
 import {
   ArrowDownOutlined,
-  ArrowUpOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import BarChart from "./barChart";
 import LineChart from "./lineChart";
 import WaterWaveChart from "./waterWaveChart";
-import LastOrderedTbl from "./LastOrderedTbl";
 import LastPRTbl from "./lastPRTbl";
+import LastOrderedTbl from "./lastOrderedTbl";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
