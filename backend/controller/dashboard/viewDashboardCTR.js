@@ -47,9 +47,13 @@ async function viewDashboardCTR(req, res) {
 
     const baseQuery = {
       orgId,
-      costCenter,
       tnxQty: { $lte: 0 },
+      isDeleted: false,
     };
+
+    if (!memberDlts.isAdmin) {
+      baseQuery.costCenter = costCenter;
+    }
 
     //   last 10 transactions
     const recentTransactions = await TrnxDetails.find(baseQuery)
@@ -59,42 +63,79 @@ async function viewDashboardCTR(req, res) {
       .lean();
 
     // last 10 PR
-    const recentPurchaseReqs = await PurchaseReq.find({
+    const baseQueryPR = {
       orgId,
-      costCenter: memberDlts.costCenter._id,
       isDeleted: false,
-    })
+      "itemDetails.isDeleted": false,
+    };
+    if (!memberDlts.isAdmin) {
+      baseQueryPR.costCenter = memberDlts.costCenter._id;
+    }
+    const recentPurchaseReqs = await PurchaseReq.find(baseQueryPR)
       .sort({ createdAt: -1 }) // newest first
       .select("createdAt code type itemDetails requestedBy")
       .limit(10)
       .lean();
 
-    const [daily, weekly, monthly, last7Days, yearly] = await Promise.all([
-      TrnxDetails.find({
-        ...baseQuery,
-        issuedAt: { $gte: startOfToday, $lte: endOfNow },
-      }).lean(),
-      TrnxDetails.find({
-        ...baseQuery,
-        issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
-      }).lean(),
-      TrnxDetails.find({
-        ...baseQuery,
-        issuedAt: { $gte: startOfMonth, $lte: endOfNow },
-      }).lean(),
-      TrnxDetails.find({
-        ...baseQuery,
-        issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
-      }).lean(),
-      TrnxDetails.find({
-        ...baseQuery,
-        issuedAt: { $gte: startOfYear, $lte: endOfYear },
-      }).lean(),
-    ]);
+    const [daily, weekly, monthly, last7Days, yearly, weeklyPR, monthlyPR] =
+      await Promise.all([
+        TrnxDetails.find({
+          ...baseQuery,
+          issuedAt: { $gte: startOfToday, $lte: endOfNow },
+        }).lean(),
+        TrnxDetails.find({
+          ...baseQuery,
+          issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+        }).lean(),
+        TrnxDetails.find({
+          ...baseQuery,
+          issuedAt: { $gte: startOfMonth, $lte: endOfNow },
+        }).lean(),
+        TrnxDetails.find({
+          ...baseQuery,
+          issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+        }).lean(),
+        TrnxDetails.find({
+          ...baseQuery,
+          issuedAt: { $gte: startOfYear, $lte: endOfYear },
+        }).lean(),
 
+        // for PR details
+        PurchaseReq.find({
+          ...baseQueryPR,
+          createdAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+        }).lean(),
+        PurchaseReq.find({
+          ...baseQueryPR,
+          createdAt: { $gte: startOfMonth, $lte: endOfNow },
+        }).lean(),
+      ]);
+
+    // for Tnx details
     const sumQty = (arr) => arr.reduce((sum, d) => sum + (d.tnxQty || 0), 0);
     const sumVal = (arr) =>
       arr.reduce((sum, d) => sum + (d.itemPrice || 0) * (d.tnxQty || 0), 0);
+
+    // for PR details
+    const sumPRQty = (arr) =>
+      arr?.reduce((total, doc) => {
+        const itemSum =
+          doc?.itemDetails
+            ?.filter((d) => d?.isDeleted === false)
+            .reduce((sum, d) => sum + (d?.reqQty || 0), 0) || 0;
+        return total + itemSum;
+      }, 0);
+    const sumPRVal = (arr) =>
+      arr?.reduce((total, doc) => {
+        const itemSum =
+          doc?.itemDetails
+            ?.filter((d) => d?.isDeleted === false)
+            .reduce(
+              (sum, d) => sum + (d?.unitPrice || 0) * (d?.reqQty || 0),
+              0
+            ) || 0;
+        return total + itemSum;
+      }, 0);
 
     const dailySummary = {
       qty: sumQty(daily),
@@ -111,6 +152,15 @@ async function viewDashboardCTR(req, res) {
       value: Math.round(sumVal(monthly) || 0),
     };
 
+    const weeklyPRSummary = {
+      qty: sumPRQty(weeklyPR),
+      value: Math.round(sumPRVal(weeklyPR)),
+    };
+
+    const monthlyPRSummary = {
+      qty: sumPRQty(monthlyPR),
+      value: Math.round(sumPRVal(monthlyPR)),
+    };
     const sevenDayBreakdown = {};
     // Step 1: Pre-fill keys 1–7 with actual date names
     for (let i = 0; i < 7; i++) {
@@ -134,7 +184,6 @@ async function viewDashboardCTR(req, res) {
           const qty = tx.tnxQty || 0;
           const price = tx.itemPrice || 0;
           const value = price * qty;
-
           sevenDayBreakdown[i].qty += qty;
           sevenDayBreakdown[i].value += Math.round(value);
           break;
@@ -186,7 +235,9 @@ async function viewDashboardCTR(req, res) {
       data: {
         daily: dailySummary,
         weekly: weeklySummary,
+        weeklyPR: weeklyPRSummary,
         monthly: monthlySummary,
+        monthlyPR: monthlyPRSummary,
         last7Days: sevenDayBreakdown,
         yearly: monthlyBreakdown,
         recentTransactions: recentTransactions,

@@ -58,8 +58,7 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardData();
   }, []);
-  console.log(dashboardData?.liqStock?.find((item) => item.SKU == 30000034))
-    ?.onHand;
+  console.log(dashboardData);
 
   return (
     <>
@@ -90,7 +89,7 @@ const Dashboard = () => {
           </Flex>
         </Col>
       </Row>
-      <Row gutter={16} style={{ marginTop: "16px" }}>
+      <Row style={{ marginTop: "16px" }} justify="space-between">
         <Col>
           <Card variant="borderless">
             <Statistic
@@ -118,7 +117,7 @@ const Dashboard = () => {
         <Col>
           <Card variant="borderless">
             <Statistic
-              title="This Week Order(Qty)"
+              title="Weekly Order(Qty)"
               value={Math.abs(dashboardData?.weekly?.value)}
               precision={0}
               valueStyle={{ color: "#cf1322" }}
@@ -139,30 +138,30 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        {/* <Col span={4}>
+        <Col span={4}>
           <Card variant="borderless">
             <Statistic
-              title="PR In-Process"
-              value={0}
-              precision={2}
+              title="Weekly PR(Qty)"
+              value={Math.abs(dashboardData?.weeklyPR?.value)}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowDownOutlined />}
-              suffix="%"
+              suffix={`(${Math.abs(dashboardData?.weeklyPR?.qty)})`}
             />
           </Card>
-        </Col> */}
-        {/* <Col span={4}>
+        </Col>
+        <Col span={4}>
           <Card variant="borderless">
             <Statistic
-              title="This Month Purchase"
-              value={0}
-              precision={2}
+              title="Monthly PR(Qty)"
+              value={Math.abs(dashboardData?.monthlyPR?.value)}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowDownOutlined />}
-              suffix="%"
+              suffix={`(${Math.abs(dashboardData?.monthlyPR?.qty)})`}
             />
           </Card>
-        </Col> */}
+        </Col>
       </Row>
       <Row gutter={16} style={{ marginTop: "16px" }}>
         <Col span={12}>

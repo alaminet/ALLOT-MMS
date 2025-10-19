@@ -6,15 +6,18 @@ import Title from "antd/es/typography/Title";
 const LastPRTbl = ({ tableData }) => {
   const dataArr = Object.values(tableData || {}).map((item, key) => ({
     key: ++key,
-    date: moment(item?.issuedAt).format("DD-MMM-YY"),
+    date: moment(item?.createdAt).format("DD-MMM-YY"),
     PRno: item?.code,
     createdBy: item?.requestedBy?.name,
-    qty: item?.itemDetails?.reduce((sum, detail) => {
-      return sum + (detail.reqQty || 0);
-    }, 0),
-    value: item?.itemDetails?.reduce((sum, detail) => {
-      return sum + (detail.reqQty * detail.unitPrice || 0);
-    }, 0),
+    qty: item?.itemDetails
+      ?.filter((detail) => detail.isDeleted === false)
+      .reduce((sum, detail) => sum + (detail.reqQty || 0), 0),
+    value: item?.itemDetails
+      ?.filter((detail) => detail.isDeleted === false)
+      .reduce(
+        (sum, detail) => sum + (detail.reqQty || 0) * (detail.unitPrice || 0),
+        0
+      ),
   }));
   const columns = [
     {

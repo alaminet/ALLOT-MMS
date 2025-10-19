@@ -243,3 +243,7 @@ th.ant-table-cell {
 .justification-table .ant-table-cell input {
   padding: 0 !important;
 }
+
+.ant-statistic-content {
+  font-size: 20px !important;
+}
