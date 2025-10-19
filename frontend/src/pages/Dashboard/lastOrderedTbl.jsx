@@ -10,7 +10,7 @@ const LastOrderedTbl = ({ tableData }) => {
     order: item?.tnxRef,
     name: item?.itemName,
     qty: Math.abs(item?.tnxQty),
-    value: Math.abs(item.itemPrice * item?.tnxQty).toFixed(0),
+    value: Math.abs(item?.itemPrice * item?.tnxQty).toFixed(0),
   }));
   const columns = [
     {
@@ -50,7 +50,8 @@ const LastOrderedTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title">
+        className="colorLink form-title"
+      >
         Latest orders
       </Title>
       <Table columns={columns} dataSource={dataArr} pagination={false} />
