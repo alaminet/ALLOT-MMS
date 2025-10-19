@@ -17,6 +17,7 @@ const LastOrderedTbl = ({ tableData }) => {
       title: "#",
       dataIndex: "key",
       key: "key",
+      render: (text, record, index) => index + 1,
     },
     {
       title: "Date",
@@ -53,7 +54,18 @@ const LastOrderedTbl = ({ tableData }) => {
         className="colorLink form-title">
         Latest orders
       </Title>
-      <Table columns={columns} dataSource={dataArr} pagination={false} />
+      <Table
+        columns={columns}
+        dataSource={[...dataArr].sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          if (dateA.getTime() !== dateB.getTime()) {
+            return dateB - dateA; // sort by date descending
+          }
+          return b.order - a.order; // then by PRno descending
+        })}
+        pagination={false}
+      />
     </>
   );
 };

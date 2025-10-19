@@ -81,23 +81,23 @@ async function viewDashboardCTR(req, res) {
       await Promise.all([
         TrnxDetails.find({
           ...baseQuery,
-          issuedAt: { $gte: startOfToday, $lte: endOfNow },
+          documentAt: { $gte: startOfToday, $lte: endOfNow },
         }).lean(),
         TrnxDetails.find({
           ...baseQuery,
-          issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+          documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
         }).lean(),
         TrnxDetails.find({
           ...baseQuery,
-          issuedAt: { $gte: startOfMonth, $lte: endOfNow },
+          documentAt: { $gte: startOfMonth, $lte: endOfNow },
         }).lean(),
         TrnxDetails.find({
           ...baseQuery,
-          issuedAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+          documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
         }).lean(),
         TrnxDetails.find({
           ...baseQuery,
-          issuedAt: { $gte: startOfYear, $lte: endOfYear },
+          documentAt: { $gte: startOfYear, $lte: endOfYear },
         }).lean(),
 
         // for PR details

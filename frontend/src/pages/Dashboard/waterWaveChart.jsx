@@ -15,6 +15,11 @@ const WaterWaveChart = ({ title, height, percent }) => {
       outlineBorder: 4,
       outlineDistance: 4,
       waveLength: 128,
+      // backgroundFill: "pink",
+      // fill: "#247f93",
+      contentFill: "#3779eb",
+      contentStroke: "#fff",
+      contentLineWidth: 2,
     },
   };
   return <Liquid {...config} />;

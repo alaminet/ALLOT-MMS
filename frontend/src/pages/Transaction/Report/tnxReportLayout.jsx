@@ -77,7 +77,7 @@ const TnxReportLayout = () => {
           const tableArr = res?.data?.transactions?.map((item, index) => ({
             key: index,
             tnxType: item?.tnxType,
-            docRef: item?.referance,
+            docRef: item?.reference,
             tnxRef: item?.tnxRef,
             code: item?.itemCode,
             SKU: item?.itemSKU,
@@ -90,6 +90,7 @@ const TnxReportLayout = () => {
             tnxQty: Number(item?.tnxQty).toFixed(2),
             tnxPrice: Number(item?.tnxQty * item?.itemPrice).toFixed(2),
             createdAt: moment(item?.createdAt).format("DD-MMM-YY h:mm A"),
+            documentAt: moment(item?.documentAt).format("DD-MMM-YY"),
             createdBy: item?.createdBy?.name,
             status: item?.status,
             action: item,
@@ -113,6 +114,12 @@ const TnxReportLayout = () => {
       title: "Tnx. Date",
       dataIndex: "createdAt",
       key: "createdAt",
+      width: 120,
+    },
+    {
+      title: "Doc. Date",
+      dataIndex: "documentAt",
+      key: "documentAt",
       width: 120,
     },
     {

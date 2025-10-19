@@ -24,6 +24,7 @@ const LastPRTbl = ({ tableData }) => {
       title: "#",
       dataIndex: "key",
       key: "key",
+      render: (text, record, index) => index + 1,
     },
     {
       title: "Date",

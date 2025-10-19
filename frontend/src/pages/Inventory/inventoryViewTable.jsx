@@ -31,7 +31,7 @@ const InventoryViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 50,
+      width: 60,
       render: (text, record, index) => index + 1,
       responsive: ["lg"],
     },
