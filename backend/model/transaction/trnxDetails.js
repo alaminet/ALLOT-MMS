@@ -6,7 +6,7 @@ const trnxDetailsSchema = new Schema(
     orgId: String,
     tnxType: String,
     tnxRef: String,
-    referance: String,
+    reference: String,
     headerText: String,
     itemCode: String,
     itemSKU: String,

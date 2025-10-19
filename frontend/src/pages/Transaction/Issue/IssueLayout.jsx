@@ -248,7 +248,7 @@ const IssueLayout = () => {
                 <Col lg={8} xs={24}>
                   <Form.Item
                     label="Referance"
-                    name="referance"
+                    name="reference"
                     style={{ width: "100%" }}>
                     <Input
                       placeholder="Movement Ref."

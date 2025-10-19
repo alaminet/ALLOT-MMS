@@ -12,15 +12,12 @@ import {
   Statistic,
   Typography,
 } from "antd";
-import {
-  ArrowDownOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
+import { ArrowDownOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import BarChart from "./barChart";
 import LineChart from "./lineChart";
 import WaterWaveChart from "./waterWaveChart";
 import LastPRTbl from "./lastPRTbl";
-import LastOrderedTbl from "./lastOrderedTbl";
+import LastOrderedTbl from "./lastOrderedTable";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -94,55 +91,55 @@ const Dashboard = () => {
         </Col>
       </Row>
       <Row gutter={16} style={{ marginTop: "16px" }}>
-        <Col span={4}>
+        <Col>
           <Card variant="borderless">
             <Statistic
               title="Today Order(Qty)"
               value={Math.abs(dashboardData?.daily?.value)}
-              precision={2}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowUpOutlined />}
               suffix={`(${Math.abs(dashboardData?.daily?.qty)})`}
             />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col>
           <Card variant="borderless">
             <Statistic
               title="Lastday Order(Qty)"
               value={Math.abs(dashboardData?.last7Days[6]?.value)}
-              precision={2}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowDownOutlined />}
               suffix={`(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}
             />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col>
           <Card variant="borderless">
             <Statistic
               title="This Week Order(Qty)"
               value={Math.abs(dashboardData?.weekly?.value)}
-              precision={2}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowDownOutlined />}
               suffix={`(${Math.abs(dashboardData?.weekly?.qty)})`}
             />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col>
           <Card variant="borderless">
             <Statistic
               title="Monthly Order(Qty)"
               value={Math.abs(dashboardData?.monthly?.value)}
-              precision={2}
+              precision={0}
               valueStyle={{ color: "#cf1322" }}
               // prefix={<ArrowDownOutlined />}
               suffix={`(${Math.abs(dashboardData?.monthly?.qty)})`}
             />
           </Card>
         </Col>
-        <Col span={4}>
+        {/* <Col span={4}>
           <Card variant="borderless">
             <Statistic
               title="PR In-Process"
@@ -153,8 +150,8 @@ const Dashboard = () => {
               suffix="%"
             />
           </Card>
-        </Col>
-        <Col span={4}>
+        </Col> */}
+        {/* <Col span={4}>
           <Card variant="borderless">
             <Statistic
               title="This Month Purchase"
@@ -165,7 +162,7 @@ const Dashboard = () => {
               suffix="%"
             />
           </Card>
-        </Col>
+        </Col> */}
       </Row>
       <Row gutter={16} style={{ marginTop: "16px" }}>
         <Col span={12}>
@@ -190,7 +187,11 @@ const Dashboard = () => {
               <Col span={12}>
                 <Card>
                   <WaterWaveChart
-                    title="OCTANE"
+                    title={
+                      dashboardData?.liqStock?.find(
+                        (item) => item.SKU === "3100000143"
+                      )?.name
+                    }
                     height={250}
                     percent={Number(
                       (
@@ -205,13 +206,17 @@ const Dashboard = () => {
               <Col span={12}>
                 <Card>
                   <WaterWaveChart
-                    title="DIESEL"
+                    title={
+                      dashboardData?.liqStock?.find(
+                        (item) => item.SKU === "3100000147"
+                      )?.name
+                    }
                     height={250}
                     percent={Number(
                       (
                         (dashboardData?.liqStock?.find(
-                          (item) => item.SKU === "3100000147"
-                        )?.onHand || 0) / 10600
+                          (item) => item.SKU === "3100000143"
+                        )?.onHand || 0) / 5300
                       ).toFixed(2)
                     )}
                   />
