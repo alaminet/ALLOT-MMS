@@ -77,6 +77,7 @@ const TnxReportLayout = () => {
           const tableArr = res?.data?.transactions?.map((item, index) => ({
             key: index,
             tnxType: item?.tnxType,
+            docRef: item?.referance,
             tnxRef: item?.tnxRef,
             code: item?.itemCode,
             SKU: item?.itemSKU,
@@ -130,6 +131,19 @@ const TnxReportLayout = () => {
         })
       ),
       onFilter: (value, record) => record?.tnxType === value,
+      filterSearch: true,
+    },
+    {
+      title: "Doc.Ref",
+      dataIndex: "docRef",
+      key: "docRef",
+      filters: [...new Set(queryData?.map((item) => item?.docRef))].map(
+        (item) => ({
+          text: item,
+          value: item,
+        })
+      ),
+      onFilter: (value, record) => record?.code === value,
       filterSearch: true,
     },
     {

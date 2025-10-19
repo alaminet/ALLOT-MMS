@@ -15,6 +15,7 @@ import {
   message,
   InputNumber,
   Flex,
+  notification,
 } from "antd";
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
@@ -53,7 +54,14 @@ const ReceiveLayout = () => {
           },
         }
       );
-      message.success(res.data.message);
+      notification.success({
+        message: "Success",
+        description: res.data.message,
+        duration: 0,
+        onClose: () => {
+          // your custom logic here
+        },
+      });
       setLoading(false);
       getItems();
       getItemInfo();
@@ -474,7 +482,14 @@ const ReceiveLayout = () => {
                           </Row>
                         ))}
                         <Form.Item>
-                          <Button type="primary" onClick={() => add()} block style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                          <Button
+                            type="primary"
+                            onClick={() => add()}
+                            block
+                            style={{
+                              borderRadius: "0px",
+                              padding: "10px 30px",
+                            }}>
                             + Add Item
                           </Button>
                         </Form.Item>

@@ -39,6 +39,20 @@ const Dashboard = () => {
         .then((res) => {
           // message.success(res.data.message);
           setDashboardData(res?.data?.data);
+          const leqItems = res?.data?.data?.liqStock?.map((item) => {
+            return {
+              name: item.name,
+              SKU: item.SKU,
+              onHand: item.stock?.reduce(
+                (acc, s) => acc + (s.onHandQty || 0),
+                0
+              ),
+            };
+          });
+          setDashboardData((prevData) => ({
+            ...prevData,
+            liqStock: leqItems,
+          }));
         });
     } catch (error) {
       message.error(error.response.data.error);
@@ -48,7 +62,8 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardData();
   }, []);
-  // console.log(dashboardData);
+  console.log(dashboardData?.liqStock?.find((item) => item.SKU == 30000034))
+    ?.onHand;
 
   return (
     <>
@@ -132,10 +147,10 @@ const Dashboard = () => {
           <Card variant="borderless">
             <Statistic
               title="PR In-Process"
-              value={9.3}
+              value={0}
               precision={2}
               valueStyle={{ color: "#cf1322" }}
-              prefix={<ArrowDownOutlined />}
+              // prefix={<ArrowDownOutlined />}
               suffix="%"
             />
           </Card>
@@ -144,10 +159,10 @@ const Dashboard = () => {
           <Card variant="borderless">
             <Statistic
               title="This Month Purchase"
-              value={9.3}
+              value={0}
               precision={2}
               valueStyle={{ color: "#cf1322" }}
-              prefix={<ArrowDownOutlined />}
+              // prefix={<ArrowDownOutlined />}
               suffix="%"
             />
           </Card>
@@ -175,12 +190,32 @@ const Dashboard = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <Card>
-                  <WaterWaveChart title="OCTANE" height={250} percent={0.4} />
+                  <WaterWaveChart
+                    title="OCTANE"
+                    height={250}
+                    percent={Number(
+                      (
+                        (dashboardData?.liqStock?.find(
+                          (item) => item.SKU === "3100000143"
+                        )?.onHand || 0) / 5300
+                      ).toFixed(2)
+                    )}
+                  />
                 </Card>
               </Col>
               <Col span={12}>
                 <Card>
-                  <WaterWaveChart title="DIESEL" height={250} percent={0.8} />
+                  <WaterWaveChart
+                    title="DIESEL"
+                    height={250}
+                    percent={Number(
+                      (
+                        (dashboardData?.liqStock?.find(
+                          (item) => item.SKU === "3100000147"
+                        )?.onHand || 0) / 10600
+                      ).toFixed(2)
+                    )}
+                  />
                 </Card>
               </Col>
             </Row>

@@ -102,7 +102,7 @@ async function createTrnxRecCTR(req, res, next) {
         await item.save();
       }
       res.status(201).send({
-        message: "New data inserted",
+        message: `Goods received ID #${newData.code}`,
       });
 
       // Add Log activites

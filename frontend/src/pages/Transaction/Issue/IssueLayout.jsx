@@ -7,7 +7,7 @@ import {
   DatePicker,
   Form,
   Input,
-  Space,
+  Alert,
   Row,
   Select,
   Typography,
@@ -55,7 +55,14 @@ const IssueLayout = () => {
           },
         }
       );
-      message.success(res.data.message);
+      notification.success({
+        message: "Success",
+        description: res.data.message,
+        duration: 0,
+        onClose: () => {
+          // your custom logic here
+        },
+      });
       setLoading(false);
       getItems();
       getItemInfo();
@@ -500,7 +507,14 @@ const IssueLayout = () => {
                           </>
                         ))}
                         <Form.Item>
-                          <Button type="primary" onClick={() => add()} block style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                          <Button
+                            type="primary"
+                            onClick={() => add()}
+                            block
+                            style={{
+                              borderRadius: "0px",
+                              padding: "10px 30px",
+                            }}>
                             + Add Item
                           </Button>
                         </Form.Item>

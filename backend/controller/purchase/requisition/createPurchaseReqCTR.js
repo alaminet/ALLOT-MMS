@@ -36,7 +36,7 @@ async function createPurchaseReqCTR(req, res, next) {
       });
       await newData.save();
       res.status(201).send({
-        message: "New data inserted",
+        message: `New PR "${newData.code}" created`,
       });
 
       // Add Log activites

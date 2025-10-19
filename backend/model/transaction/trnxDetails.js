@@ -6,6 +6,8 @@ const trnxDetailsSchema = new Schema(
     orgId: String,
     tnxType: String,
     tnxRef: String,
+    referance: String,
+    headerText: String,
     itemCode: String,
     itemSKU: String,
     itemName: String,

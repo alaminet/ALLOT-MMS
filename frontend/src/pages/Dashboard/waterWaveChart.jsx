@@ -2,6 +2,8 @@ import React from "react";
 import { Liquid } from "@ant-design/plots";
 
 const WaterWaveChart = ({ title, height, percent }) => {
+  console.log(percent);
+
   const config = {
     percent: percent,
     height: height,

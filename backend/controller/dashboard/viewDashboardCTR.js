@@ -1,6 +1,7 @@
 const TrnxDetails = require("../../model/transaction/trnxDetails");
 const PurchaseReq = require("../../model/purchaseReq");
 const Member = require("../../model/member");
+const ItemInfo = require("../../model/master/itemInfo");
 
 async function viewDashboardCTR(req, res) {
   try {
@@ -175,6 +176,11 @@ async function viewDashboardCTR(req, res) {
       monthlyBreakdown[monthKey].value += Math.round(value);
     }
 
+    //   Liqued Stock
+    const liqStock = await ItemInfo.find({
+      SKU: { $in: [3100000143, 3100000147] },
+    });
+
     res.status(200).send({
       message: "Dashboard data retrieved",
       data: {
@@ -185,6 +191,7 @@ async function viewDashboardCTR(req, res) {
         yearly: monthlyBreakdown,
         recentTransactions: recentTransactions,
         recentPurchaseReqs: recentPurchaseReqs,
+        liqStock: liqStock,
       },
     });
   } catch (error) {

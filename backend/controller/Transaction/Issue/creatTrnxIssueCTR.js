@@ -94,6 +94,8 @@ async function creatTrnxIssueCTR(req, res, next) {
         orgId: newData.orgId,
         tnxType: newData.tnxType,
         tnxRef: newData.code,
+        referance: newData.referance,
+        headerText: newData.headerText,
         itemCode: item.code,
         itemSKU: item.SKU,
         itemName: item.name,
@@ -158,7 +160,7 @@ async function creatTrnxIssueCTR(req, res, next) {
         await item.save();
       }
       res.status(201).send({
-        message: "New data inserted",
+        message: `Goods issued ID #${newData.code}`,
       });
 
       // Add Log activites
