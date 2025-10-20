@@ -17,12 +17,14 @@ const LastOrderedTbl = ({ tableData }) => {
       title: "#",
       dataIndex: "key",
       key: "key",
+      width: 30,
       render: (text, record, index) => index + 1,
     },
     {
       title: "Date",
       dataIndex: "date",
       key: "date",
+      width: 110,
     },
     {
       title: "Order No",

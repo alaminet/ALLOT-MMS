@@ -4,8 +4,8 @@ import { Card } from "antd";
 
 const BarChart = ({ title, height, cartData }) => {
   const dataArr = Object.values(cartData || {}).map((item) => ({
-    date: item.name,
-    value: Math.abs(item.value),
+    Date: item.name,
+    Value: Math.abs(item.value),
   }));
 
   const config = {
@@ -17,9 +17,9 @@ const BarChart = ({ title, height, cartData }) => {
       titleFill: "#247f93",
       titleFontSize: 22,
     },
-    xField: "date",
-    yField: "value",
-    colorField: "date",
+    xField: "Date",
+    yField: "Value",
+    colorField: "Value",
     scale: {
       color: {
         range: [

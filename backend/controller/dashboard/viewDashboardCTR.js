@@ -230,6 +230,30 @@ async function viewDashboardCTR(req, res) {
       SKU: { $in: [3100000143, 3100000147] },
     });
 
+    // Type wise stock
+    const typeWiseStock = await ItemInfo.aggregate([
+      { $match: { orgId, isDeleted: false } },
+      { $unwind: "$stock" },
+      {
+        $lookup: {
+          from: "item_types",
+          localField: "type",
+          foreignField: "_id",
+          as: "typeInfo",
+        },
+      },
+      { $unwind: "$typeInfo" },
+      {
+        $group: {
+          _id: "$typeInfo.name",
+          totalQty: { $sum: "$stock.onHandQty" },
+          totalValue: {
+            $sum: { $multiply: ["$stock.onHandQty", "$avgPrice"] },
+          },
+        },
+      },
+    ]);
+
     res.status(200).send({
       message: "Dashboard data retrieved",
       data: {
@@ -243,6 +267,7 @@ async function viewDashboardCTR(req, res) {
         recentTransactions: recentTransactions,
         recentPurchaseReqs: recentPurchaseReqs,
         liqStock: liqStock,
+        typeWiseStock: typeWiseStock,
       },
     });
   } catch (error) {

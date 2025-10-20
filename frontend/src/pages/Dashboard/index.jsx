@@ -18,6 +18,8 @@ import LineChart from "./lineChart";
 import WaterWaveChart from "./waterWaveChart";
 import LastPRTbl from "./lastPRTbl";
 import LastOrderedTbl from "./lastOrderedTable";
+import PaiChart from "./paiChart";
+import DualAxesChart from "./dualAxesChart";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -169,7 +171,7 @@ const Dashboard = () => {
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
         <Col xs={24} lg={12}>
           <Card>
-            <BarChart
+            <DualAxesChart
               title="Weekly Order"
               height={460}
               cartData={dashboardData?.last7Days}
@@ -177,55 +179,58 @@ const Dashboard = () => {
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Flex style={{ flexFlow: "column" }} gap={16}>
-            <Card>
-              <LineChart
-                title="Monthly Order"
-                height={140}
-                cartData={dashboardData?.yearly}
-              />
-            </Card>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Card>
-                  <WaterWaveChart
-                    title={
-                      dashboardData?.liqStock?.find(
-                        (item) => item.SKU === "3100000147"
-                      )?.name
-                    }
-                    height={250}
-                    percent={Number(
-                      (
-                        (dashboardData?.liqStock?.find(
-                          (item) => item.SKU === "3100000147"
-                        )?.onHand || 0) / 10600
-                      ).toFixed(2)
-                    )}
-                  />
-                </Card>
-              </Col>
-              <Col span={12}>
-                <Card>
-                  <WaterWaveChart
-                    title={
-                      dashboardData?.liqStock?.find(
-                        (item) => item.SKU === "3100000143"
-                      )?.name
-                    }
-                    height={250}
-                    percent={Number(
-                      (
-                        (dashboardData?.liqStock?.find(
-                          (item) => item.SKU === "3100000143"
-                        )?.onHand || 0) / 5300
-                      ).toFixed(2)
-                    )}
-                  />
-                </Card>
-              </Col>
-            </Row>
-          </Flex>
+          <Card>
+            <LineChart
+              title="Monthly Order"
+              height={460}
+              cartData={dashboardData?.yearly}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+        <Col lg={8}>
+          <Card>
+            <WaterWaveChart
+              title={
+                dashboardData?.liqStock?.find(
+                  (item) => item.SKU === "3100000147"
+                )?.name
+              }
+              height={350}
+              percent={Number(
+                (
+                  (dashboardData?.liqStock?.find(
+                    (item) => item.SKU === "3100000147"
+                  )?.onHand || 0) / 10600
+                ).toFixed(2)
+              )}
+            />
+          </Card>
+        </Col>
+        <Col lg={8}>
+          <Card>
+            <WaterWaveChart
+              title={
+                dashboardData?.liqStock?.find(
+                  (item) => item.SKU === "3100000143"
+                )?.name
+              }
+              height={350}
+              percent={Number(
+                (
+                  (dashboardData?.liqStock?.find(
+                    (item) => item.SKU === "3100000143"
+                  )?.onHand || 0) / 5300
+                ).toFixed(2)
+              )}
+            />
+          </Card>
+        </Col>
+        <Col lg={8}>
+          <Card>
+            <PaiChart height={350} cartData={dashboardData?.typeWiseStock} />
+          </Card>
         </Col>
       </Row>
       <Row
