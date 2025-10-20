@@ -33,7 +33,7 @@ const Inventory = () => {
     <>
       <Flex justify="space-between">
         <BreadCrumbCustom />
-        <Flex
+        {/* <Flex
           gap={10}
           style={{
             marginBottom: "10px",
@@ -98,7 +98,7 @@ const Inventory = () => {
             <p>Total Purchase Value</p>
             <p className="colorLink">BDT 510215</p>
           </div>
-        </Flex>
+        </Flex> */}
       </Flex>
       <div
         style={{

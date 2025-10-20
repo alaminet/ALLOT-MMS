@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Row justify="space-between">
+      <Row justify="space-between" gutter={16}>
         <Col>
           <Title
             style={{ textAlign: "center", margin: "0" }}
@@ -89,8 +89,11 @@ const Dashboard = () => {
           </Flex>
         </Col>
       </Row>
-      <Row style={{ marginTop: "16px" }} justify="space-between">
-        <Col>
+      <Row
+        style={{ marginTop: "16px" }}
+        justify="space-between"
+        gutter={[16, 16]}>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Today Order(Qty)"
@@ -102,7 +105,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Lastday Order(Qty)"
@@ -114,7 +117,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Weekly Order(Qty)"
@@ -126,7 +129,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Monthly Order(Qty)"
@@ -138,7 +141,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Weekly PR(Qty)"
@@ -150,7 +153,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col span={4}>
+        <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Statistic
               title="Monthly PR(Qty)"
@@ -163,8 +166,8 @@ const Dashboard = () => {
           </Card>
         </Col>
       </Row>
-      <Row gutter={16} style={{ marginTop: "16px" }}>
-        <Col span={12}>
+      <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+        <Col xs={24} lg={12}>
           <Card>
             <BarChart
               title="Weekly Order"
@@ -173,7 +176,7 @@ const Dashboard = () => {
             />
           </Card>
         </Col>
-        <Col span={12}>
+        <Col xs={24} lg={12}>
           <Flex style={{ flexFlow: "column" }} gap={16}>
             <Card>
               <LineChart
@@ -225,13 +228,16 @@ const Dashboard = () => {
           </Flex>
         </Col>
       </Row>
-      <Row style={{ marginTop: "16px" }} justify="space-between" gutter={16}>
-        <Col span={12}>
+      <Row
+        style={{ marginTop: "16px" }}
+        justify="space-between"
+        gutter={[16, 16]}>
+        <Col xs={24} lg={12}>
           <Card>
             <LastOrderedTbl tableData={dashboardData?.recentTransactions} />
           </Card>
         </Col>
-        <Col span={12}>
+        <Col xs={24} lg={12}>
           <Card>
             <LastPRTbl tableData={dashboardData?.recentPurchaseReqs} />
           </Card>
