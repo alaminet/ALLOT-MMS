@@ -177,7 +177,6 @@ async function viewDashboardCTR(req, res) {
     // Step 2: Merge actual transaction data
     for (const tx of last7Days) {
       const txDate = new Date(tx.issuedAt).toISOString().slice(0, 10); // "YYYY-MM-DD"
-
       // Match transaction date to one of the 7 pre-filled entries
       for (let i = 1; i <= 7; i++) {
         if (sevenDayBreakdown[i].name === txDate) {

@@ -2,11 +2,16 @@ import React from "react";
 import { DualAxes } from "@ant-design/plots";
 
 const DualAxesChart = ({ title, height, cartData }) => {
-  const qtyArr = Object.values(cartData || {}).map((item) => ({
-    Date: item.name,
-    Qty: Math.abs(item.qty),
-    Value: Math.abs(item.value),
-  }));
+  const qtyArr = Object.values(cartData || {}).map((item) => {
+    const issued = new Date(item.name);
+    const day = issued.getDate().toString().padStart(2, "0"); // "21"
+    const weekday = issued.toLocaleDateString("en-US", { weekday: "short" }); // "Tue"
+    return {
+      Date: `${day}-${weekday}`, // "21-Tue"
+      Qty: Math.abs(item.qty),
+      Value: Math.abs(item.value),
+    };
+  });
 
   const config = {
     xField: "Date",
@@ -24,17 +29,6 @@ const DualAxesChart = ({ title, height, cartData }) => {
         yField: "Value",
         stack: true,
         colorField: "Value",
-        color: {
-          range: [
-            "#f4664a",
-            "#faad14",
-            "#a0d911",
-            "#52c41a",
-            "#13c2c2",
-            "#1890ff",
-            "#2f54eb",
-          ],
-        },
         style: { maxWidth: 80 },
         // scale: { y: { key: "key1", independent: false } },
         interaction: { elementHighlight: { background: true } },
@@ -51,7 +45,6 @@ const DualAxesChart = ({ title, height, cartData }) => {
   return (
     <>
       <DualAxes {...config} />
-      {/* <Column {...config} /> */}
     </>
   );
 };

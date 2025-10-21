@@ -227,7 +227,17 @@ const UserTable = () => {
           dataSource={queryData?.filter((item) =>
             item?.name?.toLowerCase().includes(search?.toLowerCase())
           )}
-          pagination={{ position: ["bottomRight"] }}
+          pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: [
+              "10",
+              "20",
+              "50",
+              queryData?.length?.toString() || "100",
+            ],
+            // showTotal: (total) => `Total ${total} items`,
+            defaultPageSize: 10,
+          }}
           expandable={{
             expandedRowRender: (record) => (
               <UserRoleViewTable data={record?.access?.access} />

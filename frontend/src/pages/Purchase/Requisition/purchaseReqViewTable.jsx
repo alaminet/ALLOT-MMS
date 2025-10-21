@@ -40,7 +40,7 @@ const PurchaseReqViewTable = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 50,
+      width: 80,
       render: (text, record, index) => index + 1,
     },
     {
@@ -258,7 +258,17 @@ const PurchaseReqViewTable = () => {
           )}
           // title={() => "Header"}
           sticky
-          pagination
+           pagination={{
+          showSizeChanger: true,
+          pageSizeOptions: [
+            "10",
+            "20",
+            "50",
+            queryData?.length?.toString() || "100",
+          ],
+          // showTotal: (total) => `Total ${total} items`,
+          defaultPageSize: 10,
+        }}
           scroll={{
             x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
           }}

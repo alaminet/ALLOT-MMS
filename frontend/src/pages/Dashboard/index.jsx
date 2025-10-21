@@ -192,11 +192,9 @@ const Dashboard = () => {
         <Col lg={8}>
           <Card>
             <WaterWaveChart
-              title={
-                dashboardData?.liqStock?.find(
-                  (item) => item.SKU === "3100000147"
-                )?.name
-              }
+              title={`${
+                dashboardData?.liqStock[1]?.name
+              } (${dashboardData?.liqStock[1]?.onHand.toFixed(0)} Ltr)`}
               height={350}
               percent={Number(
                 (
@@ -211,11 +209,9 @@ const Dashboard = () => {
         <Col lg={8}>
           <Card>
             <WaterWaveChart
-              title={
-                dashboardData?.liqStock?.find(
-                  (item) => item.SKU === "3100000143"
-                )?.name
-              }
+              title={`${
+                dashboardData?.liqStock[0]?.name
+              } (${dashboardData?.liqStock[0]?.onHand.toFixed(0)} Ltr)`}
               height={350}
               percent={Number(
                 (
