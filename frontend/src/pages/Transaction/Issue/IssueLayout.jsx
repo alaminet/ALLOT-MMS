@@ -318,9 +318,10 @@ const IssueLayout = () => {
                                     options={itemList?.map((item) => ({
                                       label: item.name,
                                       value: item.name,
+                                      find: item.name + "_" + item.SKU,
                                     }))}
                                     filterOption={(input, option) =>
-                                      (option?.value ?? "")
+                                      (option?.find ?? "")
                                         .toLowerCase()
                                         .includes(input.toLowerCase())
                                     }

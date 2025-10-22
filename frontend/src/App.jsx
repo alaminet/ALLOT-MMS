@@ -46,6 +46,7 @@ import TnxReport from "./pages/Transaction/Report";
 import TnxReportLayout from "./pages/Transaction/Report/tnxReportLayout";
 import ItemAddBulk from "./pages/Master/ItemInfo/itemAddBulk";
 import ItemDetailsBulkAdd from "./pages/Master/ItemDetails/itemDetailsBulkAdd.jsx";
+import TnxReportView from "./pages/Transaction/Report/tnxReportView.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -85,6 +86,7 @@ function App() {
               <Route path="tnx-report" element={<TnxReport />}>
                 <Route path="" element={<TnxReportLayout />} />
                 <Route path="logs" element={<LogActivites />} />
+                <Route path="view" element={<TnxReportView />} />
               </Route>
             </Route>
             <Route path="" element={<Purchase />}>

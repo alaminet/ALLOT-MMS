@@ -95,6 +95,7 @@ const ReceiveLayout = () => {
         UOM: item?.UOM?.code,
         price: item?.avgPrice,
         SKU: item?.SKU,
+        find: item.name + "_" + item.SKU,
       }));
       setItemList(tableArr);
     } catch (error) {
@@ -325,7 +326,7 @@ const ReceiveLayout = () => {
                                   onSearch={(searchText) => {
                                     const filtered = itemList
                                       .filter((item) =>
-                                        item.label
+                                        item.find
                                           .toLowerCase()
                                           .includes(searchText.toLowerCase())
                                       )

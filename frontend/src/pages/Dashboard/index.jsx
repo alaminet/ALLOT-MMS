@@ -20,10 +20,12 @@ import LastPRTbl from "./lastPRTbl";
 import LastOrderedTbl from "./lastOrderedTable";
 import PaiChart from "./paiChart";
 import DualAxesChart from "./dualAxesChart";
+import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [dashboardData, setDashboardData] = useState();
+  const navigate = useNavigate();
 
   const getDashboardData = async () => {
     try {
@@ -82,6 +84,7 @@ const Dashboard = () => {
               marginBottom: "10px",
             }}>
             <Button
+              onClick={() => navigate("/issue")}
               icon={<PlusCircleOutlined />}
               type="primary"
               lassName="borderBrand"

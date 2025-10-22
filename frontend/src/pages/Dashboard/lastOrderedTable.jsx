@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 import { Table } from "antd";
 import Title from "antd/es/typography/Title";
+import { Link } from "react-router-dom";
 
 const LastOrderedTbl = ({ tableData }) => {
   const dataArr = Object.values(tableData || {})?.map((item, key) => ({
@@ -30,7 +31,9 @@ const LastOrderedTbl = ({ tableData }) => {
       title: "Order No",
       dataIndex: "order",
       key: "order",
-      render: (text) => <a>{text}</a>,
+      render: (text) => (
+        <Link to={`/tnx-report/view?tnxType=issue&tnxId=${text}`}>{text}</Link>
+      ),
     },
     {
       title: "Item Name",

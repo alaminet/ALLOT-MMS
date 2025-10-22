@@ -19,7 +19,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 
 const TnxReportLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -51,7 +51,7 @@ const TnxReportLayout = () => {
       return; // stop execution
     }
     let startDate = new Date(values?.startDate?.$d).setHours(0, 0, 0);
-    let endDate = new Date(values?.endDate?.$d).setHours(23, 59, 59);
+    let endDate = new Date(values?.endDate?.$d).setHours(23, 59, 59, 999);
     const findData = {
       tnxType: values?.tnxType,
       startDate: moment(startDate).format(),
@@ -126,6 +126,10 @@ const TnxReportLayout = () => {
       title: "Tnx. Ref.",
       dataIndex: "tnxRef",
       key: "tnxRef",
+      render: (text, record) => {
+        const tnxType = record?.tnxQty > 0 ? "receive" : "issue";
+        return <Link to={`view?tnxType=${tnxType}&tnxId=${text}`}>{text}</Link>;
+      },
     },
     {
       title: "Tnx. Type",
@@ -407,7 +411,7 @@ const TnxReportLayout = () => {
         dataSource={queryData}
         // title={() => "Header"}
         sticky
-         pagination={{
+        pagination={{
           showSizeChanger: true,
           pageSizeOptions: [
             "10",
