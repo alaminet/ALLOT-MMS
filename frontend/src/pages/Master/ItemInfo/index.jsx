@@ -14,7 +14,7 @@ const ItemInfo = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   // User Permission Check
-  const { canViewPage, canDoOther } = usePermission();
+  const { canViewPage, canDoOwn } = usePermission();
   if (!canViewPage("item-list")) {
     return <NotAuth />;
   }
@@ -31,7 +31,7 @@ const ItemInfo = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOther("item-list", "create")}>
+            disabled={!canDoOwn("item-list", "create")}>
             Add Item
           </Button>
         )}

@@ -11,7 +11,7 @@ const User = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   // User Permission Check
-  const { canViewPage, canDoOther } = usePermission();
+  const { canViewPage, canDoOwn } = usePermission();
   if (!canViewPage("user")) {
     return <NotAuth />;
   }
@@ -28,7 +28,7 @@ const User = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOther("user", "create")}>
+            disabled={!canDoOwn("user", "create")}>
             Add User
           </Button>
         )}

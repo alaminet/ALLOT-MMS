@@ -14,7 +14,7 @@ const Supplier = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   // User Permission Check
-  const { canViewPage, canDoOther } = usePermission();
+  const { canViewPage, canDoOwn } = usePermission();
   if (!canViewPage("supplier")) {
     return <NotAuth />;
   }
@@ -31,7 +31,7 @@ const Supplier = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOther("supplier", "create")}>
+            disabled={!canDoOwn("supplier", "create")}>
             Add Supplier
           </Button>
         )}

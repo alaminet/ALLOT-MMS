@@ -14,7 +14,7 @@ const PurchaseRequisition = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   // User Permission Check
-  const { canViewPage, canDoOther } = usePermission();
+  const { canViewPage,  canDoOwn } = usePermission();
   if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
@@ -31,7 +31,7 @@ const PurchaseRequisition = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOther("purchase-requisition", "create")}>
+            disabled={!canDoOwn("purchase-requisition", "create")}>
             Purchase Requisition
           </Button>
         )}

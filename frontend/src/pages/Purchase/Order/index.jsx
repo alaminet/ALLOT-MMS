@@ -4,7 +4,7 @@ import NotAuth from "../../notAuth";
 
 const PurchaseOrder = () => {
   // User Permission Check
-  const { canViewPage, canDoOther } = usePermission();
+  const { canViewPage, canDoOwn } = usePermission();
   if (!canViewPage("purchase-order")) {
     return <NotAuth />;
   }
