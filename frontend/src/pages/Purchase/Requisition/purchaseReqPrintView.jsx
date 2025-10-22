@@ -7,20 +7,32 @@ import {
   Upload,
   Table,
   Typography,
-  Checkbox,
   Input,
   InputNumber,
+  message,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
+import { useEffect } from "react";
+import axios from "axios";
+import { usePermission } from "../../../hooks/usePermission";
+import NotAuth from "../../notAuth";
+import { useSelector } from "react-redux";
 const { Title, Text } = Typography;
 const { Column, ColumnGroup } = Table;
+
 const PurchaseReqPrintView = () => {
+  const user = useSelector((user) => user.loginSlice.login);
   const location = useLocation();
   const { refData } = location.state || {};
   const [inputValues, setInputValues] = useState({});
-  console.log(refData);
+  const [queryData, setQueryData] = useState([]);
+
+  // User Permission Check
+  const { canDoOwn, canDoOther } = usePermission();
+  const own = canDoOwn("purchase-requisition", "view");
+  const others = canDoOther("purchase-requisition", "view");
 
   // image upload
   const getBase64 = (file) =>
@@ -140,6 +152,42 @@ const PurchaseReqPrintView = () => {
       className: "cell-top-left",
     },
   ];
+
+  // Get print data
+  const getData = async () => {
+    const scope =
+      own && others ? "all" : own ? "own" : others ? "others" : null;
+    if (!scope) {
+      setQueryData([]);
+      message.warning("You are not authorized");
+      return; // stop execution
+    }
+    const payload = { scope, prId: refData };
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/requisition/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res?.data?.message);
+          setQueryData(res?.data?.items[0]);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <>
       <div
@@ -165,31 +213,31 @@ const PurchaseReqPrintView = () => {
           <Col>
             <p>
               <strong>PR Ref.: </strong>
-              {refData.code}
+              {queryData?.code}
             </p>
             <p>
               <strong>Requested By: </strong>
-              {refData.requestedBy?.name}
+              {queryData?.requestedBy?.name}
             </p>
           </Col>
           <Col>
             <p>
               <strong>Department: </strong>
-              {refData.costCenter?.name}
+              {queryData?.costCenter?.name}
             </p>
             <p>
               <strong>Email: </strong>
-              {refData.requestedBy?.contact}
+              {queryData?.requestedBy?.contact}
             </p>
           </Col>
           <Col>
             <p>
               <strong>Date: </strong>
-              {moment(refData?.createdAt).format("DD-MMM-YYYY")}
+              {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
             </p>
             <p>
               <strong>Phone No.: </strong>
-              {refData.requestedBy?.contact}
+              {queryData?.requestedBy?.contact}
             </p>
           </Col>
         </Row>
@@ -197,16 +245,16 @@ const PurchaseReqPrintView = () => {
           bordered
           className="purchase-table"
           columns={columns}
-          dataSource={refData.itemDetails}
+          dataSource={queryData?.itemDetails}
           // title={() => "Header"}
           pagination={false}
           summary={() => {
-            const totalQty = refData.itemDetails.reduce(
-              (sum, item) => sum + (item.reqQty || 0),
+            const totalQty = queryData?.itemDetails?.reduce(
+              (sum, item) => sum + (item?.reqQty || 0),
               0
             );
-            const totalValue = refData.itemDetails.reduce(
-              (sum, item) => sum + (item.unitPrice || 0) * (item.reqQty || 0),
+            const totalValue = queryData?.itemDetails?.reduce(
+              (sum, item) => sum + (item?.unitPrice || 0) * (item?.reqQty || 0),
               0
             );
 
@@ -233,11 +281,11 @@ const PurchaseReqPrintView = () => {
         <Row style={{ margin: "10px 0" }}>
           <Col span={6}>
             <span style={{ display: "block" }}>
-              <strong>Note:</strong> {refData.note}
+              <strong>Note:</strong> {queryData?.note}
             </span>
             <span>
               <strong>Referance: </strong>
-              {refData.reference}
+              {queryData?.reference}
             </span>
           </Col>
           <Col>
@@ -273,27 +321,33 @@ const PurchaseReqPrintView = () => {
               borderTop: "1px solid black",
             }}>
             Prepared By
-            <span style={{ display: "block" }}>{refData.createdBy.name}</span>
+            <span style={{ display: "block" }}>
+              {queryData?.createdBy?.name}
+            </span>
           </Col>
           <Col
             span={5}
             style={{ textAlign: "center", borderTop: "1px solid black" }}>
             Checked By
             <span style={{ display: "block" }}>
-              {refData.confirmedBy?.name}
+              {queryData?.confirmedBy?.name}
             </span>
           </Col>
           <Col
             span={5}
             style={{ textAlign: "center", borderTop: "1px solid black" }}>
             Confirmed By
-            <span style={{ display: "block" }}>{refData.checkedBy?.name}</span>
+            <span style={{ display: "block" }}>
+              {queryData?.checkedBy?.name}
+            </span>
           </Col>
           <Col
             span={5}
             style={{ textAlign: "center", borderTop: "1px solid black" }}>
             Approved By
-            <span style={{ display: "block" }}>{refData.approvedBy?.name}</span>
+            <span style={{ display: "block" }}>
+              {queryData?.approvedBy?.name}
+            </span>
           </Col>
         </Row>
         <Table
@@ -301,7 +355,7 @@ const PurchaseReqPrintView = () => {
           className="justification-table"
           pagination={false}
           // dataSource={data}
-          dataSource={refData.itemDetails}>
+          dataSource={queryData?.itemDetails}>
           <ColumnGroup title="Justification of Purchage Requisition">
             <Column
               title="Item Name"
@@ -397,9 +451,9 @@ const PurchaseReqPrintView = () => {
               key="totalStock"
               render={(_, record, index) => {
                 const values = inputValues[index] || {};
-                const stockInHand = values.stockInHand || 0; // A
-                const onHandQty = values.onHandQty || record?.onHandQty || 0; // B
-                const POQty = values.POQty || record?.POQty || 0; // C
+                const stockInHand = values?.stockInHand || 0; // A
+                const onHandQty = values?.onHandQty || record?.onHandQty || 0; // B
+                const POQty = values?.POQty || record?.POQty || 0; // C
                 const total = stockInHand + onHandQty + POQty;
                 return new Intl.NumberFormat("en-BD", {
                   minimumFractionDigits: 2,

@@ -118,7 +118,7 @@ const PurchaseReqViewTable = () => {
                 onClick={() =>
                   navigate("print", {
                     state: {
-                      refData: _.access,
+                      refData: _.action,
                     },
                   })
                 }
@@ -258,17 +258,17 @@ const PurchaseReqViewTable = () => {
           )}
           // title={() => "Header"}
           sticky
-           pagination={{
-          showSizeChanger: true,
-          pageSizeOptions: [
-            "10",
-            "20",
-            "50",
-            queryData?.length?.toString() || "100",
-          ],
-          // showTotal: (total) => `Total ${total} items`,
-          defaultPageSize: 10,
-        }}
+          pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: [
+              "10",
+              "20",
+              "50",
+              queryData?.length?.toString() || "100",
+            ],
+            // showTotal: (total) => `Total ${total} items`,
+            defaultPageSize: 10,
+          }}
           scroll={{
             x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
           }}

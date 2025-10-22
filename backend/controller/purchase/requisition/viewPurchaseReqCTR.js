@@ -13,6 +13,11 @@ async function viewPurchaseReqCTR(req, res) {
     } else if (data.scope === "others") {
       query["createdBy"] = { $ne: req.actionBy };
     }
+
+    if (data?.prId) {
+      query["_id"] = data.prId;
+    }
+
     const items = await PurchaseReq.find(query)
       .sort({ createdAt: -1 })
       .populate({
