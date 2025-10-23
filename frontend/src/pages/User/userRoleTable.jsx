@@ -105,6 +105,13 @@ const UserRoleTable = ({ data, setData }) => {
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
+    {
+      key: "settings",
+      module: "Settings",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
   ];
 
   const normalizeData = (data) => {

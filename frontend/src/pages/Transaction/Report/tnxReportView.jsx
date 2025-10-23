@@ -79,7 +79,6 @@ const TnxReportView = () => {
   useEffect(() => {
     getDetails();
   }, []);
-  console.log(queryData);
 
   return (
     <>

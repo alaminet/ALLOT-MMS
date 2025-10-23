@@ -11,7 +11,7 @@ import {
   InputNumber,
   message,
 } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
 import { useEffect } from "react";
@@ -485,13 +485,14 @@ const PurchaseReqPrintView = () => {
                 />
               </ColumnGroup>
             </Table>
+            <Button
+              style={{ marginTop: "16px" }}
+              type="primary"
+              className="no-print"
+              onClick={() => window.print()}>
+              <PrinterOutlined />
+            </Button>
           </div>
-          <Button
-            type="primary"
-            className="no-print"
-            onClick={() => window.print()}>
-            Print
-          </Button>
         </>
       )}
     </>

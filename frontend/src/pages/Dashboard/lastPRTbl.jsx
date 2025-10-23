@@ -55,7 +55,7 @@ const LastPRTbl = ({ tableData }) => {
       ),
     },
     {
-      title: "Created By",
+      title: "Requested By",
       dataIndex: "createdBy",
       key: "createdBy",
     },

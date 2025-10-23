@@ -3,11 +3,13 @@ import {
   BellFilled,
   FileDoneOutlined,
   GroupOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationFilled,
   PieChartOutlined,
   ProductOutlined,
+  SettingOutlined,
   ShopOutlined,
   TeamOutlined,
   UsergroupAddOutlined,
@@ -133,11 +135,24 @@ const BasicLayout = () => {
 
   // User Popover Content
   const content = (
-    <div>
-      <Button onClick={handleLogout} block size="small">
+    <Flex vertical gap={10}>
+      <Button
+        icon={<SettingOutlined />}
+        type="link"
+        onClick={() => navigate("/settings")}
+        block
+        size="small">
+        Settings
+      </Button>
+      <Button
+        icon={<LogoutOutlined />}
+        type="link"
+        onClick={handleLogout}
+        block
+        size="small">
         Logout
       </Button>
-    </div>
+    </Flex>
   );
 
   return (
