@@ -1,11 +1,14 @@
 import React from "react";
 import moment from "moment";
-import { Space, Table, Tag } from "antd";
+import { Button, Space, Table, Tag } from "antd";
 import Title from "antd/es/typography/Title";
+import { Link, useNavigate } from "react-router-dom";
 
 const LastPRTbl = ({ tableData }) => {
+  const navigate = useNavigate();
   const dataArr = Object.values(tableData || {}).map((item, key) => ({
     key: ++key,
+    id: item._id,
     date: moment(item?.createdAt).format("DD-MMM-YY"),
     PRno: item?.code,
     createdBy: item?.requestedBy?.name,
@@ -37,7 +40,19 @@ const LastPRTbl = ({ tableData }) => {
       title: "PR No",
       dataIndex: "PRno",
       key: "PRno",
-      render: (text) => <a>{text}</a>,
+      render: (text, record) => (
+        <Button
+          type="link"
+          onClick={() =>
+            navigate("/purchase-requisition/print", {
+              state: {
+                refData: record.id,
+              },
+            })
+          }>
+          {text}
+        </Button>
+      ),
     },
     {
       title: "Created By",

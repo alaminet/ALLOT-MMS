@@ -159,7 +159,7 @@ const PurchaseReqPrintView = () => {
       own && others ? "all" : own ? "own" : others ? "others" : null;
     if (!scope) {
       setQueryData([]);
-      message.warning("You are not authorized");
+      // message.warning("You are not authorized");
       return; // stop execution
     }
     const payload = { scope, prId: refData };
@@ -176,7 +176,7 @@ const PurchaseReqPrintView = () => {
           }
         )
         .then((res) => {
-          message.success(res?.data?.message);
+          // message.success(res?.data?.message);
           setQueryData(res?.data?.items[0]);
         });
     } catch (error) {
@@ -190,302 +190,310 @@ const PurchaseReqPrintView = () => {
 
   return (
     <>
-      <div
-        className="print-page"
-        style={{ backgroundColor: "#fff", padding: "20px" }}>
-        <Row justify="center">
-          <Col>
-            <Typography style={{ textAlign: "center" }}>
-              <Title style={{ margin: "0" }}>Fair Technology Limited</Title>
-              <Text style={{ display: "block" }}>
-                Plot- 12/A & 12/B, Block-C, Kaliakoir Hi-Tech Park
-              </Text>
-              <Text style={{ display: "block" }}>
-                Kaliakoir, Gazipur, Dhaka. #+880 1787-670 786
-              </Text>
-              <Title level={3} style={{ margin: "0" }}>
-                PURCHASE REQUISITION FORM
-              </Title>
-            </Typography>
-          </Col>
-        </Row>
-        <Row justify="space-between" style={{ padding: "10px" }}>
-          <Col>
-            <p>
-              <strong>PR Ref.: </strong>
-              {queryData?.code}
-            </p>
-            <p>
-              <strong>Requested By: </strong>
-              {queryData?.requestedBy?.name}
-            </p>
-          </Col>
-          <Col>
-            <p>
-              <strong>Department: </strong>
-              {queryData?.costCenter?.name}
-            </p>
-            <p>
-              <strong>Email: </strong>
-              {queryData?.requestedBy?.contact}
-            </p>
-          </Col>
-          <Col>
-            <p>
-              <strong>Date: </strong>
-              {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
-            </p>
-            <p>
-              <strong>Phone No.: </strong>
-              {queryData?.requestedBy?.contact}
-            </p>
-          </Col>
-        </Row>
-        <Table
-          bordered
-          className="purchase-table"
-          columns={columns}
-          dataSource={queryData?.itemDetails}
-          // title={() => "Header"}
-          pagination={false}
-          summary={() => {
-            const totalQty = queryData?.itemDetails?.reduce(
-              (sum, item) => sum + (item?.reqQty || 0),
-              0
-            );
-            const totalValue = queryData?.itemDetails?.reduce(
-              (sum, item) => sum + (item?.unitPrice || 0) * (item?.reqQty || 0),
-              0
-            );
+      {queryData.length == 0 ? (
+        <NotAuth />
+      ) : (
+        <>
+          <div
+            className="print-page"
+            style={{ backgroundColor: "#fff", padding: "20px" }}>
+            <Row justify="center">
+              <Col>
+                <Typography style={{ textAlign: "center" }}>
+                  <Title style={{ margin: "0" }}>Fair Technology Limited</Title>
+                  <Text style={{ display: "block" }}>
+                    Plot- 12/A & 12/B, Block-C, Kaliakoir Hi-Tech Park
+                  </Text>
+                  <Text style={{ display: "block" }}>
+                    Kaliakoir, Gazipur, Dhaka. #+880 1787-670 786
+                  </Text>
+                  <Title level={3} style={{ margin: "0" }}>
+                    PURCHASE REQUISITION FORM
+                  </Title>
+                </Typography>
+              </Col>
+            </Row>
+            <Row justify="space-between" style={{ padding: "10px" }}>
+              <Col>
+                <p>
+                  <strong>PR Ref.: </strong>
+                  {queryData?.code}
+                </p>
+                <p>
+                  <strong>Requested By: </strong>
+                  {queryData?.requestedBy?.name}
+                </p>
+              </Col>
+              <Col>
+                <p>
+                  <strong>Department: </strong>
+                  {queryData?.costCenter?.name}
+                </p>
+                <p>
+                  <strong>Email: </strong>
+                  {queryData?.requestedBy?.contact}
+                </p>
+              </Col>
+              <Col>
+                <p>
+                  <strong>Date: </strong>
+                  {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
+                </p>
+                <p>
+                  <strong>Phone No.: </strong>
+                  {queryData?.requestedBy?.contact}
+                </p>
+              </Col>
+            </Row>
+            <Table
+              bordered
+              className="purchase-table"
+              columns={columns}
+              dataSource={queryData?.itemDetails}
+              // title={() => "Header"}
+              pagination={false}
+              summary={() => {
+                const totalQty = queryData?.itemDetails?.reduce(
+                  (sum, item) => sum + (item?.reqQty || 0),
+                  0
+                );
+                const totalValue = queryData?.itemDetails?.reduce(
+                  (sum, item) =>
+                    sum + (item?.unitPrice || 0) * (item?.reqQty || 0),
+                  0
+                );
 
-            return (
-              <Table.Summary.Row style={{ textAlign: "right" }}>
-                <Table.Summary.Cell index={0} colSpan={7}>
-                  <strong>Total</strong>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={4}>
-                  <strong>{totalQty}</strong>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell index={5}>
-                  <strong>
-                    {new Intl.NumberFormat("en-BD", {
-                      minimumFractionDigits: 2,
-                    }).format(totalValue)}
-                  </strong>
-                </Table.Summary.Cell>
-                <Table.Summary.Cell colSpan={2}></Table.Summary.Cell>
-              </Table.Summary.Row>
-            );
-          }}
-        />
-        <Row style={{ margin: "10px 0" }}>
-          <Col span={6}>
-            <span style={{ display: "block" }}>
-              <strong>Note:</strong> {queryData?.note}
-            </span>
-            <span>
-              <strong>Referance: </strong>
-              {queryData?.reference}
-            </span>
-          </Col>
-          <Col>
-            <div>
-              <Upload
-                action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
-                listType="picture-card"
-                fileList={fileList}
-                onPreview={handlePreview}
-                onChange={handleChange}>
-                {fileList.length >= 8 ? null : uploadButton}
-              </Upload>
-              {previewImage && (
-                <Image
-                  wrapperStyle={{ display: "none" }}
-                  preview={{
-                    visible: previewOpen,
-                    onVisibleChange: (visible) => setPreviewOpen(visible),
-                    afterOpenChange: (visible) =>
-                      !visible && setPreviewImage(""),
-                  }}
-                  src={previewImage}
-                />
-              )}
-            </div>
-          </Col>
-        </Row>
-        <Row justify="space-between" style={{ marginTop: "50px" }}>
-          <Col
-            span={5}
-            style={{
-              textAlign: "center",
-              borderTop: "1px solid black",
-            }}>
-            Prepared By
-            <span style={{ display: "block" }}>
-              {queryData?.createdBy?.name}
-            </span>
-          </Col>
-          <Col
-            span={5}
-            style={{ textAlign: "center", borderTop: "1px solid black" }}>
-            Checked By
-            <span style={{ display: "block" }}>
-              {queryData?.confirmedBy?.name}
-            </span>
-          </Col>
-          <Col
-            span={5}
-            style={{ textAlign: "center", borderTop: "1px solid black" }}>
-            Confirmed By
-            <span style={{ display: "block" }}>
-              {queryData?.checkedBy?.name}
-            </span>
-          </Col>
-          <Col
-            span={5}
-            style={{ textAlign: "center", borderTop: "1px solid black" }}>
-            Approved By
-            <span style={{ display: "block" }}>
-              {queryData?.approvedBy?.name}
-            </span>
-          </Col>
-        </Row>
-        <Table
-          bordered
-          className="justification-table"
-          pagination={false}
-          // dataSource={data}
-          dataSource={queryData?.itemDetails}>
-          <ColumnGroup title="Justification of Purchage Requisition">
-            <Column
-              title="Item Name"
-              dataIndex="name"
-              key="name"
-              width={200}
-              // render={(text, record, index) => index + 1}
-            />
-            <Column
-              align="center"
-              title="Last 6M Used"
-              dataIndex="L6MUsed"
-              key="L6MUsed"
-              render={(_, record) => <Input variant="borderless" />}
-            />
-            <Column
-              align="center"
-              title="Consumption Rate"
-              dataIndex="consumptionRate"
-              key="consumptionRate"
-              render={(_, record) => <Input variant="borderless" />}
-            />
-            <Column
-              align="center"
-              title="Stock in Hand [A]"
-              dataIndex="stockInHand"
-              key="stockInHand"
-              render={(_, record, index) => (
-                <InputNumber
-                  min={0}
-                  defaultValue={0}
-                  variant="borderless"
-                  onChange={(value) =>
-                    setInputValues((prev) => ({
-                      ...prev,
-                      [index]: {
-                        ...prev[index],
-                        stockInHand: value,
-                      },
-                    }))
-                  }
-                />
-              )}
-            />
-            <Column
-              align="center"
-              title="Stock in Store [B]"
-              dataIndex="onHandQty"
-              key="onHandQty"
-              render={(_, record, index) => (
-                <InputNumber
-                  min={0}
-                  defaultValue={_}
-                  onChange={(value) =>
-                    setInputValues((prev) => ({
-                      ...prev,
-                      [index]: {
-                        ...prev[index],
-                        onHandQty: value,
-                      },
-                    }))
-                  }
-                  variant="borderless"
-                />
-              )}
-            />
-            <Column
-              align="center"
-              title="Ordered Qty [C]"
-              dataIndex="POQty"
-              key="POQty"
-              render={(_, record, index) => (
-                <InputNumber
-                  min={0}
-                  defaultValue={_}
-                  onChange={(value) =>
-                    setInputValues((prev) => ({
-                      ...prev,
-                      [index]: {
-                        ...prev[index],
-                        POQty: value,
-                      },
-                    }))
-                  }
-                  variant="borderless"
-                />
-              )}
-            />
-            <Column
-              align="center"
-              title="Total [D=A+B+C]"
-              dataIndex="totalStock"
-              key="totalStock"
-              render={(_, record, index) => {
-                const values = inputValues[index] || {};
-                const stockInHand = values?.stockInHand || 0; // A
-                const onHandQty = values?.onHandQty || record?.onHandQty || 0; // B
-                const POQty = values?.POQty || record?.POQty || 0; // C
-                const total = stockInHand + onHandQty + POQty;
-                return new Intl.NumberFormat("en-BD", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                }).format(total);
+                return (
+                  <Table.Summary.Row style={{ textAlign: "right" }}>
+                    <Table.Summary.Cell index={0} colSpan={7}>
+                      <strong>Total</strong>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={4}>
+                      <strong>{totalQty}</strong>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell index={5}>
+                      <strong>
+                        {new Intl.NumberFormat("en-BD", {
+                          minimumFractionDigits: 2,
+                        }).format(totalValue)}
+                      </strong>
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell colSpan={2}></Table.Summary.Cell>
+                  </Table.Summary.Row>
+                );
               }}
             />
-            <Column
-              align="center"
-              title="Production Target"
-              dataIndex="consumePlan"
-              key="consumePlan"
-              render={(_, record) => (
-                <Input defaultValue={_} variant="borderless" />
-              )}
-            />
-            <Column
-              align="center"
-              title="Approved Design [Y/N]"
-              dataIndex="appDesign"
-              key="appDesign"
-              render={(_, record) => <Input variant="borderless" />}
-            />
-          </ColumnGroup>
-        </Table>
-      </div>
-      <Button
-        type="primary"
-        className="no-print"
-        onClick={() => window.print()}>
-        Print
-      </Button>
+            <Row style={{ margin: "10px 0" }}>
+              <Col span={6}>
+                <span style={{ display: "block" }}>
+                  <strong>Note:</strong> {queryData?.note}
+                </span>
+                <span>
+                  <strong>Referance: </strong>
+                  {queryData?.reference}
+                </span>
+              </Col>
+              <Col>
+                <div>
+                  <Upload
+                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
+                    listType="picture-card"
+                    fileList={fileList}
+                    onPreview={handlePreview}
+                    onChange={handleChange}>
+                    {fileList.length >= 8 ? null : uploadButton}
+                  </Upload>
+                  {previewImage && (
+                    <Image
+                      wrapperStyle={{ display: "none" }}
+                      preview={{
+                        visible: previewOpen,
+                        onVisibleChange: (visible) => setPreviewOpen(visible),
+                        afterOpenChange: (visible) =>
+                          !visible && setPreviewImage(""),
+                      }}
+                      src={previewImage}
+                    />
+                  )}
+                </div>
+              </Col>
+            </Row>
+            <Row justify="space-between" style={{ marginTop: "50px" }}>
+              <Col
+                span={5}
+                style={{
+                  textAlign: "center",
+                  borderTop: "1px solid black",
+                }}>
+                Prepared By
+                <span style={{ display: "block" }}>
+                  {queryData?.createdBy?.name}
+                </span>
+              </Col>
+              <Col
+                span={5}
+                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                Checked By
+                <span style={{ display: "block" }}>
+                  {queryData?.confirmedBy?.name}
+                </span>
+              </Col>
+              <Col
+                span={5}
+                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                Confirmed By
+                <span style={{ display: "block" }}>
+                  {queryData?.checkedBy?.name}
+                </span>
+              </Col>
+              <Col
+                span={5}
+                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                Approved By
+                <span style={{ display: "block" }}>
+                  {queryData?.approvedBy?.name}
+                </span>
+              </Col>
+            </Row>
+            <Table
+              bordered
+              className="justification-table"
+              pagination={false}
+              // dataSource={data}
+              dataSource={queryData?.itemDetails}>
+              <ColumnGroup title="Justification of Purchage Requisition">
+                <Column
+                  title="Item Name"
+                  dataIndex="name"
+                  key="name"
+                  width={200}
+                  // render={(text, record, index) => index + 1}
+                />
+                <Column
+                  align="center"
+                  title="Last 6M Used"
+                  dataIndex="L6MUsed"
+                  key="L6MUsed"
+                  render={(_, record) => <Input variant="borderless" />}
+                />
+                <Column
+                  align="center"
+                  title="Consumption Rate"
+                  dataIndex="consumptionRate"
+                  key="consumptionRate"
+                  render={(_, record) => <Input variant="borderless" />}
+                />
+                <Column
+                  align="center"
+                  title="Stock in Hand [A]"
+                  dataIndex="stockInHand"
+                  key="stockInHand"
+                  render={(_, record, index) => (
+                    <InputNumber
+                      min={0}
+                      defaultValue={0}
+                      variant="borderless"
+                      onChange={(value) =>
+                        setInputValues((prev) => ({
+                          ...prev,
+                          [index]: {
+                            ...prev[index],
+                            stockInHand: value,
+                          },
+                        }))
+                      }
+                    />
+                  )}
+                />
+                <Column
+                  align="center"
+                  title="Stock in Store [B]"
+                  dataIndex="onHandQty"
+                  key="onHandQty"
+                  render={(_, record, index) => (
+                    <InputNumber
+                      min={0}
+                      defaultValue={_}
+                      onChange={(value) =>
+                        setInputValues((prev) => ({
+                          ...prev,
+                          [index]: {
+                            ...prev[index],
+                            onHandQty: value,
+                          },
+                        }))
+                      }
+                      variant="borderless"
+                    />
+                  )}
+                />
+                <Column
+                  align="center"
+                  title="Ordered Qty [C]"
+                  dataIndex="POQty"
+                  key="POQty"
+                  render={(_, record, index) => (
+                    <InputNumber
+                      min={0}
+                      defaultValue={_}
+                      onChange={(value) =>
+                        setInputValues((prev) => ({
+                          ...prev,
+                          [index]: {
+                            ...prev[index],
+                            POQty: value,
+                          },
+                        }))
+                      }
+                      variant="borderless"
+                    />
+                  )}
+                />
+                <Column
+                  align="center"
+                  title="Total [D=A+B+C]"
+                  dataIndex="totalStock"
+                  key="totalStock"
+                  render={(_, record, index) => {
+                    const values = inputValues[index] || {};
+                    const stockInHand = values?.stockInHand || 0; // A
+                    const onHandQty =
+                      values?.onHandQty || record?.onHandQty || 0; // B
+                    const POQty = values?.POQty || record?.POQty || 0; // C
+                    const total = stockInHand + onHandQty + POQty;
+                    return new Intl.NumberFormat("en-BD", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).format(total);
+                  }}
+                />
+                <Column
+                  align="center"
+                  title="Production Target"
+                  dataIndex="consumePlan"
+                  key="consumePlan"
+                  render={(_, record) => (
+                    <Input defaultValue={_} variant="borderless" />
+                  )}
+                />
+                <Column
+                  align="center"
+                  title="Approved Design [Y/N]"
+                  dataIndex="appDesign"
+                  key="appDesign"
+                  render={(_, record) => <Input variant="borderless" />}
+                />
+              </ColumnGroup>
+            </Table>
+          </div>
+          <Button
+            type="primary"
+            className="no-print"
+            onClick={() => window.print()}>
+            Print
+          </Button>
+        </>
+      )}
     </>
   );
 };
