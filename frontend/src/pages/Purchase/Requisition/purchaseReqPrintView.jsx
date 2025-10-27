@@ -27,6 +27,7 @@ const PurchaseReqPrintView = () => {
   const location = useLocation();
   const { refData } = location.state || {};
   const [inputValues, setInputValues] = useState({});
+  const [businessDetails, setBusinessDetails] = useState();
   const [queryData, setQueryData] = useState([]);
 
   // User Permission Check
@@ -184,8 +185,32 @@ const PurchaseReqPrintView = () => {
     }
   };
 
+  // Get Business Details
+  const getBusinessDetails = async () => {
+    try {
+      await axios
+        .get(`${import.meta.env.VITE_API_URL}/api/orgUser/view`, {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        })
+        .then((res) => {
+          const settings = res.data?.businessSettings;
+          setBusinessDetails(settings);
+          if (settings) {
+            form.setFieldsValue(settings);
+          }
+        });
+    } catch (error) {
+      setLoading(false);
+      message.error(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     getData();
+    getBusinessDetails();
   }, []);
 
   return (
@@ -200,12 +225,20 @@ const PurchaseReqPrintView = () => {
             <Row justify="center">
               <Col>
                 <Typography style={{ textAlign: "center" }}>
-                  <Title style={{ margin: "0" }}>Fair Technology Limited</Title>
+                  <Title style={{ margin: "0" }}>
+                    {businessDetails?.orgName}
+                  </Title>
                   <Text style={{ display: "block" }}>
-                    Plot- 12/A & 12/B, Block-C, Kaliakoir Hi-Tech Park
+                    {businessDetails?.businessAddress?.street}
                   </Text>
                   <Text style={{ display: "block" }}>
-                    Kaliakoir, Gazipur, Dhaka. #+880 1787-670 786
+                    {businessDetails?.businessAddress?.city +
+                      ", " +
+                      businessDetails?.businessAddress?.country +
+                      "-" +
+                      businessDetails?.businessAddress?.postal +
+                      ". #" +
+                      businessDetails?.phone?.office}
                   </Text>
                   <Title level={3} style={{ margin: "0" }}>
                     PURCHASE REQUISITION FORM

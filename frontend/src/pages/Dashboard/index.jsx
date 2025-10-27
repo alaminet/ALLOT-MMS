@@ -71,7 +71,7 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardData();
   }, []);
-  console.log(dashboardData);
+  // console.log(dashboardData);
 
   return (
     <>
