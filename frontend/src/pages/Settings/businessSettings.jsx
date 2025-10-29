@@ -112,18 +112,6 @@ const BusinessSettings = () => {
             style={{ width: "100%" }}>
             <Input placeholder="Id" showCount />
           </Form.Item>
-          <Form.Item
-            hidden
-            label="OrgId"
-            name="orgId"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-            style={{ width: "100%" }}>
-            <Input placeholder="orgId" showCount />
-          </Form.Item>
           <Row gutter={16}>
             <Col>
               <Row justify="space-between" gutter={16}>

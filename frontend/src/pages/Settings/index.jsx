@@ -4,6 +4,7 @@ import NotAuth from "../notAuth";
 import { Tabs, Typography } from "antd";
 import { BankOutlined, GlobalOutlined } from "@ant-design/icons";
 import BusinessSettings from "./businessSettings";
+import WebSettings from "./webSettings";
 const { Title } = Typography;
 
 const Settings = () => {
@@ -24,7 +25,7 @@ const Settings = () => {
     {
       key: "2",
       label: "Website",
-      children: "Content of Tab Pane 2",
+      children: <WebSettings />,
       icon: <GlobalOutlined />,
     },
   ];

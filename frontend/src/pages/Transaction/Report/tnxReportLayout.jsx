@@ -50,7 +50,7 @@ const TnxReportLayout = () => {
       message.warning("You are not authorized");
       return; // stop execution
     }
-    let startDate = new Date(values?.startDate?.$d).setHours(0, 0, 0);
+    let startDate = new Date(values?.startDate?.$d).setHours(0, 0, 0, 0);
     let endDate = new Date(values?.endDate?.$d).setHours(23, 59, 59, 999);
     const findData = {
       tnxType: values?.tnxType,

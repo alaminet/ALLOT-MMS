@@ -14,11 +14,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="pageAccess"
             key="pageAccess"
             render={(_, record) =>
-              record.pageAccess.view ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.pageAccess ? (
+                record.pageAccess?.view ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
         </ColumnGroup>
@@ -29,11 +31,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="own-create"
             key="own-create"
             render={(_, record) =>
-              record.own.create ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.own ? (
+                record.own?.create ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -42,11 +46,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="own-edit"
             key="own-edit"
             render={(_, record) =>
-              record.own.edit ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.own ? (
+                record.own?.edit ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -55,11 +61,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="own-view"
             key="own-view"
             render={(_, record) =>
-              record.own.view ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.own ? (
+                record.own?.view ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -68,11 +76,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="own-delete"
             key="own-delete"
             render={(_, record) =>
-              record.own.delete ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.own ? (
+                record.own?.delete ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
         </ColumnGroup>
@@ -83,11 +93,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="other-create"
             key="other-create"
             render={(_, record) =>
-              record.other.create ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.other ? (
+                record.other?.create ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -96,11 +108,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="other-edit"
             key="other-edit"
             render={(_, record) =>
-              record.other.edit ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.other ? (
+                record.other?.edit ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -109,11 +123,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="other-view"
             key="other-view"
             render={(_, record) =>
-              record.other.view ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.other ? (
+                record.other?.view ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
           <Column
@@ -122,11 +138,13 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="other-delete"
             key="other-delete"
             render={(_, record) =>
-              record.other.delete ? (
-                <CheckSquareTwoTone />
-              ) : (
-                <CloseSquareTwoTone twoToneColor="#eb2f96" />
-              )
+              record.other ? (
+                record.other?.delete ? (
+                  <CheckSquareTwoTone />
+                ) : (
+                  <CloseSquareTwoTone twoToneColor="#eb2f96" />
+                )
+              ) : null
             }
           />
         </ColumnGroup>

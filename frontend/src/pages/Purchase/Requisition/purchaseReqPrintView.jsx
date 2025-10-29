@@ -22,6 +22,20 @@ import { useSelector } from "react-redux";
 const { Title, Text } = Typography;
 const { Column, ColumnGroup } = Table;
 
+// Print layout
+function handlePrint(layout = "A4 landscape") {
+  const styleTag = document.createElement("style");
+  styleTag.innerHTML = `
+    @media print {
+      @page {
+        size: ${layout};
+      }
+    }
+  `;
+  document.head.appendChild(styleTag);
+  window.print();
+}
+
 const PurchaseReqPrintView = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const location = useLocation();
@@ -522,7 +536,7 @@ const PurchaseReqPrintView = () => {
               style={{ marginTop: "16px" }}
               type="primary"
               className="no-print"
-              onClick={() => window.print()}>
+              onClick={() => handlePrint("A4 landscape")}>
               <PrinterOutlined />
             </Button>
           </div>

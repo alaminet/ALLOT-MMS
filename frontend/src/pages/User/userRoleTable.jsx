@@ -11,8 +11,8 @@ const UserRoleTable = ({ data, setData }) => {
       key: "dashboard",
       module: "Dashboard",
       pageAccess: { view: true },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "user",
@@ -32,8 +32,8 @@ const UserRoleTable = ({ data, setData }) => {
       key: "transaction",
       module: "Transaction",
       pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "receive",
@@ -60,8 +60,8 @@ const UserRoleTable = ({ data, setData }) => {
       key: "purchase",
       module: "Purchase",
       pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "purchase-requisition",
@@ -88,8 +88,8 @@ const UserRoleTable = ({ data, setData }) => {
       key: "master",
       module: "Master Access",
       pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "item-list",
@@ -116,26 +116,36 @@ const UserRoleTable = ({ data, setData }) => {
 
   const normalizeData = (data) => {
     return initialData.map((template) => {
-      const override = data.find((d) => d.key === template.key) || {};
+      const override = data?.find((d) => d.key === template.key) || {};
       return {
         key: template.key,
         module: template.module,
         pageAccess: { ...template.pageAccess, ...override?.pageAccess },
-        own: { ...template.own, ...override?.own },
-        other: { ...template.other, ...override?.other },
+        // Preserve null/undefined for modules that don't have 'own' or 'other'
+        own: template.own
+          ? { ...template.own, ...override?.own }
+          : override?.own ?? null,
+        other: template.other
+          ? { ...template.other, ...override?.other }
+          : override?.other ?? null,
       };
     });
   };
 
   const mergedValue = useMemo(() => {
     return initialData.map((item) => {
-      const override = data.find((d) => d.key === item.key);
+      const override = data?.find((d) => d.key === item.key);
       if (!override) return item;
       return {
         ...item,
         ...override,
-        other: { ...item.other, ...override?.other },
-        own: { ...item.own, ...override?.own },
+        // Keep null for other/own when the base item doesn't define them
+        other: item.other
+          ? { ...item.other, ...override?.other }
+          : override?.other ?? null,
+        own: item.own
+          ? { ...item.own, ...override?.own }
+          : override?.own ?? null,
         pageAccess: { ...item.pageAccess, ...override?.pageAccess },
       };
     });
@@ -145,17 +155,20 @@ const UserRoleTable = ({ data, setData }) => {
   const handleCheckboxChange = (rowKey, type, permission) => (e) => {
     const normalized = normalizeData(data);
     const newData = normalized.map((row) => {
-      if (row.key === rowKey) {
-        return {
-          ...row,
-          [type]: {
-            ...row[type],
-            [permission]: e.target.checked,
-          },
-        };
-      }
-      return row;
+      if (row.key !== rowKey) return row;
+
+      // If this permission group doesn't exist for the module, keep it as-is (null)
+      if (!row[type]) return row;
+
+      return {
+        ...row,
+        [type]: {
+          ...row[type],
+          [permission]: e.target.checked,
+        },
+      };
     });
+
     setData(newData);
   };
 
@@ -172,8 +185,13 @@ const UserRoleTable = ({ data, setData }) => {
         return {
           ...row,
           pageAccess: { view: true },
-          own: { create: true, edit: true, view: true, delete: true },
-          other: { create: true, edit: true, view: true, delete: true },
+          // Only set own/other if those groups exist for this module; otherwise keep null
+          own: row.own
+            ? { create: true, edit: true, view: true, delete: true }
+            : null,
+          other: row.other
+            ? { create: true, edit: true, view: true, delete: true }
+            : null,
         };
       }
 
@@ -182,8 +200,12 @@ const UserRoleTable = ({ data, setData }) => {
         return {
           ...row,
           pageAccess: { view: false },
-          own: { create: false, edit: false, view: false, delete: false },
-          other: { create: false, edit: false, view: false, delete: false },
+          own: row.own
+            ? { create: false, edit: false, view: false, delete: false }
+            : null,
+          other: row.other
+            ? { create: false, edit: false, view: false, delete: false }
+            : null,
         };
       }
 
@@ -234,48 +256,112 @@ const UserRoleTable = ({ data, setData }) => {
             title="Create"
             dataIndex="own-create"
             key="own-create"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.own?.create}
-                onChange={handleCheckboxChange(record?.key, "own", "create")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.own?.create}
+            //     onChange={handleCheckboxChange(record?.key, "own", "create")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.own ? (
+                    <Checkbox
+                      checked={record?.own?.create}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "create"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="Edit"
             dataIndex="own-edit"
             key="own-edit"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.own?.edit}
-                onChange={handleCheckboxChange(record?.key, "own", "edit")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.own?.edit}
+            //     onChange={handleCheckboxChange(record?.key, "own", "edit")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.own ? (
+                    <Checkbox
+                      checked={record?.own?.edit}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "edit"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="View"
             dataIndex="own-view"
             key="own-view"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.own?.view}
-                onChange={handleCheckboxChange(record?.key, "own", "view")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.own?.view}
+            //     onChange={handleCheckboxChange(record?.key, "own", "view")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.own ? (
+                    <Checkbox
+                      checked={record?.own?.view}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "view"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="Delete"
             dataIndex="own-delete"
             key="own-delete"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.own?.delete}
-                onChange={handleCheckboxChange(record?.key, "own", "delete")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.own?.delete}
+            //     onChange={handleCheckboxChange(record?.key, "own", "delete")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.own ? (
+                    <Checkbox
+                      checked={record?.own?.delete}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "delete"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
         </ColumnGroup>
         <ColumnGroup title="Others Data">
@@ -284,48 +370,112 @@ const UserRoleTable = ({ data, setData }) => {
             title="Create"
             dataIndex="other-create"
             key="other-create"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.other?.create}
-                onChange={handleCheckboxChange(record?.key, "other", "create")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.other?.create}
+            //     onChange={handleCheckboxChange(record?.key, "other", "create")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.other ? (
+                    <Checkbox
+                      checked={record?.other?.create}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "create"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="Edit"
             dataIndex="other-edit"
             key="other-edit"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.other?.edit}
-                onChange={handleCheckboxChange(record?.key, "other", "edit")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.other?.edit}
+            //     onChange={handleCheckboxChange(record?.key, "other", "edit")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.other ? (
+                    <Checkbox
+                      checked={record?.other?.edit}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "edit"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="View"
             dataIndex="other-view"
             key="other-view"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.other?.view}
-                onChange={handleCheckboxChange(record?.key, "other", "view")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.other?.view}
+            //     onChange={handleCheckboxChange(record?.key, "other", "view")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.other ? (
+                    <Checkbox
+                      checked={record?.other?.view}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "view"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
           <Column
             align="center"
             title="Delete"
             dataIndex="other-delete"
             key="other-delete"
-            render={(_, record) => (
-              <Checkbox
-                checked={record?.other?.delete}
-                onChange={handleCheckboxChange(record?.key, "other", "delete")}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.other?.delete}
+            //     onChange={handleCheckboxChange(record?.key, "other", "delete")}
+            //   />
+            // )}
+            render={(_, record) => {
+              return (
+                <>
+                  {record?.other ? (
+                    <Checkbox
+                      checked={record?.other?.delete}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "delete"
+                      )}
+                    />
+                  ) : null}
+                </>
+              );
+            }}
           />
         </ColumnGroup>
       </Table>
