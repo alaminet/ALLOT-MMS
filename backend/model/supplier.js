@@ -6,16 +6,16 @@ const supplierSchema = new Schema(
     orgId: String,
     code: Number,
     name: String,
-    phone: Array,
-    email: Array,
+    phone: Object,
+    email: Object,
     TIN: String,
-    taxInfo: Array,
+    taxInfo: Object,
     type: {
       type: String,
       enum: ["Local", "Import"],
     },
-    officeAddress: Array,
-    paymentInfo: Array,
+    officeAddress: Object,
+    paymentInfo: Object,
 
     // Common Schema
     status: {

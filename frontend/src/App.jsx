@@ -48,6 +48,9 @@ import ItemAddBulk from "./pages/Master/ItemInfo/itemAddBulk";
 import ItemDetailsBulkAdd from "./pages/Master/ItemDetails/itemDetailsBulkAdd.jsx";
 import TnxReportView from "./pages/Transaction/Report/tnxReportView.jsx";
 import Settings from "./pages/Settings/index.jsx";
+import PurchaseOrder from "./pages/Purchase/Order/index.jsx";
+import PurchaseOrderReqTable from "./pages/Purchase/Order/purchaseOrderReqTable.jsx";
+import PurchaseOrderViewTable from "./pages/Purchase/Order/purchaseOrderViewTable.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -97,6 +100,13 @@ function App() {
                 element={<PurchaseRequisition />}>
                 <Route path="" element={<PurchaseReqViewTable />} />
                 <Route path="new" element={<PurchaseRequisitiion />} />
+                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+                <Route path="print" element={<PurchaseReqPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="purchase-order" element={<PurchaseOrder />}>
+                <Route path="" element={<PurchaseOrderViewTable />} />
+                <Route path="new" element={<PurchaseOrderReqTable />} />
                 <Route path="update" element={<PurchaseRequisitiionUpdate />} />
                 <Route path="print" element={<PurchaseReqPrintView />} />
                 <Route path="logs" element={<LogActivites />} />

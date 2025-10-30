@@ -9,13 +9,13 @@ import {
   EditTwoTone,
   EyeTwoTone,
   InfoCircleTwoTone,
+  PrinterOutlined,
 } from "@ant-design/icons";
-
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { usePermission } from "../../hooks/usePermission";
-import NotAuth from "../notAuth";
+import { usePermission } from "../../../hooks/usePermission";
+import NotAuth from "../../notAuth";
 
-const SupplierViewTable = () => {
+const PurchaseOrderViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
@@ -26,9 +26,10 @@ const SupplierViewTable = () => {
   // Get pathname
   const pathname = location.pathname;
   const lastSegment = pathname.split("/").filter(Boolean).pop();
+
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("supplier")) {
+  if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
   const own = canDoOwn(lastSegment, "view");
@@ -43,20 +44,38 @@ const SupplierViewTable = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      width: 130,
-      key: "code",
-      filters: [...new Set(queryData?.map((item) => item.code))].map(
-        (code) => ({
-          text: code,
-          value: code,
-        })
-      ),
-      onFilter: (value, record) => record?.code === value,
+      title: "PO No",
+      dataIndex: "PO",
+      key: "PR",
+      filters: [...new Set(queryData?.map((item) => item.PO))].map((code) => ({
+        text: code,
+        value: code,
+      })),
+      onFilter: (value, record) => record?.PO === value,
       filterSearch: true,
     },
-
+    {
+      title: "PR No",
+      dataIndex: "PR",
+      key: "PR",
+      filters: [...new Set(queryData?.map((item) => item.PR))].map((code) => ({
+        text: code,
+        value: code,
+      })),
+      onFilter: (value, record) => record?.PR === value,
+      filterSearch: true,
+    },
+    {
+      title: "SKU",
+      dataIndex: "SKU",
+      key: "SKU",
+      filters: [...new Set(queryData?.map((item) => item.SKU))].map((code) => ({
+        text: code,
+        value: code,
+      })),
+      onFilter: (value, record) => record?.SKU === value,
+      filterSearch: true,
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -64,33 +83,57 @@ const SupplierViewTable = () => {
       width: 200,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "PO Price",
+      dataIndex: "POPrice",
+      key: "POPrice",
       responsive: ["md"],
     },
     {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
+      title: "PO Qty",
+      dataIndex: "POQty",
+      key: "POQty",
       responsive: ["md"],
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
+      title: "PO Value",
+      dataIndex: "POValue",
+      key: "POValue",
       responsive: ["md"],
-      width: 80,
     },
-
+    {
+      title: "Req. By",
+      dataIndex: "reqBy",
+      key: "reqBy",
+      responsive: ["md"],
+    },
+    {
+      title: "Supplier",
+      dataIndex: "supplier",
+      key: "supplier",
+      responsive: ["md"],
+    },
     {
       title: "Action",
+      key: "action",
       align: "center",
       width: 150,
-      key: "action",
+      fixed: "right",
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
+            <Tooltip title="Print">
+              <Button
+                onClick={() =>
+                  navigate("print", {
+                    state: {
+                      refData: _.action,
+                    },
+                  })
+                }
+                icon={<PrinterOutlined />}
+              />
+            </Tooltip>
+
             {(canDoOther(lastSegment, "view") ||
               (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
               <Tooltip title="View">
@@ -120,7 +163,7 @@ const SupplierViewTable = () => {
               <Tooltip title="Delete">
                 <Button
                   onClick={(e) =>
-                    handleChange(record.action, "isDeleted", true)
+                    handleChange(record.action, record.key, "isDeleted", true)
                   }
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
@@ -142,41 +185,41 @@ const SupplierViewTable = () => {
       return; // stop execution
     }
     const payload = { scope };
+
     try {
       await axios
-        .post(`${import.meta.env.VITE_API_URL}/api/supplier/view`, payload, {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        })
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/order/view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
+          }
+        )
         .then((res) => {
           message.success(res.data.message);
-          const tableArr = res?.data?.items?.map((item, index) => ({
-            key: index,
-            code: item?.code,
-            name: item?.name,
-            email: (
-              <>
-                Office: {item?.email?.office || "—"} <br />
-                Contact: {item?.email?.contact || "—"} <br />
-                Alternate: {item?.email?.alternate || "—"}
-              </>
-            ),
-            phone: (
-              <>
-                Office: {item?.phone?.office || "—"} <br />
-                Contact: {item?.phone?.contact || "—"} <br />
-                Alternate: {item?.phone?.alternate || "—"}
-              </>
-            ),
-            type: item?.type,
-            status: item?.status,
-            createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-            updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
-            access: item,
-            action: item?._id,
-          }));
+          const tableArr = res?.data?.items?.flatMap((item) =>
+            item.itemDetails.map((list) => ({
+              key: list?._id,
+              PO: item?.code,
+              PR: list?.PRCode,
+              SKU: list?.SKU || "NA",
+              name: list?.name,
+              UOM: list?.UOM,
+              POPrice: list?.POPrice,
+              POQty: list?.POQty,
+              supplier: item?.supplier?.name,
+              POValue: Number(list?.POQty * list?.POPrice).toFixed(2),
+              reqBy: item?.requestedBy.name,
+              status: item?.status,
+              createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+              updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              access: item,
+              action: item?._id,
+            }))
+          );
           setQueryData(tableArr);
         });
     } catch (error) {
@@ -191,11 +234,11 @@ const SupplierViewTable = () => {
   };
 
   //   Update Functional
-  const handleChange = async (id, field, data) => {
+  const handleChange = async (id, lineID, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/update/${id}`,
-        { [field]: data },
+        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${id}`,
+        { lineID, field, data },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -215,28 +258,33 @@ const SupplierViewTable = () => {
   }, []);
   return (
     <>
-      <Table
-        columns={columns}
-        dataSource={queryData?.filter((item) =>
-          item.name?.toLowerCase().includes(search?.toLowerCase())
-        )}
-        // title={() => "Header"}
-        sticky
-        pagination={{
-          showSizeChanger: true,
-          pageSizeOptions: [
-            "10",
-            "20",
-            "50",
-            queryData?.length?.toString() || "100",
-          ],
-          // showTotal: (total) => `Total ${total} items`,
-          defaultPageSize: 10,
-        }}
-        scroll={{
-          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
-        }}
-      />
+      {!own && !others ? (
+        <NotAuth />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={queryData?.filter((item) =>
+            item.name?.toLowerCase().includes(search?.toLowerCase())
+          )}
+          // title={() => "Header"}
+          sticky
+          pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: [
+              "10",
+              "20",
+              "50",
+              queryData?.length?.toString() || "100",
+            ],
+            // showTotal: (total) => `Total ${total} items`,
+            defaultPageSize: 10,
+          }}
+          scroll={{
+            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+          }}
+        />
+      )}
+
       <Modal
         title="View Details"
         open={isModalVisible}
@@ -256,4 +304,4 @@ const SupplierViewTable = () => {
   );
 };
 
-export default SupplierViewTable;
+export default PurchaseOrderViewTable;

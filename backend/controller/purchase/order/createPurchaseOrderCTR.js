@@ -1,0 +1,70 @@
+const PurchaseOrder = require("../../../model/purchaseOrder");
+const PurchaseReq = require("../../../model/purchaseReq");
+
+async function createPurchaseOrderCTR(req, res, next) {
+  const data = req.body;
+
+  try {
+    if (!data.itemDetails || data.itemDetails.length == 0) {
+      return res.status(400).send({ error: "Item is required" });
+    } else {
+      const lastItem = await PurchaseOrder.findOne({}).sort({ _id: -1 });
+      const newData = new PurchaseOrder({
+        orgId: req.orgId,
+        code: lastItem?.code + 1 || 4000000001,
+        type: data.type,
+        supplier: data.supplier,
+        requestedBy: data.requestedBy,
+        checkedBy: data.checkedBy,
+        approvedBy: data.approvedBy,
+        note: data.note,
+        itemDetails: data.itemDetails?.map((dtl) => ({
+          code: dtl.code !== "" ? dtl.code : null,
+          PRRef: dtl.PRRef !== "" ? dtl.PRRef : null,
+          PRLineId: dtl.PRLineId,
+          PRCode: dtl.PRCode,
+          SKU: dtl.SKU,
+          name: dtl.name,
+          spec: dtl.spec,
+          UOM: dtl.UOM,
+          POQty: Number(dtl.POQty),
+          POPrice: Number(dtl.POPrice),
+          remarks: dtl.remarks,
+        })),
+        createdBy: req.actionBy,
+        updatedBy: req.actionBy,
+      });
+      await newData.save();
+
+      for (const dtl of newData.itemDetails) {
+        const prId = dtl.PRRef;
+        const prLineId = dtl.PRLineId;
+        const qty = Number(dtl.POQty || 0);
+        if (!prId || !prLineId || !qty) continue;
+
+        await PurchaseReq.updateOne(
+          { _id: prId, "itemDetails._id": prLineId },
+          { $inc: { "itemDetails.$.POQty": qty } }
+        );
+      }
+      res.status(201).send({
+        message: `New PR "${newData.code}" created`,
+      });
+
+      // Add Log activites
+      const logData = {
+        orgId: req.orgId,
+        id: req.actionBy,
+        refModel: "Purchase-Order",
+        action: `New purchase Order "${newData.code}" created`,
+      };
+      req.log = logData;
+      next();
+    }
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).send({ error: error.message || "Error creating" });
+  }
+}
+module.exports = createPurchaseOrderCTR;

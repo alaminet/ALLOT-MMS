@@ -1,18 +1,17 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const purchaseReqSchema = new Schema(
+const purchaseOrderSchema = new Schema(
   {
     orgId: String,
     code: Number,
-    reference: String,
     type: {
       type: String,
       enum: ["Local", "Import"],
     },
-    costCenter: {
+    supplier: {
       type: Schema.Types.ObjectId,
-      ref: "Cost_Center",
+      ref: "Supplier",
     },
     requestedBy: {
       type: Object,
@@ -26,10 +25,6 @@ const purchaseReqSchema = new Schema(
       type: Object,
       default: null,
     },
-    confirmedBy: {
-      type: Object,
-      default: null,
-    },
     note: String,
     itemDetails: [
       {
@@ -38,25 +33,19 @@ const purchaseReqSchema = new Schema(
           ref: "Item_Info",
           default: null,
         },
+        PRRef: {
+          type: Schema.Types.ObjectId,
+          ref: "Purchase_Requisition",
+          default: null,
+        },
+        PRLineId: String,
+        PRCode: String,
+        SKU: String,
         name: String,
         spec: String,
         UOM: String,
-        brand: String,
-        unitPrice: Number,
-        reqQty: Number,
-        POQty: {
-          type: Number,
-          default: 0,
-        },
-        recQty: {
-          type: Number,
-          default: 0,
-        },
-        onHandQty: {
-          type: Number,
-          default: 0,
-        },
-        consumePlan: String,
+        POQty: Number,
+        POPrice: Number,
         remarks: String,
         isDeleted: {
           type: Boolean,
@@ -68,7 +57,7 @@ const purchaseReqSchema = new Schema(
     // Common Schema
     status: {
       type: String,
-      enum: ["In-Process", "Checked", "Confirmed", "Approved"],
+      enum: ["In-Process", "Checked", "Approved"],
       default: "In-Process",
     },
     isDeleted: {
@@ -89,4 +78,4 @@ const purchaseReqSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Purchase_Requisition", purchaseReqSchema);
+module.exports = mongoose.model("Purchase_Order", purchaseOrderSchema);
