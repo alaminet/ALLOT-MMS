@@ -194,7 +194,6 @@ const PurchaseOrderReviewForm = ({
     {
       title: "Action",
       dataIndex: "action",
-      dataIndex: "action",
       align: "center",
       width: 100,
       render: (_, record) =>
