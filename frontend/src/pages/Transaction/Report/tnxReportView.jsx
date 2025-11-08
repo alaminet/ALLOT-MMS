@@ -125,8 +125,8 @@ const TnxReportView = () => {
           className="print-page"
           style={{ backgroundColor: "#fff", padding: "20px" }}>
           <Row justify="center">
-            <Col span={6}></Col>
-            <Col span={12}>
+            <Col span={4}></Col>
+            <Col span={16}>
               <Typography style={{ textAlign: "center" }}>
                 <Title style={{ margin: "0" }}>
                   {businessDetails?.orgName}
@@ -148,7 +148,7 @@ const TnxReportView = () => {
                 </Title>
               </Typography>
             </Col>
-            <Col span={6}>
+            <Col span={4}>
               <QRCode
                 value={`${window.location.href}`}
                 type="svg"
@@ -161,26 +161,26 @@ const TnxReportView = () => {
           <Row justify="space-between" style={{ padding: "20px" }}>
             <Col span={8}>
               <p>
-                <strong>Transaction ID: </strong>
+                <strong>Tnx.ID: </strong>
                 {queryData?.code}
               </p>
               <p>
-                <strong>Transaction Type: </strong>
+                <strong>Tnx.Type: </strong>
                 {queryData?.tnxType}
               </p>
               <p>
-                <strong>Referance: </strong>
+                <strong>Ref.: </strong>
                 {queryData?.sourceRef || queryData?.reference}
               </p>
             </Col>
             <Col span={8}>
               <p>
-                <strong>Document Date: </strong>
+                <strong>Doc. Date: </strong>
                 {moment(queryData?.documentAt).format("DD-MMM-YYYY")}
               </p>
               {queryData?.costCenter && (
                 <p>
-                  <strong>Department: </strong>
+                  <strong>Dept.: </strong>
                   {queryData?.costCenter}
                 </p>
               )}
@@ -197,11 +197,11 @@ const TnxReportView = () => {
                 {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
               </p>
               <p>
-                <strong>Header Text: </strong>
+                <strong>Header: </strong>
                 {queryData?.headerText}
               </p>
               <p>
-                <strong>Transaction By: </strong>
+                <strong>Tnx.By: </strong>
                 {queryData?.createdBy?.name}
               </p>
             </Col>
@@ -248,7 +248,7 @@ const TnxReportView = () => {
                           }).format(totalValue || 0)}
                         </strong>
                       </Table.Summary.Cell>
-                      <Table.Summary.Cell colSpan={2}></Table.Summary.Cell>
+                      <Table.Summary.Cell colSpan={4}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   );
                 }}>
@@ -305,6 +305,30 @@ const TnxReportView = () => {
                         (record?.unitPrice || record?.issuePrice) *
                           (record?.issueQty || record?.receiveQty)
                       )
+                    }
+                  />
+                  <Column
+                    title="6M Used (Dept)"
+                    align="right"
+                    dataIndex="sixMonthUsedDept"
+                    key="sixMonthUsedAll"
+                    render={(text, record, index) =>
+                      new Intl.NumberFormat("en-BD", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(text || 0)
+                    }
+                  />
+                  <Column
+                    title="6M Used (All)"
+                    align="right"
+                    dataIndex="sixMonthUsedAll"
+                    key="sixMonthUsedAll"
+                    render={(text, record, index) =>
+                      new Intl.NumberFormat("en-BD", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(text || 0)
                     }
                   />
                   <Column title="Remarks" dataIndex="remarks" key="remarks" />

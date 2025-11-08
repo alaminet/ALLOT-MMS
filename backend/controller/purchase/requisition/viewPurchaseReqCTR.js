@@ -1,4 +1,5 @@
 const PurchaseReq = require("../../../model/purchaseReq");
+const TrnxDetails = require("../../../model/transaction/trnxDetails");
 
 async function viewPurchaseReqCTR(req, res) {
   const data = req.body;
@@ -18,30 +19,54 @@ async function viewPurchaseReqCTR(req, res) {
       query["_id"] = data.prId;
     }
 
-    const items = await PurchaseReq.find(query)
+    const items = await PurchaseReq.findOne(query)
       .sort({ createdAt: -1 })
       .populate({
         path: ["createdBy", "updatedBy", "costCenter", "itemDetails.code"],
         select: "name code SKU",
       })
       .lean();
-    if (items.length === 0) {
+    if (!items) {
       return res.status(404).send({ error: "No data found" });
-    } else {
-      // Filtered Deleted line items
-      const filteredItems = items.reduce((acc, item) => {
-        const filteredDetails = item.itemDetails.filter((d) => !d.isDeleted);
-        if (filteredDetails.length > 0) {
-          acc.push({ ...item, itemDetails: filteredDetails });
-        }
-        return acc;
-      }, []);
-      res.status(200).send({
-        message: "Data retrieved",
-        items: filteredItems,
-      });
     }
+
+    // Filtered Deleted line items
+    const filteredDetails = items.itemDetails.filter((d) => !d.isDeleted);
+    if (filteredDetails.length > 0) {
+      items.itemDetails = filteredDetails;
+    }
+    if (items.itemDetails.length === 0) {
+      return res.status(404).send({ error: "No data found" });
+    }
+
+    // last 6 months transaction details summary
+    const lastSixMonths = new Date();
+    lastSixMonths.setMonth(lastSixMonths.getMonth() - 6);
+    const createdAtFilter = { $gte: lastSixMonths };
+    for (const reqItem of items?.itemDetails) {
+      if (!reqItem.code) continue;
+      const sixMonthUsedSummary = await TrnxDetails.aggregate([
+        {
+          $match: {
+            orgId: req.orgId,
+            itemCode: String(reqItem.code.code),
+            createdAt: createdAtFilter,
+            tnxQty: { $lt: 0 },
+          },
+        },
+      ]);
+      // attach summary to the reqItem
+      reqItem.sixMonthUsed =
+        sixMonthUsedSummary.reduce((sum, trnx) => trnx.tnxQty + sum, 0) * -1;
+    }
+
+    res.status(200).send({
+      message: "Data retrieved",
+      items: items,
+    });
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({ error: error.message || "Error retrieving" });
   }
 }

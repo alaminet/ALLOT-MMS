@@ -1,5 +1,7 @@
 const TrnxReceive = require("../../../model/transaction/trnxReceive");
 const TrnxIssue = require("../../../model/transaction/trnxIssue");
+const TrnxDetails = require("../../../model/transaction/trnxDetails");
+const Member = require("../../../model/member");
 
 async function viewSingleTnxDetails(req, res) {
   const data = req.body;
@@ -38,6 +40,40 @@ async function viewSingleTnxDetails(req, res) {
     if (transactions.length === 0) {
       return res.status(404).send({ error: "No data found" });
     }
+
+    // requester cost center
+    const userCostCenter = await Member.findOne({ _id: req.actionBy })
+      .select("costCenter")
+      .lean();
+    const userDept = userCostCenter?.costCenter?.name || null;
+
+    // last 6 months transaction details summary
+    const lastSixMonths = new Date();
+    lastSixMonths.setMonth(lastSixMonths.getMonth() - 6);
+    const createdAtFilter = { $gte: lastSixMonths };
+    for (const reqItem of transactions?.itemDetails) {
+      if (!reqItem.code) continue;
+      const sixMonthUsedSummary = await TrnxDetails.aggregate([
+        {
+          $match: {
+            orgId: req.orgId,
+            itemCode: String(reqItem.code),
+            createdAt: createdAtFilter,
+            tnxQty: { $lt: 0 },
+          },
+        },
+      ]);
+      // attach summary to the reqItem
+      reqItem.sixMonthUsedAll =
+        sixMonthUsedSummary.reduce((sum, trnx) => trnx.tnxQty + sum, 0) * -1;
+      reqItem.sixMonthUsedDept =
+        sixMonthUsedSummary.reduce(
+          (sum, trnx) =>
+            trnx.costCenter == userDept ? trnx.tnxQty + sum : sum,
+          0
+        ) * -1;
+    }
+
     res.status(200).send({
       message: "Data retrieved",
       transactions: transactions,

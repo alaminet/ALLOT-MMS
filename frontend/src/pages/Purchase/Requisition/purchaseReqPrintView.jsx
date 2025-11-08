@@ -192,8 +192,10 @@ const PurchaseReqPrintView = () => {
           }
         )
         .then((res) => {
+          console.log(res?.data);
+
           // message.success(res?.data?.message);
-          setQueryData(res?.data?.items[0]);
+          setQueryData(res?.data?.items);
         });
     } catch (error) {
       console.log(error);
@@ -274,7 +276,7 @@ const PurchaseReqPrintView = () => {
             <Row justify="space-between" style={{ padding: "10px" }}>
               <Col>
                 <p>
-                  <strong>PR Ref.: </strong>
+                  <strong>PR No.: </strong>
                   {queryData?.code}
                 </p>
                 <p>
@@ -430,9 +432,24 @@ const PurchaseReqPrintView = () => {
                 <Column
                   align="center"
                   title="Last 6M Used"
-                  dataIndex="L6MUsed"
-                  key="L6MUsed"
-                  render={(_, record) => <Input variant="borderless" />}
+                  dataIndex="sixMonthUsed"
+                  key="sixMonthUsed"
+                  render={(_, record, index) => (
+                    <InputNumber
+                      min={0}
+                      defaultValue={_ || 0}
+                      onChange={(value) =>
+                        setInputValues((prev) => ({
+                          ...prev,
+                          [index]: {
+                            ...prev[index],
+                            sixMonthUsed: value,
+                          },
+                        }))
+                      }
+                      variant="borderless"
+                    />
+                  )}
                 />
                 <Column
                   align="center"
