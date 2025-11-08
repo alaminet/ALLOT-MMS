@@ -191,7 +191,7 @@ const PurchaseReqViewTable = () => {
         .then((res) => {
           message.success(res.data.message);
           const tableArr = res?.data?.items?.flatMap((item) =>
-            item.itemDetails.map((list) => ({
+            item?.itemDetails.map((list) => ({
               key: list?._id,
               PR: item?.code,
               code: list?.code?.code || "NA",

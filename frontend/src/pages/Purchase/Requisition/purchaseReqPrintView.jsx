@@ -182,7 +182,9 @@ const PurchaseReqPrintView = () => {
     try {
       await axios
         .post(
-          `${import.meta.env.VITE_API_URL}/api/purchase/requisition/view`,
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/purchase/requisition/view-single`,
           payload,
           {
             headers: {
@@ -192,8 +194,6 @@ const PurchaseReqPrintView = () => {
           }
         )
         .then((res) => {
-          console.log(res?.data);
-
           // message.success(res?.data?.message);
           setQueryData(res?.data?.items);
         });
