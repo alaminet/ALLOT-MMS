@@ -60,15 +60,7 @@ const InventoryListView = () => {
       render: (text, record, index) => index + 1,
       responsive: ["lg"],
     },
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      responsive: ["lg"],
-      onCell: (record) => ({
-        rowSpan: record.rowSpan,
-      }),
-    },
+
     {
       title: "SKU/Part",
       dataIndex: "SKU",
@@ -86,6 +78,15 @@ const InventoryListView = () => {
           </Flex>
         </>
       ),
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      responsive: ["lg"],
+      onCell: (record) => ({
+        rowSpan: record.rowSpan,
+      }),
     },
     {
       title: "UOM",

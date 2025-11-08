@@ -54,7 +54,7 @@ const items = [
     getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
     getItem("Order", "purchase-order", <FileDoneOutlined />),
   ]),
-  getItem("Transaction", "transaction", <ShopOutlined />, [
+  getItem("Warehouse", "transaction", <ShopOutlined />, [
     getItem("Receive", "receive", <FileDoneOutlined />),
     getItem("Issue", "issue", <FileDoneOutlined />),
     getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),

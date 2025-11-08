@@ -5,7 +5,16 @@ import { useLocation } from "react-router-dom";
 import { usePermission } from "../../../hooks/usePermission";
 import NotFound from "../../notFound";
 import NotAuth from "../../notAuth";
-import { Col, Row, Table, Typography, Input, InputNumber, Button } from "antd";
+import {
+  Col,
+  Row,
+  Table,
+  Typography,
+  Input,
+  InputNumber,
+  Button,
+  QRCode,
+} from "antd";
 import moment from "moment";
 import { PrinterOutlined } from "@ant-design/icons";
 const { Title, Text } = Typography;
@@ -116,7 +125,8 @@ const TnxReportView = () => {
           className="print-page"
           style={{ backgroundColor: "#fff", padding: "20px" }}>
           <Row justify="center">
-            <Col>
+            <Col span={6}></Col>
+            <Col span={12}>
               <Typography style={{ textAlign: "center" }}>
                 <Title style={{ margin: "0" }}>
                   {businessDetails?.orgName}
@@ -137,6 +147,15 @@ const TnxReportView = () => {
                   Transaction Details Report
                 </Title>
               </Typography>
+            </Col>
+            <Col span={6}>
+              <QRCode
+                value={`${window.location.href}`}
+                type="svg"
+                size={100}
+                style={{ margin: "0 0 0 auto" }}
+                bordered={false}
+              />
             </Col>
           </Row>
           <Row justify="space-between" style={{ padding: "20px" }}>

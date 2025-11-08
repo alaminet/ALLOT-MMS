@@ -20,9 +20,9 @@ import {
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
-import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
 const ReceiveLayout = () => {
@@ -42,6 +42,8 @@ const ReceiveLayout = () => {
       receivedAt: values.receivedAt.$d,
       createdBy: user?.id,
     };
+    console.log(formData);
+
     setLoading(true);
     try {
       const res = await axios.post(

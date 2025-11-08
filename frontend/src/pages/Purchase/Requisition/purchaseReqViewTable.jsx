@@ -55,16 +55,14 @@ const PurchaseReqViewTable = () => {
       filterSearch: true,
     },
     {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      filters: [...new Set(queryData?.map((item) => item.code))].map(
-        (code) => ({
-          text: code,
-          value: code,
-        })
-      ),
-      onFilter: (value, record) => record?.code === value,
+      title: "SKU",
+      dataIndex: "SKU",
+      key: "SKU",
+      filters: [...new Set(queryData?.map((item) => item.SKU))].map((code) => ({
+        text: code,
+        value: code,
+      })),
+      onFilter: (value, record) => record?.SKU === value,
       filterSearch: true,
     },
     {
@@ -197,6 +195,7 @@ const PurchaseReqViewTable = () => {
               key: list?._id,
               PR: item?.code,
               code: list?.code?.code || "NA",
+              SKU: list?.code?.SKU || "NA",
               name: list?.name,
               reqQty: list?.reqQty,
               POQty: list?.POQty,

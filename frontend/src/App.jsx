@@ -51,6 +51,7 @@ import Settings from "./pages/Settings/index.jsx";
 import PurchaseOrder from "./pages/Purchase/Order/index.jsx";
 import PurchaseOrderReqTable from "./pages/Purchase/Order/purchaseOrderReqTable.jsx";
 import PurchaseOrderViewTable from "./pages/Purchase/Order/purchaseOrderViewTable.jsx";
+import POReceiveLayout from "./pages/Transaction/Receive/POReceiveLayout.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -81,7 +82,8 @@ function App() {
             </Route>
             <Route path="" element={<Transaction />}>
               <Route path="receive" element={<Receive />}>
-                <Route path="" element={<ReceiveLayout />} />
+                <Route path="" element={<POReceiveLayout />} />
+                <Route path="new" element={<ReceiveLayout />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="issue" element={<Issue />}>

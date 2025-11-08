@@ -1,8 +1,10 @@
 const TrnxReceive = require("../../../model/transaction/trnxReceive");
 const TrnxDetails = require("../../../model/transaction/trnxDetails");
 const ItemInfo = require("../../../model/master/itemInfo");
+const PurchaseOrder = require("../../../model/purchaseOrder");
+const PurchaseReq = require("../../../model/purchaseReq");
 
-async function createTrnxRecCTR(req, res, next) {
+async function creatPOGRNRecCTR(req, res, next) {
   const data = req.body;
   try {
     if (!data.itemDetails) {
@@ -27,7 +29,7 @@ async function createTrnxRecCTR(req, res, next) {
           UOM: dtl.UOM,
           location: dtl.location,
           receiveQty: dtl.receiveQty,
-          unitPrice: dtl.unitPrice,
+          unitPrice: Number(dtl.unitPrice) || 0,
           remarks: dtl.remarks,
         })),
         createdBy: req.actionBy,
@@ -40,11 +42,11 @@ async function createTrnxRecCTR(req, res, next) {
         orgId: newData.orgId,
         tnxType: newData.tnxType,
         tnxRef: newData.code,
-        itemCode: item.code,
-        itemSKU: item.SKU,
+        itemCode: item.code || null,
+        itemSKU: item.SKU || null,
         itemName: item.name,
         itemUOM: item.UOM,
-        itemPrice: item.unitPrice,
+        itemPrice: Number(item.unitPrice) || 0,
         tnxQty: item.receiveQty,
         location: item.location,
         remarks: item.remarks,
@@ -55,7 +57,7 @@ async function createTrnxRecCTR(req, res, next) {
 
       // Item Info Updated
       for (const element of newData.itemDetails) {
-        const item = await ItemInfo.findOne({ code: element.code });
+        const item = await ItemInfo.findOne({ code: element?.code });
         if (!item) continue;
 
         const newQty = element.receiveQty;
@@ -101,6 +103,28 @@ async function createTrnxRecCTR(req, res, next) {
 
         await item.save();
       }
+
+      // Update PO GRN Qty and PO RecQty
+      for (const item of data.itemDetails) {
+        // Update PO GRN Qty
+        const poId = data.sourceRef;
+        const poLineId = item.POLineID;
+        const qty = Number(item.receiveQty || 0);
+        if (!poId || !poLineId || !qty) continue;
+        await PurchaseOrder.updateOne(
+          { code: poId, "itemDetails._id": poLineId },
+          { $inc: { "itemDetails.$.GRNQty": qty } }
+        );
+        //Update PR RecQty
+        const prId = item.PRRef;
+        const prLineId = item.PRLineId;
+        const recQty = Number(item.receiveQty || 0);
+        if (!prId || !prLineId || !recQty) continue;
+        await PurchaseReq.updateOne(
+          { _id: prId, "itemDetails._id": prLineId },
+          { $inc: { "itemDetails.$.recQty": recQty } }
+        );
+      }
       res.status(201).send({
         message: `Goods received ID #${newData.code}`,
       });
@@ -120,4 +144,4 @@ async function createTrnxRecCTR(req, res, next) {
     res.status(500).send({ error: error.message || "Error creating" });
   }
 }
-module.exports = createTrnxRecCTR;
+module.exports = creatPOGRNRecCTR;

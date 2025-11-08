@@ -10,6 +10,7 @@ import {
   Input,
   InputNumber,
   message,
+  QRCode,
 } from "antd";
 import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
@@ -236,8 +237,9 @@ const PurchaseReqPrintView = () => {
           <div
             className="print-page"
             style={{ backgroundColor: "#fff", padding: "20px" }}>
-            <Row justify="center">
-              <Col>
+            <Row justify="space-between">
+              <Col span={6}></Col>
+              <Col span={12}>
                 <Typography style={{ textAlign: "center" }}>
                   <Title style={{ margin: "0" }}>
                     {businessDetails?.orgName}
@@ -258,6 +260,15 @@ const PurchaseReqPrintView = () => {
                     PURCHASE REQUISITION FORM
                   </Title>
                 </Typography>
+              </Col>
+              <Col span={6}>
+                <QRCode
+                  value={`${window.location.href}?ref=${refData}`}
+                  type="svg"
+                  size={100}
+                  style={{ margin: "0 0 0 auto" }}
+                  bordered={false}
+                />
               </Col>
             </Row>
             <Row justify="space-between" style={{ padding: "10px" }}>

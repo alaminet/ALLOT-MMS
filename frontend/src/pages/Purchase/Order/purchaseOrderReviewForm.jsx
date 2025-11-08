@@ -174,6 +174,11 @@ const PurchaseOrderReviewForm = ({
       width: 100,
     },
     {
+      title: "PO Pending",
+      dataIndex: "reqPOQty",
+      width: 100,
+    },
+    {
       title: "PO Qty",
       dataIndex: "reqPOQty",
       editable: true,

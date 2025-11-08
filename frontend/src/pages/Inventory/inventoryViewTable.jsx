@@ -36,13 +36,6 @@ const InventoryViewTable = () => {
       responsive: ["lg"],
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      width: 300,
-      // responsive: ["lg"],
-    },
-    {
       title: "Code",
       dataIndex: "SKU",
       key: "SKU",
@@ -56,6 +49,20 @@ const InventoryViewTable = () => {
           </Flex>
         </>
       ),
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: 300,
+      // responsive: ["lg"],
+    },
+    {
+      title: "UOM",
+      dataIndex: "UOM",
+      key: "UOM",
+      width: 80,
+      // responsive: ["lg"],
     },
     {
       title: "Received Qty",

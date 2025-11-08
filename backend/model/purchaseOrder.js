@@ -45,6 +45,7 @@ const purchaseOrderSchema = new Schema(
         spec: String,
         UOM: String,
         POQty: Number,
+        GRNQty: { type: Number, default: 0 },
         POPrice: Number,
         remarks: String,
         isDeleted: {

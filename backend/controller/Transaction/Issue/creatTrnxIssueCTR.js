@@ -150,13 +150,11 @@ async function creatTrnxIssueCTR(req, res, next) {
         }
 
         // Calculate avgPrice using weighted average
-        const totalQty = existingQty - newQty;
+        const totalQty = existingQty + newQty;
+        const existingValue = existingQty * existingPrice;
+        const newValue = newQty * newPrice;
         item.avgPrice =
-          totalQty > 0
-            ? (existingQty * existingPrice - newQty * newPrice) / totalQty
-            : newPrice;
-
-        // item.lastPrice = newPrice;
+          totalQty > 0 ? (existingValue - newValue) / totalQty : newPrice;
         await item.save();
       }
       res.status(201).send({
