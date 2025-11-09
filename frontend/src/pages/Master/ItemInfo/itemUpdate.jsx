@@ -70,7 +70,6 @@ const ItemUpdate = () => {
             "ItemType",
             "CostCenter",
             "StoreLocation",
-            "Transaction",
           ],
         },
         {
@@ -147,7 +146,6 @@ const ItemUpdate = () => {
                     <Form.Item
                       label="Item Discription"
                       name="discription"
-                      required
                       style={{ width: "100%" }}>
                       <Input
                         placeholder="Discription/Specification"

@@ -79,14 +79,14 @@ const customTheme = {
 // Recursive Menu Filtering
 const filterMenuItems = (menuItems, allowedKeys) => {
   return menuItems
-    .map((item) => {
+    ?.map((item) => {
       if (item.children) {
         const filteredChildren = filterMenuItems(item.children, allowedKeys);
         if (filteredChildren.length > 0) {
           return { ...item, children: filteredChildren };
         }
       }
-      return allowedKeys.includes(item.key) ? item : null;
+      return allowedKeys?.includes(item.key) ? item : null;
     })
     .filter(Boolean);
 };

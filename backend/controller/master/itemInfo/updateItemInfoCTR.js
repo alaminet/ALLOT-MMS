@@ -33,7 +33,7 @@ async function updateItemInfoCTR(req, res, next) {
           : `"${changedData.name}" updated`;
 
       const logData = {
-        orgId: changedData.orgId,
+        orgId: req.orgId,
         id: req.actionBy,
         refModel: "Item_Info",
         action: actionTex,

@@ -16,10 +16,12 @@ import {
 } from "antd";
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
 const PurchaseRequisitiion = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -31,19 +33,29 @@ const PurchaseRequisitiion = () => {
     setLoading(true);
     const formData = { ...values, createdBy: user?.id };
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/new`,
-        formData,
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user?.token,
-          },
-        }
-      );
-      message.success(res.data.message);
-      setLoading(false);
-      form.resetFields();
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/requisition/new`,
+          formData,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res);
+
+          message.success(res.data.message);
+          setLoading(false);
+          form.resetFields();
+          navigate("/purchase-requisition/print", {
+            state: {
+              refData: res?.data?.data,
+            },
+          });
+        });
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);
@@ -117,6 +129,7 @@ const PurchaseRequisitiion = () => {
     getItems();
     getItemInfo();
   }, []);
+  console.log(form.getFieldValue("itemDetails"));
 
   return (
     <>
@@ -385,7 +398,12 @@ const PurchaseRequisitiion = () => {
                               </Form.Item>
                             </Col>
                             <Col span={2}>
-                              <Form.Item {...restField} name={[name, "UOM"]}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "UOM"]}
+                                disabled={
+                                  form.getFieldValue([name, "UOM"]) == ""
+                                }>
                                 <Input placeholder="UOM" />
                               </Form.Item>
                             </Col>

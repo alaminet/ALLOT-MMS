@@ -3,7 +3,6 @@ const ItemGroup = require("../../../model/master/itemGroup");
 const ItemType = require("../../../model/master/itemType");
 const CostCenter = require("../../../model/master/constCenter");
 const StoreLocation = require("../../../model/master/storeLocation");
-const Transaction = require("../../../model/master/transactionType");
 
 const modelMap = {
   ItemUOM,
@@ -11,7 +10,6 @@ const modelMap = {
   ItemType,
   CostCenter,
   StoreLocation,
-  Transaction,
 };
 
 async function createItemDetailsCTR(req, res, next) {
@@ -45,8 +43,6 @@ async function createItemDetailsCTR(req, res, next) {
             ? 3001
             : modelName === "StoreLocation"
             ? 4001
-            : modelName === "Transaction"
-            ? 5001
             : modelName === "CostCenter"
             ? 6001
             : null;

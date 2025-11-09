@@ -93,10 +93,6 @@ const ItemDetailsAdd = () => {
                       label: "Store Location",
                     },
                     {
-                      value: "Transaction",
-                      label: "Transaction Type",
-                    },
-                    {
                       value: "CostCenter",
                       label: "Cost Center",
                     },

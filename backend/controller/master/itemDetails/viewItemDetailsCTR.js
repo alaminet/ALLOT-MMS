@@ -3,7 +3,6 @@ const ItemGroup = require("../../../model/master/itemGroup");
 const ItemType = require("../../../model/master/itemType");
 const CostCenter = require("../../../model/master/constCenter");
 const StoreLocation = require("../../../model/master/storeLocation");
-const Transaction = require("../../../model/master/transactionType");
 
 const modelMap = {
   ItemUOM,
@@ -11,7 +10,6 @@ const modelMap = {
   ItemType,
   CostCenter,
   StoreLocation,
-  Transaction,
 };
 
 async function viewItemDetailsCTR(req, res) {

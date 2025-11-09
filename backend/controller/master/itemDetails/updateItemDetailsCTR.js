@@ -3,7 +3,6 @@ const ItemGroup = require("../../../model/master/itemGroup");
 const ItemType = require("../../../model/master/itemType");
 const CostCenter = require("../../../model/master/constCenter");
 const StoreLocation = require("../../../model/master/storeLocation");
-const Transaction = require("../../../model/master/transactionType");
 
 const modelMap = {
   ItemUOM,
@@ -11,7 +10,6 @@ const modelMap = {
   ItemType,
   CostCenter,
   StoreLocation,
-  Transaction,
 };
 
 async function updateItemDetailsCTR(req, res, next) {
@@ -19,6 +17,7 @@ async function updateItemDetailsCTR(req, res, next) {
   const data = req.body;
   const modelName = req.body.model;
   const Model = modelMap[modelName];
+
   try {
     if (!id) {
       return res.status(400).send({ error: "ID is required" });
@@ -27,10 +26,11 @@ async function updateItemDetailsCTR(req, res, next) {
     const query = {
       orgId: req.orgId,
       _id: { $ne: id },
-      name: data.name.trim(),
+      name: data.name?.trim(),
     };
+
     if (data.code) {
-      query.code = data.code?.toUpperCase().trim();
+      query.code = data.code?.toUpperCase()?.trim();
     }
     const dataExist = await Model.findOne(query);
     if (dataExist) {
@@ -47,11 +47,15 @@ async function updateItemDetailsCTR(req, res, next) {
       });
 
       // Add Log activites
+      const actionTex =
+        "isDeleted" in data
+          ? `${Model.modelName} "${changedData.name}" deleted`
+          : `${Model.modelName} "${changedData.name}" updated`;
       const logData = {
         orgId: req.orgId,
         id: req.actionBy,
         refModel: "Item_Details",
-        action: `${Model.modelName} "${changedData.name}" updated`,
+        action: actionTex,
       };
       req.log = logData;
       next();

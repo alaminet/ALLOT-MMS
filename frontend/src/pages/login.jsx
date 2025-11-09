@@ -70,8 +70,7 @@ const Login = () => {
             backgroundColor: "#e6e6e6ff",
           }}
           align="center"
-          justify="center"
-        >
+          justify="center">
           <Card
             // variant="outlined"
             style={{
@@ -79,8 +78,7 @@ const Login = () => {
               // backgroundColor: "#121212",
               padding: "20px",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-            }}
-          >
+            }}>
             <div style={{ textAlign: "center", padding: "0 0 30px 0" }}>
               {/* <img src={logoWhite} alt="Logo" style={{ width: 200 }} /> */}
               <span style={{ fontSize: "36px", fontWeight: "800" }}>ALLOT</span>
@@ -89,14 +87,12 @@ const Login = () => {
               name="login"
               initialValues={{ remember: true }}
               style={{ maxWidth: 360 }}
-              onFinish={onFinish}
-            >
+              onFinish={onFinish}>
               <Form.Item
                 name="email"
                 rules={[
                   { required: true, message: "Please input your email!" },
-                ]}
-              >
+                ]}>
                 <Input
                   size="large"
                   style={{
@@ -113,9 +109,8 @@ const Login = () => {
                 rules={[
                   { required: true, message: "Please input your Password!" },
                 ]}
-                style={{ margin: "0px" }}
-              >
-                <Input
+                style={{ margin: "0px" }}>
+                <Input.Password
                   size="large"
                   style={{
                     borderRadius: "0px",
@@ -131,8 +126,7 @@ const Login = () => {
                 <Flex
                   justify="space-between"
                   align="center"
-                  style={{ marginTop: "5px" }}
-                >
+                  style={{ marginTop: "5px" }}>
                   <Form.Item name="remember" valuePropName="checked" noStyle>
                     <Checkbox className="colorLink">Remember</Checkbox>
                   </Form.Item>
@@ -149,8 +143,7 @@ const Login = () => {
                   block
                   type="primary"
                   htmlType="submit"
-                  style={{ borderRadius: "1px" }}
-                >
+                  style={{ borderRadius: "1px" }}>
                   Log in
                 </Button>
               </Form.Item>

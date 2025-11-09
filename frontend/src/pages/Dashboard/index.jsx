@@ -250,7 +250,7 @@ const Dashboard = () => {
             <WaterWaveChart
               title={`${
                 dashboardData?.liqStock[1]?.name
-              } (${dashboardData?.liqStock[1]?.onHand.toFixed(0)} Ltr)`}
+              } (${dashboardData?.liqStock[1]?.onHand.toFixed(0)})`}
               height={350}
               percent={Number(
                 (
@@ -267,7 +267,7 @@ const Dashboard = () => {
             <WaterWaveChart
               title={`${
                 dashboardData?.liqStock[0]?.name
-              } (${dashboardData?.liqStock[0]?.onHand.toFixed(0)} Ltr)`}
+              } (${dashboardData?.liqStock[0]?.onHand.toFixed(0)})`}
               height={350}
               percent={Number(
                 (

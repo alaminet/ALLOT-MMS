@@ -24,7 +24,7 @@ const ItemDetailsView = () => {
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [findModel, setFindModel] = useState("");
+  const [findData, setFindData] = useState();
   const search = useOutletContext();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -43,6 +43,7 @@ const ItemDetailsView = () => {
   // Table data get form
   const onFinish = async (values) => {
     setQueryData([]);
+    setFindData(values);
     const scope =
       own && others ? "all" : own ? "own" : others ? "others" : null;
     if (!scope) {
@@ -154,8 +155,13 @@ const ItemDetailsView = () => {
             (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
               <Tooltip title="Delete">
                 <Button
-                  onClick={(e) =>
-                    handleChange(record.action, "isDeleted", true)
+                  onClick={() =>
+                    handleChange(
+                      record.action,
+                      "isDeleted",
+                      true,
+                      record.access.model
+                    )
                   }
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
@@ -176,11 +182,16 @@ const ItemDetailsView = () => {
   };
 
   //   Update Functional
-  const handleChange = async (id, field, data) => {
+  const handleChange = async (id, field, data, model) => {
+    const formData = {
+      [field]: data,
+      updatedBy: user?.id,
+      model: model,
+    };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemGroup/update/${id}`,
-        { [field]: data },
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/update/${id}`,
+        formData,
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
@@ -189,6 +200,7 @@ const ItemDetailsView = () => {
         }
       );
       message.success(res.data.message);
+      onFinish(findData);
     } catch (error) {
       message.error(error.response.data.error);
     }
@@ -229,10 +241,6 @@ const ItemDetailsView = () => {
                 {
                   value: "StoreLocation",
                   label: "Store Location",
-                },
-                {
-                  value: "Transaction",
-                  label: "Transaction Type",
                 },
                 {
                   value: "CostCenter",
