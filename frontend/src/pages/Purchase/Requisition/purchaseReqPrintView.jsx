@@ -20,6 +20,7 @@ import axios from "axios";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { useSelector } from "react-redux";
+import NotFound from "../../notFound";
 const { Title, Text } = Typography;
 const { Column, ColumnGroup } = Table;
 
@@ -233,7 +234,7 @@ const PurchaseReqPrintView = () => {
   return (
     <>
       {queryData.length == 0 ? (
-        <NotAuth />
+        <NotFound />
       ) : (
         <>
           <div

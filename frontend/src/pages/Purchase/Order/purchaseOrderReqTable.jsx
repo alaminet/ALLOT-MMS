@@ -163,6 +163,7 @@ const PurchaseOrderReqTable = () => {
                   PORemarks: null,
                   POQty: list?.POQty,
                   recQty: list?.recQty,
+                  POPending: list?.reqQty - list?.POQty,
                   reqBy: item?.requestedBy.name,
                   reqDpt: item?.costCenter?.name,
                   status: item?.status,
@@ -233,7 +234,7 @@ const PurchaseOrderReqTable = () => {
       <PurchaseOrderReviewForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
-        data={modifiedData.length > 0 ? modifiedData : selectedRowData}
+        data={modifiedData?.length > 0 ? modifiedData : selectedRowData}
         onSelectChange={onSelectChange}
       />
     </>

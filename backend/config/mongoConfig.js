@@ -9,7 +9,7 @@ let mongoConfig = () => {
     .catch((err) => {
       console.error("MongoNetworkError:", err.message);
       console.log("Retrying connection");
-      setTimeout(mongoConfig, 30000); // 30,000 ms = 30 seconds
+      setTimeout(mongoConfig, 3000); // 3,000 ms = 3 seconds
     });
 };
 

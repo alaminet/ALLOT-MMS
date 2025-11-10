@@ -14,7 +14,7 @@ async function viewPurchaseOrderCTR(req, res) {
       query["createdBy"] = { $ne: req.actionBy };
     }
 
-    if (data?.prId) {
+    if (data?.POId) {
       query["_id"] = data.prId;
     }
 

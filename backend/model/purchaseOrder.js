@@ -26,6 +26,14 @@ const purchaseOrderSchema = new Schema(
       default: null,
     },
     note: String,
+    delveryTerms: String,
+    deliveryLocation: String,
+    billingLocation: String,
+    requiredDoc: String,
+    paymentTerms: String,
+    paymentMode: String,
+    POCurrency: String,
+    deliveryTarget: Date || null,
     itemDetails: [
       {
         code: {
@@ -47,6 +55,7 @@ const purchaseOrderSchema = new Schema(
         POQty: Number,
         GRNQty: { type: Number, default: 0 },
         POPrice: Number,
+        reqPOVAT: { type: Number, default: 0 },
         remarks: String,
         isDeleted: {
           type: Boolean,

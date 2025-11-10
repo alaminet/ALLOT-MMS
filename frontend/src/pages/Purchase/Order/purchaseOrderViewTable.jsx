@@ -134,7 +134,7 @@ const PurchaseOrderViewTable = () => {
               />
             </Tooltip>
 
-            {(canDoOther(lastSegment, "view") ||
+            {/* {(canDoOther(lastSegment, "view") ||
               (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
               <Tooltip title="View">
                 <Button
@@ -142,7 +142,7 @@ const PurchaseOrderViewTable = () => {
                   icon={<EyeTwoTone />}
                 />
               </Tooltip>
-            )}
+            )} */}
             {(canDoOther(lastSegment, "edit") ||
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">

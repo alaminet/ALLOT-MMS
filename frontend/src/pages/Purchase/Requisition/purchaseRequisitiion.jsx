@@ -398,12 +398,7 @@ const PurchaseRequisitiion = () => {
                               </Form.Item>
                             </Col>
                             <Col span={2}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "UOM"]}
-                                disabled={
-                                  form.getFieldValue([name, "UOM"]) == ""
-                                }>
+                              <Form.Item {...restField} name={[name, "UOM"]}>
                                 <Input placeholder="UOM" />
                               </Form.Item>
                             </Col>

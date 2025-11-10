@@ -234,13 +234,13 @@ const BasicLayout = () => {
                   }}>
                   ALLOT
                 </span>
-                <Search
+                {/* <Search
                   style={{ width: "500px" }}
                   size="large"
                   placeholder="input search text"
                   // onSearch={onSearch}
                   enterButton
-                />
+                /> */}
                 <Flex gap={10}>
                   <Button
                     className="top-icon-btn"

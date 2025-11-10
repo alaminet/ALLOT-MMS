@@ -53,7 +53,7 @@ const PurchaseOrder = () => {
                 onClick={() =>
                   navigate("logs", {
                     state: {
-                      model: "Purchase-Requisition",
+                      model: "Purchase-Order",
                     },
                   })
                 }>

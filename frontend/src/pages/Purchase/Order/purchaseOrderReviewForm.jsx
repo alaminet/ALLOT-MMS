@@ -17,6 +17,7 @@ import {
   Table,
   Typography,
   message,
+  DatePicker,
 } from "antd";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -96,6 +97,7 @@ const PurchaseOrderReviewForm = ({
   const [dataSource, setDataSource] = useState(data);
   const [supplierData, setSuppierData] = useState();
   const [selectSupplier, setSelectSupplier] = useState();
+  const [businessSettings, setBusinessSettings] = useState();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -119,12 +121,12 @@ const PurchaseOrderReviewForm = ({
             email: item?.email,
             phone: item?.phone,
             officeAddress: item?.officeAddress,
+            paymentInfo: item?.paymentInfo,
           }));
           setSuppierData(tableArr);
         });
     } catch (error) {
       console.log(error);
-
       message.error(error.response.data.error);
     }
   };
@@ -133,12 +135,6 @@ const PurchaseOrderReviewForm = ({
     const selectSupplier = supplierData?.filter((item) => item.key === value);
     setSelectSupplier(selectSupplier[0]);
   };
-
-  // Update dataSource when drawer data changes
-  useEffect(() => {
-    setDataSource(data);
-    getSupplierData();
-  }, [data]);
 
   const handleDelete = (key) => {
     const newData = dataSource?.filter((item) => item.key !== key);
@@ -175,7 +171,7 @@ const PurchaseOrderReviewForm = ({
     },
     {
       title: "PO Pending",
-      dataIndex: "reqPOQty",
+      dataIndex: "POPending",
       width: 100,
     },
     {
@@ -191,10 +187,21 @@ const PurchaseOrderReviewForm = ({
       width: 100,
     },
     {
+      title: "% of VAT",
+      dataIndex: "reqPOVAT",
+      editable: true,
+      width: 100,
+      render: (text) => (
+        <Input style={{ padding: 0 }} variant="borderless" value={text} />
+      ),
+    },
+    {
       title: "PO Remarks",
       dataIndex: "PORemarks",
       editable: true,
-      render: (text) => <Input variant="borderless" value={text} />,
+      render: (text) => (
+        <Input style={{ padding: 0 }} variant="borderless" value={text} />
+      ),
     },
     {
       title: "Action",
@@ -271,11 +278,13 @@ const PurchaseOrderReviewForm = ({
       UOM: item?.UOM,
       POPrice: Number(item?.reqPOPrice),
       POQty: Number(item?.reqPOQty),
+      reqPOVAT: Number(item?.reqPOVAT),
       remarks: item?.PORemarks,
     }));
     const payload = {
       itemDetails,
       ...values,
+      deliveryTarget: values.deliveryTarget.$d,
       requestedBy: {
         name: user?.name,
         contact: user?.phone,
@@ -309,11 +318,51 @@ const PurchaseOrderReviewForm = ({
     }
   };
 
+  // Get Business Settings
+  const getBusinessSettings = async () => {
+    try {
+      await axios
+        .get(`${import.meta.env.VITE_API_URL}/api/orgUser/view`, {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        })
+        .then((res) => {
+          const settings = res.data?.businessSettings;
+          setBusinessSettings(settings);
+          if (settings) {
+            form.setFieldsValue(settings);
+          }
+        });
+    } catch (error) {
+      setLoading(false);
+      message.error(error.response.data.error);
+    }
+  };
+
+  // Update dataSource when drawer data changes
+  useEffect(() => {
+    setDataSource(data);
+    getSupplierData();
+    getBusinessSettings();
+    if (selectSupplier?.paymentInfo) {
+      form.setFieldsValue({
+        paymentMode: `Bank A/C Name: ${selectSupplier.paymentInfo.name || ""}
+Bank A/C Number: ${selectSupplier.paymentInfo.account || ""}
+Bank Name: ${selectSupplier.paymentInfo.bank || ""}
+Branch Name: ${selectSupplier.paymentInfo.branch || ""}
+Routing No.: ${selectSupplier.paymentInfo.routing || ""}
+Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
+      });
+    }
+  }, [data, selectSupplier]);
+
   return (
     <>
       <Drawer
         title="Make a Purchase Order(PO)"
-        width="90%"
+        width="95%"
         onClose={onClose}
         open={drawerOpen}
         styles={{
@@ -401,11 +450,87 @@ const PurchaseOrderReviewForm = ({
                 )}
               </Row>
             </Col>
-            <Col span={16}>
+            <Col span={8}>
               <Form.Item name="note" label="PO Note">
                 <Input.TextArea
                   rows={7}
                   placeholder="Please enter PO Note..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="delveryTerms"
+                label="Delivery Terms"
+                initialValue={`1. Delivery has to be done within 03 working days after receiving PO by the supplier.\n2. Delivery has to be done as per specification of PO and quotation.\n3. Incase of failure of work within the given time, supplier will be penalized as per company policy.\n4. If any damage or problem occurs with the product, the supplier/seller will immediately replace/make arrangements with a new product.`}>
+                <Input.TextArea
+                  rows={7}
+                  placeholder="Please enter Delivery Terms..."
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={8}>
+              <Form.Item
+                name="deliveryLocation"
+                label="Delivery Location"
+                initialValue={`Contact Person: \n${businessSettings?.businessAddress?.street}, ${businessSettings?.businessAddress?.city}, ${businessSettings?.businessAddress?.country}, ${businessSettings?.businessAddress?.postal}.`}>
+                <Input.TextArea
+                  rows={5}
+                  placeholder="Please enter Delivery Location..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="billingLocation"
+                label="Bill Submission"
+                initialValue={`Contact Person: \n${businessSettings?.officeAddress?.street}, ${businessSettings?.officeAddress?.city}, ${businessSettings?.officeAddress?.country}, ${businessSettings?.officeAddress?.postal}.`}>
+                <Input.TextArea
+                  rows={5}
+                  placeholder="Please enter Delivery Location..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="requiredDoc"
+                label="Documents Requied For Billing"
+                initialValue={`1. Fully signed PO copy accept by supplier.\n2. Delivery challan with receiving sign from inventory/warehouse officials.\n3. Mushok 6.3.\n4. Price quotation.`}>
+                <Input.TextArea
+                  rows={5}
+                  placeholder="List of required documents during bill submission..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="paymentTerms"
+                label="Payment Terms"
+                initialValue={`1. 100% payment will be made within 30 working days of successful delivery of required .\n2. VAT and AIT applicable as per BD Govt. rules.`}>
+                <Input.TextArea
+                  rows={5}
+                  placeholder="List of required documents during bill submission..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="paymentMode" label="Payment Methode">
+                <Input.TextArea
+                  rows={5}
+                  placeholder="Payment methode details..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item name="POCurrency" label="PO Currency">
+                <Input placeholder="BDT/USD/..." />
+              </Form.Item>
+              <Form.Item name="deliveryTarget" label="Delivery Target">
+                <DatePicker
+                  placeholder="Select a date"
+                  style={{ width: "100%" }}
                 />
               </Form.Item>
             </Col>
