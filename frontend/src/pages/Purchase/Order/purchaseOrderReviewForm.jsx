@@ -144,6 +144,9 @@ const PurchaseOrderReviewForm = ({
       newData.map((item) => item.key),
       newData
     );
+    if (newData?.length == 0) {
+      onClose();
+    }
   };
 
   const defaultColumns = [
@@ -356,7 +359,7 @@ Routing No.: ${selectSupplier.paymentInfo.routing || ""}
 Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
       });
     }
-  }, [selectSupplier]);
+  }, [data, selectSupplier]);
 
   return (
     <>

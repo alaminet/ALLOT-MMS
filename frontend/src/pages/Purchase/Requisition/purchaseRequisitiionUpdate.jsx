@@ -136,7 +136,6 @@ const PurchaseRequisitiionUpdate = () => {
       <Title style={{ textAlign: "left" }} className="colorLink form-title">
         Update Purchase Requisition
       </Title>
-
       <Card>
         <Form
           form={form}
@@ -296,168 +295,218 @@ const PurchaseRequisitiionUpdate = () => {
                           </Col>
                           <Col span={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
-                        {fields.map(({ key, name, ...restField }) => (
-                          <Row key={key} justify="space-between" align="top">
-                            <Col span={4}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "name"]}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Item name",
-                                  },
-                                ]}>
-                                <AutoComplete
-                                  options={filteredOptions}
-                                  onSearch={(searchText) => {
-                                    const filtered = itemList
-                                      .filter((item) =>
-                                        item.label
-                                          .toLowerCase()
-                                          .includes(searchText.toLowerCase())
-                                      )
-                                      .map((item) => ({
-                                        label: item.label,
-                                        value: item.label,
-                                      }));
-                                    setFilteredOptions(filtered);
-                                  }}
-                                  onSelect={(value) => {
-                                    const matched = itemList.find(
-                                      (i) => i.label === value
-                                    );
-                                    if (matched) {
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "UOM"],
-                                        matched.UOM
-                                      );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "code"],
-                                        matched.value
-                                      );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "unitPrice"],
-                                        matched.price
-                                      );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "onHandQty"],
-                                        matched.onHandQty
-                                      );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "spec"],
-                                        matched.spec
-                                      );
-                                    }
-                                  }}
-                                  onChange={(value) => {
-                                    const matched = itemList.find(
-                                      (i) => i.label === value
-                                    );
-                                    if (!matched) {
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "UOM"],
-                                        ""
-                                      ); // clear UOM for manual input
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "code"],
-                                        ""
-                                      ); // clear code for manual input
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "unitPrice"],
-                                        ""
-                                      ); // clear unitPrice for manual input
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "onHandQty"],
-                                        ""
-                                      ); // clear unitPrice for manual input
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "spec"],
-                                        ""
-                                      ); // clear unitPrice for manual input
-                                    }
-                                  }}
-                                  placeholder="Item name"
-                                />
-                              </Form.Item>
-                              <Form.Item
-                                hidden
-                                {...restField}
-                                name={[name, "code"]}>
-                                <Input placeholder="Code" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                              <Form.Item {...restField} name={[name, "spec"]}>
-                                <Input placeholder="Specification" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={2}>
-                              <Form.Item {...restField} name={[name, "brand"]}>
-                                <Input placeholder="Brand" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={2}>
-                              <Form.Item {...restField} name={[name, "UOM"]}>
-                                <Input placeholder="UOM" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={2}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "unitPrice"]}>
-                                <Input placeholder="Price" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={2}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "onHandQty"]}>
-                                <Input placeholder="On Hand" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={2}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "reqQty"]}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: "Req. Qty",
-                                  },
-                                ]}>
-                                <Input placeholder="Req. Qty" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "consumePlan"]}>
-                                <Input placeholder="Consume Plan" />
-                              </Form.Item>
-                            </Col>
-                            <Col span={3}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "remarks"]}>
-                                <Input placeholder="Remarks" />
-                              </Form.Item>
-                            </Col>
+                        {fields.map(({ key, name, ...restField }) => {
+                          const itemData = form.getFieldValue([
+                            "itemDetails",
+                            name,
+                          ]);
+                          const isDisabled = itemData?.POQty > 0;
 
-                            <Col
-                              span={1}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                height: "42px",
-                                justifyContent: "center",
-                              }}>
-                              <MinusCircleOutlined
-                                onClick={() => remove(name)}
-                              />
-                            </Col>
-                          </Row>
-                        ))}
+                          return (
+                            <Row key={key} justify="space-between" align="top">
+                              <Col span={4}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "name"]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Item name",
+                                    },
+                                  ]}>
+                                  <AutoComplete
+                                    disabled={isDisabled}
+                                    options={filteredOptions}
+                                    onSearch={(searchText) => {
+                                      const filtered = itemList
+                                        .filter((item) =>
+                                          item.label
+                                            .toLowerCase()
+                                            .includes(
+                                              searchText.toLowerCase()
+                                            )
+                                        )
+                                        .map((item) => ({
+                                          label: item.label,
+                                          value: item.label,
+                                        }));
+                                      setFilteredOptions(filtered);
+                                    }}
+                                    onSelect={(value) => {
+                                      const matched = itemList.find(
+                                        (i) => i.label === value
+                                      );
+                                      if (matched) {
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "UOM"],
+                                          matched.UOM
+                                        );
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "code"],
+                                          matched.value
+                                        );
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "unitPrice"],
+                                          matched.price
+                                        );
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "onHandQty"],
+                                          matched.onHandQty
+                                        );
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "spec"],
+                                          matched.spec
+                                        );
+                                      }
+                                    }}
+                                    onChange={(value) => {
+                                      const matched = itemList.find(
+                                        (i) => i.label === value
+                                      );
+                                      if (!matched) {
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "UOM"],
+                                          ""
+                                        ); // clear UOM for manual input
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "code"],
+                                          ""
+                                        ); // clear code for manual input
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "unitPrice"],
+                                          ""
+                                        ); // clear unitPrice for manual input
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "onHandQty"],
+                                          ""
+                                        ); // clear unitPrice for manual input
+                                        form.setFieldValue(
+                                          ["itemDetails", name, "spec"],
+                                          ""
+                                        ); // clear unitPrice for manual input
+                                      }
+                                    }}
+                                    placeholder="Item name"
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  hidden
+                                  {...restField}
+                                  name={[name, "code"]}>
+                                  <Input placeholder="Code" />
+                                </Form.Item>
+                              </Col>
+                              <Col span={3}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "spec"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Specification"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={2}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "brand"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Brand"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={2}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "UOM"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="UOM"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={2}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "unitPrice"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Price"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={2}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "onHandQty"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="On Hand"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={2}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "reqQty"]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Req. Qty",
+                                    },
+                                  ]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Req. Qty"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={3}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "consumePlan"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Consume Plan"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={3}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "remarks"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="Remarks"
+                                  />
+                                </Form.Item>
+                              </Col>
+
+                              <Col
+                                span={1}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  height: "42px",
+                                  justifyContent: "center",
+                                }}>
+                                <MinusCircleOutlined
+                                  style={{
+                                    cursor: isDisabled
+                                      ? "not-allowed"
+                                      : "pointer",
+                                    opacity: isDisabled ? 0.5 : 1,
+                                    color: isDisabled ? "#d9d9d9" : "#000",
+                                  }}
+                                  onClick={() =>
+                                    !isDisabled && remove(name)
+                                  }
+                                />
+                              </Col>
+                            </Row>
+                          );
+                        })}
                         <Form.Item>
                           <Button type="primary" onClick={() => add()} block>
                             + Add Item

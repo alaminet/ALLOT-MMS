@@ -137,6 +137,7 @@ const PurchaseReqViewTable = () => {
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">
                 <Button
+                  disabled={record?.POAvl}
                   onClick={() =>
                     navigate("update", {
                       state: {
@@ -152,6 +153,7 @@ const PurchaseReqViewTable = () => {
             (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
               <Tooltip title="Delete">
                 <Button
+                  disabled={record.POQty > 0}
                   onClick={(e) =>
                     handleChange(record.action, record.key, "isDeleted", true)
                   }
@@ -207,6 +209,7 @@ const PurchaseReqViewTable = () => {
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
               access: item,
               action: item?._id,
+              POAvl: item?.itemDetails.some((itm) => itm.POQty > 0),
             }))
           );
           setQueryData(tableArr);

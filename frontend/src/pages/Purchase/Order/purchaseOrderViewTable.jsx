@@ -166,6 +166,7 @@ const PurchaseOrderViewTable = () => {
               <>
                 <Tooltip title="Edit">
                   <Button
+                    disabled={record.GRNAvl}
                     onClick={() => {
                       setEditPOId(record.action);
                       setDrawerOpen(true);
@@ -241,6 +242,7 @@ const PurchaseOrderViewTable = () => {
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
               access: item,
               action: item?._id,
+              GRNAvl: item?.itemDetails.some((itm) => itm.GRNQty > 0),
             }))
           );
           setQueryData(tableArr);
