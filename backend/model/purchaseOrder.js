@@ -67,7 +67,7 @@ const purchaseOrderSchema = new Schema(
     // Common Schema
     status: {
       type: String,
-      enum: ["In-Process", "Checked", "Approved"],
+      enum: ["In-Process", "Checked", "Approved", "Hold", "Cancelled"],
       default: "In-Process",
     },
     isDeleted: {

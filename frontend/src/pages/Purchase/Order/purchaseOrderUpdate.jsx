@@ -19,6 +19,7 @@ import {
   message,
   DatePicker,
 } from "antd";
+import dayjs from "dayjs";
 import axios from "axios";
 import { useSelector } from "react-redux";
 const { Option } = Select;
@@ -87,19 +88,41 @@ const EditableCell = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-const PurchaseOrderReviewForm = ({
-  drawerOpen,
-  setDrawerOpen,
-  data,
-  onSelectChange,
-}) => {
+const PurchaseOrderUpdate = ({ drawerOpen, setDrawerOpen, data }) => {
   const user = useSelector((user) => user.loginSlice.login);
-  const [dataSource, setDataSource] = useState(data);
+  const [dataSource, setDataSource] = useState();
   const [supplierData, setSuppierData] = useState();
   const [selectSupplier, setSelectSupplier] = useState();
   const [businessSettings, setBusinessSettings] = useState();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  // Fetch PO data when drawer opens and data (editPOId) changes
+  useEffect(() => {
+    const fetchPOData = async () => {
+      if (data && drawerOpen) {
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_API_URL}/api/purchase/order/view-single`,
+            { scope: "all", POId: data },
+            {
+              headers: {
+                Authorization: import.meta.env.VITE_SECURE_API_KEY,
+                token: user.token,
+              },
+            }
+          );
+          if (response.data) {
+            setDataSource(response.data?.items);
+          }
+        } catch (error) {
+          message.error("Error fetching purchase order data");
+        }
+      }
+    };
+
+    fetchPOData();
+  }, [drawerOpen, form]);
 
   // Get Supplier data
   const getSupplierData = async () => {
@@ -126,7 +149,6 @@ const PurchaseOrderReviewForm = ({
           setSuppierData(tableArr);
         });
     } catch (error) {
-      console.log(error);
       message.error(error.response.data.error);
     }
   };
@@ -136,15 +158,13 @@ const PurchaseOrderReviewForm = ({
     setSelectSupplier(selectSupplier[0]);
   };
 
-  const handleDelete = (key) => {
-    const newData = dataSource?.filter((item) => item.key !== key);
-    setDataSource(newData);
-    // Pass modified data back to parent after deletion
-    onSelectChange(
-      newData.map((item) => item.key),
-      newData
-    );
-  };
+  //   const handleDelete = (key) => {
+  //     const newData = dataSource?.itemDetails?.filter((item) => item._id !== key);
+  //     setDataSource({ ...dataSource, itemDetails: newData });
+  //     if (newData?.length == 0) {
+  //       onClose();
+  //     }
+  //   };
 
   const defaultColumns = [
     {
@@ -165,24 +185,15 @@ const PurchaseOrderReviewForm = ({
       width: "20%",
     },
     {
-      title: "Req.Qty",
-      dataIndex: "reqQty",
-      width: 100,
-    },
-    {
-      title: "PO Pending",
-      dataIndex: "POPending",
-      width: 100,
-    },
-    {
       title: "PO Qty",
-      dataIndex: "reqPOQty",
-      editable: true,
+      dataIndex: "POQty",
+      //   editable: true,
       width: 100,
     },
+
     {
       title: "PO Price",
-      dataIndex: "reqPOPrice",
+      dataIndex: "POPrice",
       editable: true,
       width: 100,
     },
@@ -197,42 +208,36 @@ const PurchaseOrderReviewForm = ({
     },
     {
       title: "PO Remarks",
-      dataIndex: "PORemarks",
+      dataIndex: "remarks",
       editable: true,
       render: (text) => (
         <Input style={{ padding: 0 }} variant="borderless" value={text} />
       ),
     },
-    {
-      title: "Action",
-      dataIndex: "action",
-      align: "center",
-      width: 100,
-      render: (_, record) =>
-        dataSource?.length >= 1 ? (
-          <Popconfirm
-            title="Sure to delete?"
-            onConfirm={() => handleDelete(record.key)}>
-            <DeleteTwoTone twoToneColor="#eb2f96" />
-          </Popconfirm>
-        ) : null,
-    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   align: "center",
+    //   width: 100,
+    //   render: (_, record) => (
+    //     <Popconfirm
+    //       title="Sure to delete?"
+    //       onConfirm={() => handleDelete(record._id)}>
+    //       <DeleteTwoTone twoToneColor="#eb2f96" />
+    //     </Popconfirm>
+    //   ),
+    // },
   ];
 
   const handleSave = (row) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
+    const newData = [...dataSource?.itemDetails];
+    const index = newData.findIndex((item) => row._id === item._id);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
       ...row,
     });
-    setDataSource(newData);
-    // Pass modified data back to parent
-    onSelectChange(
-      newData.map((item) => item.key),
-      newData
-    );
+    setDataSource({ ...dataSource, itemDetails: newData });
   };
   const components = {
     body: {
@@ -263,38 +268,31 @@ const PurchaseOrderReviewForm = ({
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
-    // onSelectChange(
-    //   dataSource?.map((item) => item.key),
-    //   dataSource // Pass the modified data
-    // );
-    const itemDetails = dataSource?.map((item) => ({
-      PRLineId: item?.key,
-      PRCode: item?.PR,
-      PRRef: item?.PRId,
+    const itemDetails = dataSource?.itemDetails?.map((item) => ({
+      PRLineId: item?.PRLineId,
+      PRCode: item?.PRCode,
+      PRRef: item?.PRRef,
       code: item?.code?._id || null,
       SKU: item?.SKU,
       name: item?.name,
       spec: item?.spec,
       UOM: item?.UOM,
-      POPrice: Number(item?.reqPOPrice),
-      POQty: Number(item?.reqPOQty),
+      POPrice: Number(item?.POPrice),
+      POQty: Number(item?.POQty),
       reqPOVAT: Number(item?.reqPOVAT),
-      remarks: item?.PORemarks,
+      remarks: item?.remarks,
     }));
     const payload = {
       itemDetails,
       ...values,
-      deliveryTarget: values.deliveryTarget.$d,
-      requestedBy: {
-        name: user?.name,
-        contact: user?.phone,
-        email: user?.email,
-      },
+      deliveryTarget: values?.deliveryTarget?.$d || null,
     };
     try {
       await axios
         .post(
-          `${import.meta.env.VITE_API_URL}/api/purchase/order/new`,
+          `${import.meta.env.VITE_API_URL}/api/purchase/order/update/${
+            dataSource?._id
+          }`,
           payload,
           {
             headers: {
@@ -307,7 +305,6 @@ const PurchaseOrderReviewForm = ({
           message.success(res.data.message);
           setDataSource([]);
           setSelectSupplier(null);
-          onSelectChange([], []);
           form.resetFields();
           setLoading(false);
           onClose();
@@ -329,11 +326,7 @@ const PurchaseOrderReviewForm = ({
           },
         })
         .then((res) => {
-          const settings = res.data?.businessSettings;
-          setBusinessSettings(settings);
-          if (settings) {
-            form.setFieldsValue(settings);
-          }
+          setBusinessSettings(res.data?.businessSettings);
         });
     } catch (error) {
       setLoading(false);
@@ -343,7 +336,7 @@ const PurchaseOrderReviewForm = ({
 
   // Update dataSource when drawer data changes
   useEffect(() => {
-    setDataSource(data);
+    // setDataSource(data);
     getSupplierData();
     getBusinessSettings();
     if (selectSupplier?.paymentInfo) {
@@ -358,10 +351,37 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
     }
   }, [selectSupplier]);
 
+  // When dataSource is loaded/updated, populate the form initial values
+  useEffect(() => {
+    if (dataSource) {
+      form.setFieldsValue({
+        supplier: dataSource?.supplier?._id || dataSource?.supplier,
+        type: dataSource?.type,
+        note: dataSource?.note,
+        status: dataSource?.status,
+        delveryTerms: dataSource?.delveryTerms,
+        deliveryLocation: dataSource?.deliveryLocation,
+        billingLocation: dataSource?.billingLocation,
+        requiredDoc: dataSource?.requiredDoc,
+        paymentTerms: dataSource?.paymentTerms,
+        paymentMode: dataSource?.paymentMode,
+        POCurrency: dataSource?.POCurrency,
+        deliveryTarget: dataSource?.deliveryTarget
+          ? dayjs(dataSource.deliveryTarget)
+          : undefined,
+      });
+      // set selected supplier object for display
+      setSelectSupplier(dataSource?.supplier || null);
+    } else {
+      // reset when no data
+      form.resetFields();
+    }
+  }, [dataSource, form]);
+
   return (
     <>
       <Drawer
-        title="Make a Purchase Order(PO)"
+        title="Update Purchase Order(PO)"
         width="95%"
         onClose={onClose}
         open={drawerOpen}
@@ -388,7 +408,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 components={components}
                 rowClassName={() => "editable-row"}
                 bordered
-                dataSource={dataSource}
+                dataSource={dataSource?.itemDetails}
                 columns={columns}
               />
             </Col>
@@ -451,9 +471,21 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               </Row>
             </Col>
             <Col span={8}>
+              <Form.Item name="status" label="PO Status">
+                <Select
+                  style={{ width: "100%" }}
+                  options={[
+                    { value: "In-Process", label: "In-Process" },
+                    { value: "Checked", label: "Checked" },
+                    { value: "Approved", label: "Approved" },
+                    { value: "Hold", label: "Hold" },
+                    { value: "Cancelled", label: "Cancelled" },
+                  ]}
+                />
+              </Form.Item>
               <Form.Item name="note" label="PO Note">
                 <Input.TextArea
-                  rows={7}
+                  rows={3}
                   placeholder="Please enter PO Note..."
                 />
               </Form.Item>
@@ -541,4 +573,4 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
   );
 };
 
-export default PurchaseOrderReviewForm;
+export default PurchaseOrderUpdate;

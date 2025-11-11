@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, message, Modal, Select, Table, Tooltip } from "antd";
+import {
+  Button,
+  Flex,
+  message,
+  Modal,
+  Popconfirm,
+  Select,
+  Table,
+  Tooltip,
+} from "antd";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
@@ -14,14 +23,17 @@ import {
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
+import PurchaseOrderUpdate from "./purchaseOrderUpdate";
 
 const PurchaseOrderViewTable = () => {
+  const navigate = useNavigate();
+  const search = useOutletContext();
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const search = useOutletContext();
-  const navigate = useNavigate();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editPOId, setEditPOId] = useState(null);
 
   // Get pathname
   const pathname = location.pathname;
@@ -101,6 +113,12 @@ const PurchaseOrderViewTable = () => {
       responsive: ["md"],
     },
     {
+      title: "GRN Qty",
+      dataIndex: "GRNQty",
+      key: "GRNQty",
+      responsive: ["md"],
+    },
+    {
       title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
@@ -145,28 +163,32 @@ const PurchaseOrderViewTable = () => {
             )} */}
             {(canDoOther(lastSegment, "edit") ||
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
-              <Tooltip title="Edit">
-                <Button
-                  onClick={() =>
-                    navigate("update", {
-                      state: {
-                        refData: record.access,
-                      },
-                    })
-                  }
-                  icon={<EditTwoTone />}
-                />
-              </Tooltip>
+              <>
+                <Tooltip title="Edit">
+                  <Button
+                    onClick={() => {
+                      setEditPOId(record.action);
+                      setDrawerOpen(true);
+                    }}
+                    icon={<EditTwoTone />}
+                  />
+                </Tooltip>
+              </>
             )}
             {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
             (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
               <Tooltip title="Delete">
-                <Button
-                  onClick={(e) =>
+                <Popconfirm
+                  disabled={record.GRNQty > 0}
+                  title="Sure to delete?"
+                  onConfirm={() =>
                     handleChange(record.action, record.key, "isDeleted", true)
-                  }
-                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
-                />
+                  }>
+                  <Button
+                    icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                    disabled={record.GRNQty > 0}
+                  />
+                </Popconfirm>
               </Tooltip>
             ) : (
               ""
@@ -210,6 +232,7 @@ const PurchaseOrderViewTable = () => {
               UOM: list?.UOM,
               POPrice: list?.POPrice,
               POQty: list?.POQty,
+              GRNQty: list?.GRNQty,
               supplier: item?.supplier?.name,
               POValue: Number(list?.POQty * list?.POPrice).toFixed(2),
               reqBy: item?.requestedBy.name,
@@ -237,7 +260,7 @@ const PurchaseOrderViewTable = () => {
   const handleChange = async (id, lineID, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/purchase/order/update/${id}`,
         { lineID, field, data },
         {
           headers: {
@@ -255,7 +278,7 @@ const PurchaseOrderViewTable = () => {
 
   useEffect(() => {
     getTableData();
-  }, []);
+  }, [drawerOpen]);
   return (
     <>
       {!own && !others ? (
@@ -300,6 +323,11 @@ const PurchaseOrderViewTable = () => {
         }}>
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
+      <PurchaseOrderUpdate
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        data={editPOId}
+      />
     </>
   );
 };

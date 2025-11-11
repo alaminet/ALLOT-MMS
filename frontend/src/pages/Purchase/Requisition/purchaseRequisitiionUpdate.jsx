@@ -20,8 +20,8 @@ import { MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
 
 const PurchaseRequisitiionUpdate = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { refData } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);

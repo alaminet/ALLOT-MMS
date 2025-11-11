@@ -232,7 +232,7 @@ const PurchaseOrderPrintView = () => {
               <Col span={6}></Col>
               <Col span={12}>
                 <Typography style={{ textAlign: "center" }}>
-                  <Title level={2} style={{ margin: "0" }}>
+                  <Title level={2} style={{ margin: "0", textWrap: "nowrap" }}>
                     {businessDetails?.orgName}
                   </Title>
                   <Text style={{ display: "block" }}>
@@ -331,6 +331,10 @@ const PurchaseOrderPrintView = () => {
                   {moment(
                     queryData?.deliveryTarget || queryData?.createdAt
                   ).format("DD-MMM-YYYY")}
+                </p>
+                <p>
+                  <strong>PO Status: </strong>
+                  {queryData?.status}
                 </p>
                 <p>
                   <strong>Currency: </strong>
