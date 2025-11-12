@@ -14,6 +14,10 @@ async function viewPurchaseReqCTR(req, res) {
       query["createdBy"] = { $ne: req.actionBy };
     }
 
+    if (data?.status) {
+      query["status"] = data.status;
+    }
+
     if (data?.prId) {
       query["_id"] = data.prId;
     }

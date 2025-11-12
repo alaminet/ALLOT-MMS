@@ -11,6 +11,7 @@ import {
   InputNumber,
   message,
   QRCode,
+  Flex,
 } from "antd";
 import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
@@ -47,9 +48,17 @@ const PurchaseReqPrintView = () => {
   const [queryData, setQueryData] = useState([]);
 
   // User Permission Check
-  const { canDoOwn, canDoOther } = usePermission();
+  const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
   const own = canDoOwn("purchase-requisition", "view");
   const others = canDoOther("purchase-requisition", "view");
+  const ownCheck = canAuthOwn("purchase-requisition", "check");
+  const othersCheck = canAuthOther("purchase-requisition", "check");
+  const ownConfirm = canAuthOwn("purchase-requisition", "confirm");
+  const othersConfirm = canAuthOther("purchase-requisition", "confirm");
+  const ownApprove = canAuthOwn("purchase-requisition", "approve");
+  const othersApprove = canAuthOther("purchase-requisition", "approve");
+  const ownHold = canAuthOwn("purchase-requisition", "hold");
+  const othersHold = canAuthOther("purchase-requisition", "hold");
 
   // image upload
   const getBase64 = (file) =>
@@ -172,14 +181,14 @@ const PurchaseReqPrintView = () => {
 
   // Get print data
   const getData = async () => {
-    const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
-    if (!scope) {
-      setQueryData([]);
-      // message.warning("You are not authorized");
-      return; // stop execution
-    }
-    const payload = { scope, prId: refData };
+    // const scope =
+    //   own && others ? "all" : own ? "own" : others ? "others" : null;
+    // if (!scope) {
+    //   setQueryData([]);
+    //   // message.warning("You are not authorized");
+    //   return; // stop execution
+    // }
+    const payload = { scope: "all", prId: refData };
     try {
       await axios
         .post(
@@ -222,6 +231,69 @@ const PurchaseReqPrintView = () => {
         });
     } catch (error) {
       setLoading(false);
+      message.error(error.response.data.error);
+    }
+  };
+
+  // Handle Status Update
+  const handleStatusUpdate = async (values) => {
+    const timeNow = moment(new Date());
+    const payload = {
+      status: values,
+    };
+
+    if (values == "Checked") {
+      payload.checkedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Confirmed") {
+      payload.confirmedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Approved") {
+      payload.approvedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Hold") {
+      payload.holdBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${
+            queryData?._id
+          }`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          getData();
+          getBusinessDetails();
+        });
+    } catch (error) {
       message.error(error.response.data.error);
     }
   };
@@ -281,6 +353,10 @@ const PurchaseReqPrintView = () => {
                   {queryData?.code}
                 </p>
                 <p>
+                  <strong>Referance: </strong>
+                  {queryData?.reference}
+                </p>
+                <p>
                   <strong>Requested By: </strong>
                   {queryData?.requestedBy?.name}
                 </p>
@@ -294,15 +370,23 @@ const PurchaseReqPrintView = () => {
                   <strong>Email: </strong>
                   {queryData?.requestedBy?.contact}
                 </p>
-              </Col>
-              <Col>
-                <p>
-                  <strong>Date: </strong>
-                  {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
-                </p>
                 <p>
                   <strong>Phone No.: </strong>
                   {queryData?.requestedBy?.contact}
+                </p>
+              </Col>
+              <Col>
+                <p>
+                  <strong>Req. Date: </strong>
+                  {moment(queryData?.createdAt).format("DD-MMM-YYYY")}
+                </p>
+                <p>
+                  <strong>PR Status: </strong>
+                  {queryData?.status}
+                </p>
+                <p>
+                  <strong>Update On: </strong>
+                  {moment(queryData?.updatedAt).format("DD-MMM-YYYY")}
                 </p>
               </Col>
             </Row>
@@ -348,10 +432,6 @@ const PurchaseReqPrintView = () => {
               <Col span={6}>
                 <span style={{ display: "block" }}>
                   <strong>Note:</strong> {queryData?.note}
-                </span>
-                <span>
-                  <strong>Referance: </strong>
-                  {queryData?.reference}
                 </span>
               </Col>
               <Col>
@@ -561,13 +641,73 @@ const PurchaseReqPrintView = () => {
                 />
               </ColumnGroup>
             </Table>
-            <Button
-              style={{ marginTop: "16px" }}
-              type="primary"
-              className="no-print"
-              onClick={() => handlePrint("A4 landscape")}>
-              <PrinterOutlined />
-            </Button>
+            <Flex gap={16} style={{ marginTop: "16px" }}>
+              <Button
+                type="dashed"
+                className="no-print"
+                onClick={() => handlePrint("A4 landscape")}>
+                <PrinterOutlined />
+              </Button>
+              {((ownCheck &&
+                user?.costCenterName == queryData?.costCenter?.name) ||
+                (othersCheck &&
+                  user?.costCenterName !== queryData?.costCenter?.name)) &&
+              queryData?.status == "In-Process" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Checked")}>
+                  Checked
+                </Button>
+              ) : ((ownConfirm &&
+                  user?.costCenterName == queryData?.costCenter?.name) ||
+                  (othersConfirm &&
+                    user?.costCenterName !== queryData?.costCenter?.name)) &&
+                queryData?.status == "Checked" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Confirmed")}>
+                  Confirmed
+                </Button>
+              ) : ((ownApprove &&
+                  user?.costCenterName == queryData?.costCenter?.name) ||
+                  (othersApprove &&
+                    user?.costCenterName !== queryData?.costCenter?.name)) &&
+                queryData?.status == "Confirmed" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Approved")}>
+                  Approved
+                </Button>
+              ) : null}
+              {((ownHold &&
+                user?.costCenterName == queryData?.costCenter?.name) ||
+                (othersHold &&
+                  user?.costCenterName !== queryData?.costCenter?.name)) &&
+              queryData?.status !== "Hold" &&
+              queryData?.status !== "Closed" &&
+              queryData?.status !== "Approved" ? (
+                <Button
+                  className="no-print"
+                  color="danger"
+                  variant="outlined"
+                  onClick={() => handleStatusUpdate("Hold")}>
+                  Hold
+                </Button>
+              ) : null}
+              {queryData?.createdBy?._id === user?.id &&
+              queryData?.status !== "Closed" ? (
+                <Button
+                  className="no-print"
+                  color="danger"
+                  variant="outlined"
+                  onClick={() => handleStatusUpdate("Closed")}>
+                  Closed
+                </Button>
+              ) : null}
+            </Flex>
           </div>
         </>
       )}

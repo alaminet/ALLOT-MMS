@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Divider,
   Flex,
   Input,
   message,
@@ -18,6 +19,7 @@ import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
 import UserRoleViewTable from "./userRoleViewTable";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import UserAuthorizationViewTable from "./userAuthorizationViewTable";
 
 const UserTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -240,7 +242,14 @@ const UserTable = () => {
           }}
           expandable={{
             expandedRowRender: (record) => (
-              <UserRoleViewTable data={record?.access?.access} />
+              <>
+                <Divider>User Role Access</Divider>
+                <UserRoleViewTable data={record?.access?.access} />
+                <Divider>User Authorization Access</Divider>
+                <UserAuthorizationViewTable
+                  data={record?.access?.authorization}
+                />
+              </>
             ),
             rowExpandable: (record) => record.access !== "Not Expandable",
           }}

@@ -137,7 +137,7 @@ const PurchaseReqViewTable = () => {
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">
                 <Button
-                  disabled={record?.POAvl}
+                  disabled={record?.POAvl || record?.status !== "In-Process"}
                   onClick={() =>
                     navigate("update", {
                       state: {
@@ -177,6 +177,7 @@ const PurchaseReqViewTable = () => {
       return; // stop execution
     }
     const payload = { scope };
+    console.log(payload);
 
     try {
       await axios
@@ -191,6 +192,8 @@ const PurchaseReqViewTable = () => {
           }
         )
         .then((res) => {
+          console.log(res);
+
           message.success(res.data.message);
           const tableArr = res?.data?.items?.flatMap((item) =>
             item?.itemDetails.map((list) => ({
@@ -202,7 +205,7 @@ const PurchaseReqViewTable = () => {
               reqQty: list?.reqQty,
               POQty: list?.POQty,
               recQty: list?.recQty,
-              reqBy: item?.requestedBy.name,
+              reqBy: item?.requestedBy?.name,
               reqDpt: item?.costCenter?.name,
               status: item?.status,
               createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),

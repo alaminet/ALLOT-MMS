@@ -33,10 +33,7 @@ const PurchaseRequisitiionUpdate = () => {
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = {
-      ...values,
-      updatedBy: user?.id,
-    };
+    const formData = values;
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/purchase/requisition/update/${
@@ -322,9 +319,7 @@ const PurchaseRequisitiionUpdate = () => {
                                         .filter((item) =>
                                           item.label
                                             .toLowerCase()
-                                            .includes(
-                                              searchText.toLowerCase()
-                                            )
+                                            .includes(searchText.toLowerCase())
                                         )
                                         .map((item) => ({
                                           label: item.label,
@@ -397,9 +392,7 @@ const PurchaseRequisitiionUpdate = () => {
                                 </Form.Item>
                               </Col>
                               <Col span={3}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "spec"]}>
+                                <Form.Item {...restField} name={[name, "spec"]}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="Specification"
@@ -417,9 +410,7 @@ const PurchaseRequisitiionUpdate = () => {
                                 </Form.Item>
                               </Col>
                               <Col span={2}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "UOM"]}>
+                                <Form.Item {...restField} name={[name, "UOM"]}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="UOM"
@@ -499,9 +490,7 @@ const PurchaseRequisitiionUpdate = () => {
                                     opacity: isDisabled ? 0.5 : 1,
                                     color: isDisabled ? "#d9d9d9" : "#000",
                                   }}
-                                  onClick={() =>
-                                    !isDisabled && remove(name)
-                                  }
+                                  onClick={() => !isDisabled && remove(name)}
                                 />
                               </Col>
                             </Row>

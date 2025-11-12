@@ -479,7 +479,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                     { value: "Checked", label: "Checked" },
                     { value: "Approved", label: "Approved" },
                     { value: "Hold", label: "Hold" },
-                    { value: "Cancelled", label: "Cancelled" },
+                    { value: "Closed", label: "Closed" },
                   ]}
                 />
               </Form.Item>

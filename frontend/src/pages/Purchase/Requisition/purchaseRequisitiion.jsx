@@ -45,8 +45,6 @@ const PurchaseRequisitiion = () => {
           }
         )
         .then((res) => {
-          console.log(res);
-
           message.success(res.data.message);
           setLoading(false);
           form.resetFields();

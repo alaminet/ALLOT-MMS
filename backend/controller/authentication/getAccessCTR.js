@@ -6,7 +6,9 @@ async function getAccessCTR(req, res) {
     if (!data.id) {
       return res.status(400).send({ error: "ID are required" });
     } else {
-      const existingMember = await Member.findById(data.id);
+      const existingMember = await Member.findById(data.id).populate(
+        "costCenter"
+      );
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });
       } else if (!existingMember.status) {
@@ -19,8 +21,10 @@ async function getAccessCTR(req, res) {
             name: existingMember.name,
             email: existingMember.email,
             phone: existingMember.phone,
-            costCenter: existingMember.costCenter,
+            costCenter: existingMember.costCenter._id,
+            costCenterName: existingMember.costCenter.name,
             access: existingMember.access,
+            authorization: existingMember.authorization,
             isAdmin: existingMember.isAdmin,
             token: existingMember.token,
           },

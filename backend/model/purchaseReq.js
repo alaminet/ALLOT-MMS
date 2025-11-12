@@ -30,6 +30,14 @@ const purchaseReqSchema = new Schema(
       type: Object,
       default: null,
     },
+    holdBy: {
+      type: Object,
+      default: null,
+    },
+    closedBy: {
+      type: Object,
+      default: null,
+    },
     note: String,
     itemDetails: [
       {
@@ -68,7 +76,14 @@ const purchaseReqSchema = new Schema(
     // Common Schema
     status: {
       type: String,
-      enum: ["In-Process", "Checked", "Confirmed", "Approved"],
+      enum: [
+        "In-Process",
+        "Checked",
+        "Confirmed",
+        "Approved",
+        "Hold",
+        "Closed",
+      ],
       default: "In-Process",
     },
     isDeleted: {

@@ -166,7 +166,7 @@ const PurchaseOrderViewTable = () => {
               <>
                 <Tooltip title="Edit">
                   <Button
-                    disabled={record.GRNAvl}
+                    disabled={record.GRNAvl || record?.status !== "In-Process"}
                     onClick={() => {
                       setEditPOId(record.action);
                       setDrawerOpen(true);

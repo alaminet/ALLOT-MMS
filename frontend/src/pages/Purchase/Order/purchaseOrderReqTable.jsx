@@ -130,7 +130,7 @@ const PurchaseOrderReqTable = () => {
       message.warning("You are not authorized");
       return; // stop execution
     }
-    const payload = { scope };
+    const payload = { scope, status: "Approved" };
 
     try {
       await axios

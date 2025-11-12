@@ -12,19 +12,21 @@ import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import UserAuthorizationTable from "./userAuthorizationTable";
 
 const UserUpdate = () => {
   const location = useLocation();
   const { userInfo } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
-  const [roleData, setRoleData] = useState(userInfo.access);
+  const [roleData, setRoleData] = useState(userInfo?.access);
+  const [authData, setAuthData] = useState(userInfo?.authorization);
   const [costCenter, setCostCenter] = useState();
 
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = { ...values, access: roleData };
+    const formData = { ...values, access: roleData, authorization: authData };
 
     try {
       const res = await axios.post(
@@ -153,7 +155,9 @@ const UserUpdate = () => {
           <Form.Item>
             <UserRoleTable data={roleData} setData={setRoleData} />
           </Form.Item>
-
+          <Form.Item>
+            <UserAuthorizationTable data={authData} setData={setAuthData} />
+          </Form.Item>
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit" loading={loading} block>
               Update User

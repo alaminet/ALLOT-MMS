@@ -25,6 +25,18 @@ const purchaseOrderSchema = new Schema(
       type: Object,
       default: null,
     },
+    confirmedBy: {
+      type: Object,
+      default: null,
+    },
+    holdBy: {
+      type: Object,
+      default: null,
+    },
+    closedBy: {
+      type: Object,
+      default: null,
+    },
     note: String,
     delveryTerms: String,
     deliveryLocation: String,
@@ -67,7 +79,7 @@ const purchaseOrderSchema = new Schema(
     // Common Schema
     status: {
       type: String,
-      enum: ["In-Process", "Checked", "Approved", "Hold", "Cancelled"],
+      enum: ["In-Process", "Checked", "Approved", "Hold", "Closed"],
       default: "In-Process",
     },
     isDeleted: {

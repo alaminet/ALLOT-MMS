@@ -11,6 +11,7 @@ import {
   InputNumber,
   message,
   QRCode,
+  Flex,
 } from "antd";
 import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
@@ -51,13 +52,17 @@ const PurchaseOrderPrintView = () => {
   const [queryData, setQueryData] = useState([]);
 
   // User Permission Check
-  const { canViewPage, canDoOwn, canDoOther } = usePermission();
-  if (!canViewPage("purchase-order")) {
-    return <NotAuth />;
-  }
+  const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
   const own = canDoOwn("purchase-order", "view");
   const others = canDoOther("purchase-order", "view");
-
+  const ownCheck = canAuthOwn("purchase-order", "check");
+  const othersCheck = canAuthOther("purchase-order", "check");
+  const ownConfirm = canAuthOwn("purchase-order", "confirm");
+  const othersConfirm = canAuthOther("purchase-order", "confirm");
+  const ownApprove = canAuthOwn("purchase-order", "approve");
+  const othersApprove = canAuthOther("purchase-order", "approve");
+  const ownHold = canAuthOwn("purchase-order", "hold");
+  const othersHold = canAuthOther("purchase-order", "hold");
   const columns = [
     {
       title: "SL",
@@ -155,14 +160,14 @@ const PurchaseOrderPrintView = () => {
 
   // Get print data
   const getData = async () => {
-    const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
-    if (!scope) {
-      setQueryData([]);
-      // message.warning("You are not authorized");
-      return; // stop execution
-    }
-    const payload = { scope, POId: refData };
+    // const scope =
+    //   own && others ? "all" : own ? "own" : others ? "others" : null;
+    // if (!scope) {
+    //   setQueryData([]);
+    //   // message.warning("You are not authorized");
+    //   return; // stop execution
+    // }
+    const payload = { scope: "all", POId: refData };
     try {
       await axios
         .post(
@@ -197,6 +202,77 @@ const PurchaseOrderPrintView = () => {
         .then((res) => {
           const settings = res.data?.businessSettings;
           setBusinessDetails(settings);
+        });
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
+
+  // Handle Status Update
+  const handleStatusUpdate = async (values) => {
+    const timeNow = moment(new Date());
+    const payload = {
+      status: values,
+    };
+
+    if (values == "Checked") {
+      payload.checkedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Confirmed") {
+      payload.confirmedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Approved") {
+      payload.approvedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Hold") {
+      payload.holdBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Closed") {
+      payload.closedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/purchase/order/update/${
+            queryData?._id
+          }`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          getData();
+          getBusinessDetails();
         });
     } catch (error) {
       message.error(error.response.data.error);
@@ -534,7 +610,7 @@ const PurchaseOrderPrintView = () => {
             </Row>
             <Row justify="space-between" style={{ marginTop: "50px" }}>
               <Col
-                span={5}
+                span={4}
                 style={{
                   textAlign: "center",
                   borderTop: "1px solid black",
@@ -548,9 +624,9 @@ const PurchaseOrderPrintView = () => {
                 </span>
               </Col>
               <Col
-                span={5}
+                span={4}
                 style={{ textAlign: "center", borderTop: "1px solid black" }}>
-                Confirmed By
+                Checked By
                 <span style={{ display: "block" }}>
                   {queryData?.checkedBy?.name}
                 </span>
@@ -559,7 +635,18 @@ const PurchaseOrderPrintView = () => {
                 </span>
               </Col>
               <Col
-                span={5}
+                span={4}
+                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                Confirmed By
+                <span style={{ display: "block" }}>
+                  {queryData?.confirmedBy?.name}
+                </span>
+                <span style={{ display: "block" }}>
+                  {businessDetails?.orgName}
+                </span>
+              </Col>
+              <Col
+                span={4}
                 style={{ textAlign: "center", borderTop: "1px solid black" }}>
                 Approved By
                 <span style={{ display: "block" }}>
@@ -570,7 +657,7 @@ const PurchaseOrderPrintView = () => {
                 </span>
               </Col>
               <Col
-                span={5}
+                span={4}
                 style={{ textAlign: "center", borderTop: "1px solid black" }}>
                 Accepted By
                 <span style={{ display: "block" }}>
@@ -578,13 +665,65 @@ const PurchaseOrderPrintView = () => {
                 </span>
               </Col>
             </Row>
-            <Button
-              style={{ marginTop: "16px" }}
-              type="primary"
-              className="no-print"
-              onClick={() => handlePrint("A4 portrait")}>
-              <PrinterOutlined />
-            </Button>
+            <Flex gap={16} style={{ marginTop: "16px" }}>
+              <Button
+                type="dashed"
+                className="no-print"
+                onClick={() => handlePrint("A4 portrait")}>
+                <PrinterOutlined />
+              </Button>
+              {((ownCheck && user?.id === queryData?.createdBy?._id) ||
+                (othersCheck && user?.id !== queryData?.createdBy?._id)) &&
+              queryData?.status == "In-Process" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Checked")}>
+                  Checked
+                </Button>
+              ) : ((ownConfirm && user?.id === queryData?.createdBy?._id) ||
+                  (othersConfirm && user?.id !== queryData?.createdBy?._id)) &&
+                queryData?.status == "Checked" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Confirmed")}>
+                  Confirmed
+                </Button>
+              ) : ((ownApprove && user?.id === queryData?.createdBy?._id) ||
+                  (othersApprove && user?.id !== queryData?.createdBy?._id)) &&
+                queryData?.status == "Confirmed" ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => handleStatusUpdate("Approved")}>
+                  Approved
+                </Button>
+              ) : null}
+              {((ownHold && user?.id === queryData?.createdBy?._id) ||
+                (othersHold && user?.id !== queryData?.createdBy?._id)) &&
+              queryData?.status !== "Hold" &&
+              queryData?.status !== "Closed" &&
+              queryData?.status !== "Approved" ? (
+                <Button
+                  className="no-print"
+                  color="danger"
+                  variant="outlined"
+                  onClick={() => handleStatusUpdate("Hold")}>
+                  Hold
+                </Button>
+              ) : null}
+              {queryData?.createdBy?._id === user?.id &&
+              queryData?.status !== "Closed" ? (
+                <Button
+                  className="no-print"
+                  color="danger"
+                  variant="outlined"
+                  onClick={() => handleStatusUpdate("Closed")}>
+                  Closed
+                </Button>
+              ) : null}
+            </Flex>
           </div>
         </>
       )}

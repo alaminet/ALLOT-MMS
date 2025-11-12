@@ -41,6 +41,7 @@ export const usePermission = () => {
     }
   };
 
+  // Modue access controll
   const permissions = useSelector(
     (state) => state.loginSlice.login?.access || []
   );
@@ -64,6 +65,25 @@ export const usePermission = () => {
     return module?.other?.[action] ?? false;
   };
 
+  // Auth access controll
+  const permissionsAuth = useSelector(
+    (state) => state.loginSlice.login?.authorization || []
+  );
+
+  const getAuthModule = (key) => {
+    return permissionsAuth.find((mod) => mod.key === key);
+  };
+
+  const canAuthOwn = (key, action) => {
+    const module = getAuthModule(key);
+    return module?.own?.[action] ?? false;
+  };
+
+  const canAuthOther = (key, action) => {
+    const module = getAuthModule(key);
+    return module?.other?.[action] ?? false;
+  };
+
   useEffect(() => {
     getAccess();
   }, []);
@@ -71,5 +91,7 @@ export const usePermission = () => {
     canViewPage,
     canDoOwn,
     canDoOther,
+    canAuthOwn,
+    canAuthOther,
   };
 };

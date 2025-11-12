@@ -25,6 +25,10 @@ const memberSchema = new Schema(
       type: Array,
       default: null,
     },
+    authorization: {
+      type: Array,
+      default: null,
+    },
     isAdmin: {
       type: Boolean,
       default: false,

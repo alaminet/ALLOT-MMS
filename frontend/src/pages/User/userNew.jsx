@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Flex, Form, Input, message, Select } from "antd";
+import { Button, Divider, Flex, Form, Input, message, Select } from "antd";
 import axios from "axios";
 import Title from "antd/es/typography/Title";
 import {
@@ -12,16 +12,18 @@ import {
 import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import UserAuthorizationTable from "./userAuthorizationTable";
 
 const UserNew = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [roleData, setRoleData] = useState([]);
+  const [authData, setAuthData] = useState([]);
   const [costCenter, setCostCenter] = useState();
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = { ...values, access: roleData };
+    const formData = { ...values, access: roleData, authorization: authData };
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/member/new`,
@@ -178,9 +180,13 @@ const UserNew = () => {
             </Form.Item>
           </Flex>
           <Form.Item>
+            <Divider>User Role Access</Divider>
             <UserRoleTable data={roleData} setData={setRoleData} />
           </Form.Item>
-
+          <Form.Item>
+            <Divider>User Authorization Access</Divider>
+            <UserAuthorizationTable data={authData} setData={setAuthData} />
+          </Form.Item>
           <Form.Item label={null}>
             <Button type="primary" htmlType="submit" loading={loading} block>
               Submit
