@@ -1,16 +1,19 @@
 const TrnxDetails = require("../../model/transaction/trnxDetails");
 const PurchaseReq = require("../../model/purchaseReq");
+const PurchaseOrder = require("../../model/purchaseOrder");
 const Member = require("../../model/member");
 const ItemInfo = require("../../model/master/itemInfo");
 
 async function viewDashboardCTR(req, res) {
+  const data = req.body;
+
   try {
     const orgId = req.orgId;
     const actionBy = req.actionBy;
 
     const memberDlts = await Member.findById(actionBy)
       .select("-access")
-      .populate({ path: "costCenter", select: "name" })
+      .populate({ path: "costCenter", select: "name _id" })
       .lean();
 
     if (!memberDlts?.costCenter?.name) {
@@ -20,6 +23,86 @@ async function viewDashboardCTR(req, res) {
     }
 
     const costCenter = memberDlts.costCenter.name;
+
+    //   Set a PR query filed
+    const PRquery = {
+      isDeleted: { $ne: true },
+      orgId: req.orgId,
+    };
+    // 1. Collect statuses
+    const PRstatuses = [];
+    if (data.scopePRCheck) PRstatuses.push("In-Process");
+    if (data.scopePRConfirm) PRstatuses.push("Checked");
+    if (data.scopePRApprove) PRstatuses.push("Confirmed");
+
+    // 2. Apply statuses if any
+    if (PRstatuses.length) {
+      PRquery.status = { $in: PRstatuses };
+    }
+
+    // 3. Apply costCenter logic
+    const PRscopeMap = [
+      data.scopePRCheck,
+      data.scopePRConfirm,
+      data.scopePRApprove,
+    ];
+
+    // If any scope is "own"
+    if (PRscopeMap.includes("own")) {
+      PRquery.costCenter = memberDlts.costCenter._id;
+    }
+    // If any scope is "others"
+    else if (PRscopeMap.includes("others")) {
+      PRquery.costCenter = { $ne: memberDlts.costCenter._id };
+    }
+
+    // 4. Get PR Approval List
+    const PRApprovalList = await PurchaseReq.find(PRquery)
+      .sort({ createdAt: -1 }) // newest first
+      .select(
+        "createdAt code itemDetails.reqQty itemDetails.unitPrice itemDetails.isDeleted"
+      )
+      .lean();
+
+    //   Set a PO query filed
+    const POquery = {
+      isDeleted: { $ne: true },
+      orgId: req.orgId,
+    };
+    // 1. Collect statuses
+    const POstatuses = [];
+    if (data.scopePOCheck) POstatuses.push("In-Process");
+    if (data.scopePOConfirm) POstatuses.push("Checked");
+    if (data.scopePOApprove) POstatuses.push("Confirmed");
+
+    // 2. Apply statuses if any
+    if (POstatuses.length) {
+      POquery.status = { $in: POstatuses };
+    }
+
+    // 3. Apply costCenter logic
+    const POscopeMap = [
+      data.scopePOCheck,
+      data.scopePOConfirm,
+      data.scopePOApprove,
+    ];
+
+    // If any scope is "own"
+    if (POscopeMap.includes("own")) {
+      POquery.createdBy = memberDlts._id;
+    }
+    // If any scope is "others"
+    else if (POscopeMap.includes("others")) {
+      POquery.createdBy = { $ne: memberDlts._id };
+    }
+
+    // 4. Get PR Approval List
+    const POApprovalList = await PurchaseOrder.find(POquery)
+      .sort({ createdAt: -1 }) // newest first
+      .select(
+        "createdAt code itemDetails.POQty itemDetails.POPrice itemDetails.isDeleted"
+      )
+      .lean();
 
     // Date Ranges
     const now = new Date();
@@ -267,6 +350,8 @@ async function viewDashboardCTR(req, res) {
         recentPurchaseReqs: recentPurchaseReqs,
         liqStock: liqStock,
         typeWiseStock: typeWiseStock,
+        PRApprovalList: PRApprovalList,
+        POApprovalList: POApprovalList,
       },
     });
   } catch (error) {

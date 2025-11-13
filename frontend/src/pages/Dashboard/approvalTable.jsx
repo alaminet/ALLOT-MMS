@@ -1,0 +1,102 @@
+import React from "react";
+import moment from "moment";
+import { Button, Space, Table, Tag } from "antd";
+import Title from "antd/es/typography/Title";
+import { Link, useNavigate } from "react-router-dom";
+
+const ApprovalTable = ({ tableData, title, scope }) => {
+  const qtyFiled = scope === "PR" ? "reqQty" : scope === "PO" ? "POQty" : null;
+  const pricefiled =
+    scope === "PR" ? "unitPrice" : scope === "PO" ? "POPrice" : null;
+  const printBaseURL =
+    scope === "PR"
+      ? "/purchase-requisition/print"
+      : scope === "PO"
+      ? "/purchase-order/print"
+      : null;
+  const navigate = useNavigate();
+  const dataArr = Object.values(tableData || {}).map((item, key) => ({
+    key: ++key,
+    id: item._id,
+    date: moment(item?.createdAt).format("DD-MMM-YY"),
+    refNo: item?.code,
+    qty: item?.itemDetails
+      ?.filter((detail) => detail.isDeleted === false)
+      .reduce((sum, detail) => sum + (detail[qtyFiled] || 0), 0),
+    value: item?.itemDetails
+      ?.filter((detail) => detail.isDeleted === false)
+      .reduce(
+        (sum, detail) =>
+          sum + (detail[qtyFiled] || 0) * (detail[pricefiled] || 0),
+        0
+      ),
+  }));
+  const columns = [
+    // {
+    //   title: "#",
+    //   dataIndex: "key",
+    //   key: "key",
+    //   width: 30,
+    //   render: (text, record, index) => index + 1,
+    // },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      width: 110,
+    },
+    {
+      title: "Ref.No",
+      dataIndex: "refNo",
+      key: "refNo",
+      render: (text, record) => (
+        // <Button
+        //   type="link"
+        //   onClick={() =>
+        //     navigate(printBaseURL, {
+        //       state: {
+        //         refData: record.id,
+        //       },
+        //     })
+        //   }>
+        //   {text}
+        // </Button>
+        <Button
+          type="link"
+          onClick={() =>
+            window.open(`${printBaseURL}?ref=${record.id}`, "_blank")
+          }>
+          {text}
+        </Button>
+      ),
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+    },
+  ];
+
+  return (
+    <>
+      <Title
+        level={4}
+        style={{
+          textAlign: "left",
+          margin: "0",
+        }}
+        className="colorLink">
+        {title}
+      </Title>
+      <Table
+        columns={columns}
+        dataSource={dataArr}
+        pagination={false}
+        sticky
+        style={{ maxHeight: "250px", overflowY: "auto" }}
+      />
+    </>
+  );
+};
+
+export default ApprovalTable;

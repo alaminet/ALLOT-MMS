@@ -22,11 +22,32 @@ import LastOrderedTbl from "./lastOrderedTable";
 import PaiChart from "./paiChart";
 import DualAxesChart from "./dualAxesChart";
 import { useNavigate } from "react-router-dom";
+import ApprovalTable from "./approvalTable";
+import { usePermission } from "../../hooks/usePermission";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [dashboardData, setDashboardData] = useState();
   const navigate = useNavigate();
+
+  // User Permission Check
+  const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
+  const ownPOCheck = canAuthOwn("purchase-order", "check");
+  const othersPOCheck = canAuthOther("purchase-order", "check");
+  const ownPOConfirm = canAuthOwn("purchase-order", "confirm");
+  const othersPOConfirm = canAuthOther("purchase-order", "confirm");
+  const ownPOApprove = canAuthOwn("purchase-order", "approve");
+  const othersPOApprove = canAuthOther("purchase-order", "approve");
+  const ownPOHold = canAuthOwn("purchase-order", "hold");
+  const othersPOHold = canAuthOther("purchase-order", "hold");
+  const ownPRCheck = canAuthOwn("purchase-requisition", "check");
+  const othersPRCheck = canAuthOther("purchase-requisition", "check");
+  const ownPRConfirm = canAuthOwn("purchase-requisition", "confirm");
+  const othersPRConfirm = canAuthOther("purchase-requisition", "confirm");
+  const ownPRApprove = canAuthOwn("purchase-requisition", "approve");
+  const othersPRApprove = canAuthOther("purchase-requisition", "approve");
+  const ownPRHold = canAuthOwn("purchase-requisition", "hold");
+  const othersPRHold = canAuthOther("purchase-requisition", "hold");
 
   // Number Formatting
   const formatNumber = (num) => {
@@ -36,10 +57,36 @@ const Dashboard = () => {
     return num.toString();
   };
 
+  function getScopeValue(own, others) {
+    if (own && others) return "all";
+    if (own) return "own";
+    if (others) return "others";
+    return null;
+  }
   const getDashboardData = async () => {
+    const scopePOCheck = getScopeValue(ownPOCheck, othersPOCheck);
+    const scopePOConfirm = getScopeValue(ownPOConfirm, othersPOConfirm);
+    const scopePOApprove = getScopeValue(ownPOApprove, othersPOApprove);
+    const scopePOHold = getScopeValue(ownPOHold, othersPOHold);
+    const scopePRCheck = getScopeValue(ownPRCheck, othersPRCheck);
+    const scopePRConfirm = getScopeValue(ownPRConfirm, othersPRConfirm);
+    const scopePRApprove = getScopeValue(ownPRApprove, othersPRApprove);
+    const scopePRHold = getScopeValue(ownPRHold, othersPRHold);
+
+    // Assign only if not null
+    const payload = {
+      ...(scopePOCheck && { scopePOCheck }),
+      ...(scopePOConfirm && { scopePOConfirm }),
+      ...(scopePOApprove && { scopePOApprove }),
+      ...(scopePOHold && { scopePOHold }),
+      ...(scopePRCheck && { scopePRCheck }),
+      ...(scopePRConfirm && { scopePRConfirm }),
+      ...(scopePRApprove && { scopePRApprove }),
+      ...(scopePRHold && { scopePRHold }),
+    };
     try {
       await axios
-        .get(`${import.meta.env.VITE_API_URL}/api/dashboard/view`, {
+        .post(`${import.meta.env.VITE_API_URL}/api/dashboard/view`, payload, {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
@@ -71,7 +118,6 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardData();
   }, []);
-  // console.log(dashboardData);
 
   return (
     <>
@@ -223,6 +269,37 @@ const Dashboard = () => {
             </Tooltip>
           </Card>
         </Col>
+      </Row>
+      <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
+        {dashboardData?.PRApprovalList?.length > 0 && (
+          <Col span={8}>
+            <Card>
+              <ApprovalTable
+                title="PR Approval"
+                scope={"PR"}
+                tableData={dashboardData?.PRApprovalList}
+              />
+            </Card>
+          </Col>
+        )}
+        {dashboardData?.POApprovalList?.length > 0 && (
+          <Col span={8}>
+            <Card>
+              <ApprovalTable
+                title="PO Approval"
+                scope={"PO"}
+                tableData={dashboardData?.POApprovalList}
+              />
+            </Card>
+          </Col>
+        )}
+        {dashboardData?.MOApprovalList?.length > 0 && (
+          <Col span={8}>
+            <Card>
+              <ApprovalTable title="MO Approval" />
+            </Card>
+          </Col>
+        )}
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
         <Col xs={24} lg={12}>

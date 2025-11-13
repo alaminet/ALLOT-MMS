@@ -338,7 +338,11 @@ const PurchaseReqPrintView = () => {
               </Col>
               <Col span={6}>
                 <QRCode
-                  value={`${window.location.href}?ref=${refData}`}
+                  value={
+                    window.location.search
+                      ? window.location.href
+                      : `${window.location.href}?ref=${refData}`
+                  }
                   type="svg"
                   size={100}
                   style={{ margin: "0 0 0 auto" }}

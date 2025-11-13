@@ -3,6 +3,6 @@ const viewDashboardCTR = require("../../controller/dashboard/viewDashboardCTR");
 
 const route = express.Router();
 
-route.get("/view", viewDashboardCTR);
+route.post("/view", viewDashboardCTR);
 
 module.exports = route;
