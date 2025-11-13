@@ -167,7 +167,10 @@ const PurchaseOrderPrintView = () => {
     //   // message.warning("You are not authorized");
     //   return; // stop execution
     // }
-    const payload = { scope: "all", POId: refData };
+    const id = window.location.search
+      ? new URLSearchParams(window.location.search).get("ref")
+      : refData;
+    const payload = { scope: "all", POId: id };
     try {
       await axios
         .post(
