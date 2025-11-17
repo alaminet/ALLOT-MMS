@@ -58,6 +58,8 @@ const Dashboard = () => {
   };
 
   function getScopeValue(own, others) {
+    console.log(own, others);
+
     if (own && others) return "all";
     if (own) return "own";
     if (others) return "others";

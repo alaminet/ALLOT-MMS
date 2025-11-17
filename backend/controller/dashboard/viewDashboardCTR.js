@@ -30,6 +30,7 @@ async function viewDashboardCTR(req, res) {
       orgId: req.orgId,
     };
     // 1. Collect statuses
+
     const PRstatuses = [];
     if (data.scopePRCheck) PRstatuses.push("In-Process");
     if (data.scopePRConfirm) PRstatuses.push("Checked");
@@ -57,12 +58,18 @@ async function viewDashboardCTR(req, res) {
     }
 
     // 4. Get PR Approval List
-    const PRApprovalList = await PurchaseReq.find(PRquery)
-      .sort({ createdAt: -1 }) // newest first
-      .select(
-        "createdAt code itemDetails.reqQty itemDetails.unitPrice itemDetails.isDeleted"
-      )
-      .lean();
+    const PRApprovalList = [];
+    if (PRstatuses.length) {
+      await PurchaseReq.find(PRquery)
+        .sort({ createdAt: -1 }) // newest first
+        .select(
+          "createdAt code itemDetails.reqQty itemDetails.unitPrice itemDetails.isDeleted"
+        )
+        .lean()
+        .then((res) => {
+          PRApprovalList.push(...res);
+        });
+    }
 
     //   Set a PO query filed
     const POquery = {
@@ -97,12 +104,18 @@ async function viewDashboardCTR(req, res) {
     }
 
     // 4. Get PR Approval List
-    const POApprovalList = await PurchaseOrder.find(POquery)
-      .sort({ createdAt: -1 }) // newest first
-      .select(
-        "createdAt code itemDetails.POQty itemDetails.POPrice itemDetails.isDeleted"
-      )
-      .lean();
+    const POApprovalList = [];
+    if (POstatuses.length) {
+      await PurchaseOrder.find(POquery)
+        .sort({ createdAt: -1 }) // newest first
+        .select(
+          "createdAt code itemDetails.POQty itemDetails.POPrice itemDetails.isDeleted"
+        )
+        .lean()
+        .then((res) => {
+          POApprovalList.push(...res);
+        });
+    }
 
     // Date Ranges
     const now = new Date();

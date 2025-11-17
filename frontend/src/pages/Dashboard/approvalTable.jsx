@@ -1,8 +1,7 @@
 import React from "react";
 import moment from "moment";
-import { Button, Space, Table, Tag } from "antd";
+import { Button, Table } from "antd";
 import Title from "antd/es/typography/Title";
-import { Link, useNavigate } from "react-router-dom";
 
 const ApprovalTable = ({ tableData, title, scope }) => {
   const qtyFiled = scope === "PR" ? "reqQty" : scope === "PO" ? "POQty" : null;
@@ -14,9 +13,8 @@ const ApprovalTable = ({ tableData, title, scope }) => {
       : scope === "PO"
       ? "/purchase-order/print"
       : null;
-  const navigate = useNavigate();
+
   const dataArr = Object.values(tableData || {}).map((item, key) => ({
-    key: ++key,
     id: item._id,
     date: moment(item?.createdAt).format("DD-MMM-YY"),
     refNo: item?.code,
@@ -31,14 +29,8 @@ const ApprovalTable = ({ tableData, title, scope }) => {
         0
       ),
   }));
+
   const columns = [
-    // {
-    //   title: "#",
-    //   dataIndex: "key",
-    //   key: "key",
-    //   width: 30,
-    //   render: (text, record, index) => index + 1,
-    // },
     {
       title: "Date",
       dataIndex: "date",
