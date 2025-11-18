@@ -30,7 +30,8 @@ const ItemDetails = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOwn("item-details", "create")}>
+            disabled={!canDoOwn("item-details", "create")}
+            style={{ borderRadius: "0px", padding: "10px 30px" }}>
             Add Details
           </Button>
         )}
@@ -38,7 +39,8 @@ const ItemDetails = () => {
           <Button
             type="primary"
             onClick={() => navigate("new-bulk")}
-            disabled={!user.isAdmin}>
+            disabled={!user.isAdmin}
+            style={{ borderRadius: "0px", padding: "10px 30px" }}>
             Bulk Add
           </Button>
         )}

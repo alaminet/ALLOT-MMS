@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Button,
-  Card,
+  Drawer,
   Col,
-  DatePicker,
+  Grid,
   Form,
   Input,
   Row,
@@ -13,29 +13,44 @@ import {
   message,
   InputNumber,
   notification,
+  Space,
 } from "antd";
 const { Title } = Typography;
-import { useSelector } from "react-redux";
-import { MinusCircleOutlined } from "@ant-design/icons";
+const { useBreakpoint } = Grid;
+import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import axios from "axios";
 dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
 
-const IssueLayout = () => {
+const MoveOrderReq = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const screens = useBreakpoint();
+  const isMobile = screens.xs;
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [itemDetails, setItemDetails] = useState();
   const [form] = Form.useForm();
 
+  // Drawer options
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
+
   // Form submission
   const onFinish = async (values) => {
     const formData = {
       ...values,
-      documentAt: values.documentAt.$d,
-      issuedAt: values.issuedAt.$d,
+      documentAt: new Date(),
+      issuedAt: new Date(),
       createdBy: user?.id,
+      tnxType: "Move Order",
+      costCenter: user?.costCenter?.id,
     };
     setLoading(true);
     try {
@@ -137,10 +152,37 @@ const IssueLayout = () => {
 
   return (
     <>
-      <Title style={{ textAlign: "center" }} className="colorLink form-title">
-        Goods Issue
-      </Title>
-      <Card>
+      <Button
+        onClick={showDrawer}
+        icon={<PlusCircleOutlined />}
+        type="primary"
+        lassName="borderBrand"
+        style={{ borderRadius: "0px" }}>
+        Move Order
+      </Button>
+      <Drawer
+        title="Move Order Request"
+        placement="bottom"
+        height="95%"
+        closable={{ "aria-label": "Close Button" }}
+        onClose={onClose}
+        open={open}
+        extra={
+          <Space>
+            <Button
+              onClick={onClose}
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              Cancel
+            </Button>
+            <Button
+              loading={loading}
+              onClick={() => form.submit()}
+              type="primary"
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              Submit
+            </Button>
+          </Space>
+        }>
         <Form
           form={form}
           name="new"
@@ -153,93 +195,7 @@ const IssueLayout = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    label="Document Date"
-                    name="documentAt"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <DatePicker
-                      defaultValue={dayjs()}
-                      maxDate={dayjs()}
-                      format={dateFormat}
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    label="Issue Date"
-                    name="issuedAt"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%" }}>
-                    <DatePicker
-                      defaultValue={dayjs()}
-                      minDate={dayjs().subtract(1, "month")}
-                      maxDate={dayjs()}
-                      format={dateFormat}
-                      style={{ width: "100%" }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    label="Transaction Type"
-                    name="tnxType"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                    style={{ width: "100%", marginBottom: "35px" }}>
-                    <Select
-                      style={{ width: "100%" }}
-                      allowClear
-                      options={["Move Order", "Others"].map((item) => ({
-                        label: item,
-                        value: item,
-                      }))}
-                      placeholder="Transaction Type"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col lg={8} xs={24}>
-                  <Form.Item
-                    name="costCenter"
-                    // initialValue={user.costCenter}
-                    label="Cost Center"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}>
-                    <Select
-                      allowClear
-                      options={
-                        itemDetails?.filter(
-                          (item) => item.modelName === "CostCenter"
-                        )[0]?.data
-                      }
-                      showSearch
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      placeholder="Cost Center"
-                    />
-                  </Form.Item>
-                </Col>
-
-                <Col lg={8} xs={24}>
+                <Col lg={12} xs={24}>
                   <Form.Item
                     label="Referance"
                     name="reference"
@@ -252,7 +208,7 @@ const IssueLayout = () => {
                   </Form.Item>
                 </Col>
 
-                <Col lg={8} xs={24}>
+                <Col lg={12} xs={24}>
                   <Form.Item
                     label="Header Text"
                     name="headerText"
@@ -269,33 +225,30 @@ const IssueLayout = () => {
                     {(fields, { add, remove }) => (
                       <>
                         <Row justify="space-between">
-                          <Col span={6} style={{ fontWeight: "600" }}>
+                          <Col xs={9} sm={7} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
-                          <Col span={3} style={{ fontWeight: "600" }}>
+                          <Col xs={0} sm={4} style={{ fontWeight: "600" }}>
                             Part/SKU
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
+                          <Col xs={4} sm={2} style={{ fontWeight: "600" }}>
                             UOM
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
-                            Avg.Price
+                          <Col xs={0} sm={3} style={{ fontWeight: "600" }}>
+                            On-Hand
                           </Col>
-                          <Col span={4} style={{ fontWeight: "600" }}>
-                            Location
+                          <Col xs={4} sm={4} style={{ fontWeight: "600" }}>
+                            Req. Qty
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
-                            Issue Qty
-                          </Col>
-                          <Col span={4} style={{ fontWeight: "600" }}>
+                          <Col xs={4} sm={3} style={{ fontWeight: "600" }}>
                             Remarks
                           </Col>
-                          <Col span={1} style={{ fontWeight: "600" }}></Col>
+                          <Col xs={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
                           <>
                             <Row key={key} justify="space-between" align="top">
-                              <Col span={6}>
+                              <Col xs={9} sm={7}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "name"]}
@@ -342,7 +295,11 @@ const IssueLayout = () => {
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "stockList"],
-                                          matched.stock
+                                          matched.stock?.reduce(
+                                            (sum, acc) =>
+                                              sum + (acc.onHandQty || 0),
+                                            0
+                                          )
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "location"],
@@ -384,12 +341,12 @@ const IssueLayout = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={3}>
+                              <Col xs={0} sm={4}>
                                 <Form.Item {...restField} name={[name, "SKU"]}>
                                   <Input disabled placeholder="SKU/Code" />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col xs={4} sm={2}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "UOM"]}
@@ -402,63 +359,14 @@ const IssueLayout = () => {
                                   <Input disabled placeholder="UOM" />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col xs={4} sm={3}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "issuePrice"]}>
-                                  <InputNumber
-                                    placeholder="Price"
-                                    style={{ width: "100%" }}
-                                  />
+                                  name={[name, "stockList"]}>
+                                  <Input disabled placeholder="On-Hand" />
                                 </Form.Item>
                               </Col>
-                              <Col span={4}>
-                                <Form.Item
-                                  shouldUpdate={(prev, curr) =>
-                                    prev.itemDetails?.[name]?.stockList !==
-                                    curr.itemDetails?.[name]?.stockList
-                                  }>
-                                  {() => {
-                                    const stockList =
-                                      form.getFieldValue([
-                                        "itemDetails",
-                                        name,
-                                        "stockList",
-                                      ]) || [];
-
-                                    const locationOptions = stockList
-                                      .filter((f) => f.onHandQty > 0)
-                                      .map((loc) => ({
-                                        label: `${loc.location} (${loc.onHandQty})`,
-                                        value: loc.location,
-                                      }));
-                                    return (
-                                      <Form.Item
-                                        {...restField}
-                                        name={[name, "location"]}
-                                        rules={[
-                                          {
-                                            required: true,
-                                            message: "Enter location",
-                                          },
-                                        ]}>
-                                        <Select
-                                          options={locationOptions}
-                                          placeholder="Location"
-                                          allowClear
-                                          showSearch
-                                          filterOption={(input, option) =>
-                                            (option?.label ?? "")
-                                              .toLowerCase()
-                                              .includes(input.toLowerCase())
-                                          }
-                                        />
-                                      </Form.Item>
-                                    );
-                                  }}
-                                </Form.Item>
-                              </Col>
-                              <Col span={2}>
+                              <Col xs={4} sm={4}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "issueQty"]}
@@ -474,12 +382,12 @@ const IssueLayout = () => {
                                     },
                                   ]}>
                                   <InputNumber
-                                    placeholder="Issue Qty"
+                                    placeholder="Req. Qty"
                                     style={{ width: "100%" }}
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={4}>
+                              <Col xs={4} sm={3}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "remarks"]}>
@@ -487,7 +395,8 @@ const IssueLayout = () => {
                                 </Form.Item>
                               </Col>
                               <Col
-                                span={1}
+                                xs={1}
+                                sm={1}
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
@@ -518,7 +427,7 @@ const IssueLayout = () => {
                   </Form.List>
                 </Form.Item>
               </div>
-              <Row justify="end">
+              {/* <Row justify="end">
                 <Col span={24}>
                   <Form.Item label={null}>
                     <Button
@@ -532,13 +441,13 @@ const IssueLayout = () => {
                     </Button>
                   </Form.Item>
                 </Col>
-              </Row>
+              </Row> */}
             </Col>
           </Row>
         </Form>
-      </Card>
+      </Drawer>
     </>
   );
 };
 
-export default IssueLayout;
+export default MoveOrderReq;

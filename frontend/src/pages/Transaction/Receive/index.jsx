@@ -27,7 +27,8 @@ const Receive = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOwn("receive", "create")}>
+            disabled={!canDoOwn("receive", "create")}
+            style={{ borderRadius: "0px", padding: "10px 30px" }}>
             Manual GRN
           </Button>
         )}

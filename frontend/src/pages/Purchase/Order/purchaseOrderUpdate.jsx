@@ -392,11 +392,11 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
         }}
         extra={
           <Space>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose} style={{ borderRadius: "0px", padding: "10px 30px" }}>Cancel</Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
-              type="primary">
+              type="primary" style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Submit
             </Button>
           </Space>

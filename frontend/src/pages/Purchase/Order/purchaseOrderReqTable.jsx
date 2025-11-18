@@ -195,12 +195,19 @@ const PurchaseOrderReqTable = () => {
           {hasSelected ? (
             <>
               <span>Selected {selectedRowKeys.length} items</span>
-              <Button type="primary" onClick={() => setDrawerOpen(!drawerOpen)}>
+              <Button
+                type="primary"
+                onClick={() => setDrawerOpen(!drawerOpen)}
+                style={{ borderRadius: "0px", padding: "10px 30px" }}>
                 Make PO
               </Button>
             </>
           ) : (
-            <Button disabled>Make PO</Button>
+            <Button
+              disabled
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              Make PO
+            </Button>
           )}
         </Flex>
         {!own && !others ? (

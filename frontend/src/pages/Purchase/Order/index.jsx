@@ -34,7 +34,8 @@ const PurchaseOrder = () => {
               <Button
                 type="primary"
                 onClick={() => navigate("new")}
-                disabled={!canDoOwn("purchase-requisition", "create")}>
+                disabled={!canDoOwn("purchase-requisition", "create")}
+                style={{ borderRadius: "0px", padding: "10px 30px" }}>
                 Make Purchase Order
               </Button>
             )}

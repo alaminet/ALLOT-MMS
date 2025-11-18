@@ -43,10 +43,7 @@ const InventoryViewTable = () => {
       // responsive: ["lg"],
       render: (_, record) => (
         <>
-          <Flex gap={5}>
-            {_}
-            <InfoCircleTwoTone />
-          </Flex>
+          <Flex gap={5}>{_}</Flex>
         </>
       ),
     },

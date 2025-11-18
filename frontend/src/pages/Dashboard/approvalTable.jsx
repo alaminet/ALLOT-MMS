@@ -85,7 +85,7 @@ const ApprovalTable = ({ tableData, title, scope }) => {
         dataSource={dataArr}
         pagination={false}
         sticky
-        style={{ maxHeight: "250px", overflowY: "auto" }}
+        style={{ height: "250px", overflowY: "auto" }}
       />
     </>
   );

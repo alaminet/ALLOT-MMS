@@ -159,7 +159,12 @@ const UserUpdate = () => {
             <UserAuthorizationTable data={authData} setData={setAuthData} />
           </Form.Item>
           <Form.Item label={null}>
-            <Button type="primary" htmlType="submit" loading={loading} block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              block
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Update User
             </Button>
           </Form.Item>

@@ -24,6 +24,7 @@ import DualAxesChart from "./dualAxesChart";
 import { useNavigate } from "react-router-dom";
 import ApprovalTable from "./approvalTable";
 import { usePermission } from "../../hooks/usePermission";
+import MoveOrderReq from "../../components/moveOrderReq";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -58,8 +59,6 @@ const Dashboard = () => {
   };
 
   function getScopeValue(own, others) {
-    console.log(own, others);
-
     if (own && others) return "all";
     if (own) return "own";
     if (others) return "others";
@@ -140,14 +139,7 @@ const Dashboard = () => {
             style={{
               marginBottom: "10px",
             }}>
-            <Button
-              onClick={() => navigate("/issue")}
-              icon={<PlusCircleOutlined />}
-              type="primary"
-              lassName="borderBrand"
-              style={{ borderRadius: "0px" }}>
-              Create Order
-            </Button>
+            <MoveOrderReq />
           </Flex>
         </Col>
       </Row>

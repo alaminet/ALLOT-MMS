@@ -31,7 +31,8 @@ const Supplier = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOwn("supplier", "create")}>
+            disabled={!canDoOwn("supplier", "create")}
+            style={{ borderRadius: "0px", padding: "10px 30px" }}>
             Add Supplier
           </Button>
         )}
