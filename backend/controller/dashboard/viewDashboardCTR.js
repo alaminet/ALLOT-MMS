@@ -1,6 +1,7 @@
 const TrnxDetails = require("../../model/transaction/trnxDetails");
 const PurchaseReq = require("../../model/purchaseReq");
 const PurchaseOrder = require("../../model/purchaseOrder");
+const MoveOrder = require("../../model/transaction/trnxMoveOrder");
 const Member = require("../../model/member");
 const ItemInfo = require("../../model/master/itemInfo");
 
@@ -29,8 +30,8 @@ async function viewDashboardCTR(req, res) {
       isDeleted: { $ne: true },
       orgId: req.orgId,
     };
-    // 1. Collect statuses
 
+    // 1. Collect statuses
     const PRstatuses = [];
     if (data.scopePRCheck) PRstatuses.push("In-Process");
     if (data.scopePRConfirm) PRstatuses.push("Checked");
@@ -114,6 +115,54 @@ async function viewDashboardCTR(req, res) {
         .lean()
         .then((res) => {
           POApprovalList.push(...res);
+        });
+    }
+
+    //   Set a MO query filed
+    const MOquery = {
+      isDeleted: { $ne: true },
+      orgId: req.orgId,
+    };
+
+    // 1. Collect statuses
+    const MOstatuses = [];
+    if (data.scopeMOCheck) MOstatuses.push("In-Process");
+    if (data.scopeMOConfirm) MOstatuses.push("Checked");
+    if (data.scopeMOApprove) MOstatuses.push("Confirmed");
+
+    // 2. Apply statuses if any
+    if (MOstatuses.length) {
+      MOquery.status = { $in: MOstatuses };
+    }
+
+    // 3. Apply costCenter logic
+    const MOscopeMap = [
+      data.scopeMOCheck,
+      data.scopeMOConfirm,
+      data.scopeMOApprove,
+    ];
+
+    // If any scope is "own"
+    if (MOscopeMap.includes("own")) {
+      MOquery.costCenter = memberDlts.costCenter._id;
+    }
+    // If any scope is "others"
+    else if (MOscopeMap.includes("others")) {
+      MOquery.costCenter = { $ne: memberDlts.costCenter._id };
+    }
+
+    // 4. Get PR Approval List
+    const MOApprovalList = [];
+    if (MOstatuses.length) {
+      await MoveOrder.find(MOquery)
+        .sort({ createdAt: -1 }) // newest first
+        .select(
+          "createdAt code itemDetails.reqQty itemDetails.code itemDetails.isDeleted"
+        )
+        .populate({ path: "itemDetails.code", select: "avgPrice -_id" })
+        .lean()
+        .then((res) => {
+          MOApprovalList.push(...res);
         });
     }
 
@@ -365,6 +414,7 @@ async function viewDashboardCTR(req, res) {
         typeWiseStock: typeWiseStock,
         PRApprovalList: PRApprovalList,
         POApprovalList: POApprovalList,
+        MOApprovalList: MOApprovalList,
       },
     });
   } catch (error) {

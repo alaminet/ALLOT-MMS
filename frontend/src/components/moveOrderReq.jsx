@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useSelector } from "react-redux";
 import {
   Button,
@@ -12,26 +13,19 @@ import {
   Typography,
   message,
   InputNumber,
-  notification,
   Space,
+  notification,
 } from "antd";
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
-import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import axios from "axios";
-dayjs.extend(customParseFormat);
-const dateFormat = "YYYY-MM-DD";
+import { PlusCircleOutlined, DeleteTwoTone } from "@ant-design/icons";
 
 const MoveOrderReq = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const screens = useBreakpoint();
-  const isMobile = screens.xs;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
-  const [itemDetails, setItemDetails] = useState();
   const [form] = Form.useForm();
 
   // Drawer options
@@ -46,16 +40,19 @@ const MoveOrderReq = () => {
   const onFinish = async (values) => {
     const formData = {
       ...values,
-      documentAt: new Date(),
-      issuedAt: new Date(),
+      requestedBy: {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: new Date(),
+      },
       createdBy: user?.id,
-      tnxType: "Move Order",
-      costCenter: user?.costCenter?.id,
+      costCenter: user?.costCenter,
     };
     setLoading(true);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/transaction/issue/new`,
+        `${import.meta.env.VITE_API_URL}/api/transaction/move-order/new`,
         formData,
         {
           headers: {
@@ -64,6 +61,7 @@ const MoveOrderReq = () => {
           },
         }
       );
+      onClose();
       notification.success({
         message: "Success",
         description: res.data.message,
@@ -74,7 +72,6 @@ const MoveOrderReq = () => {
       });
       setLoading(false);
       getItems();
-      getItemInfo();
       form.resetFields();
     } catch (error) {
       setLoading(false);
@@ -115,39 +112,8 @@ const MoveOrderReq = () => {
     }
   };
 
-  // Get Category List
-  const getItemInfo = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
-        {
-          model: ["StoreLocation", "CostCenter"],
-          scope: "all",
-        },
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user?.token,
-          },
-        }
-      );
-
-      const tableArr = res?.data?.items?.map((item, index) => {
-        item.data = item?.data?.map((i) => ({
-          value: item?.modelName === "ItemUOM" ? i.code : i.name,
-          label: item?.modelName === "ItemUOM" ? i.code : i.name,
-        }));
-        return { ...item };
-      });
-      setItemDetails(tableArr);
-    } catch (error) {
-      message.error(error.response.data.error);
-    }
-  };
-
   useEffect(() => {
     getItems();
-    getItemInfo();
   }, []);
 
   return (
@@ -187,7 +153,6 @@ const MoveOrderReq = () => {
           form={form}
           name="new"
           layout="vertical"
-          initialValues={{ issuedAt: dayjs(), documentAt: dayjs() }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -283,27 +248,20 @@ const MoveOrderReq = () => {
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          matched.code
+                                          matched._id
                                         );
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "issuePrice"],
-                                          matched.avgPrice
-                                        );
+
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
                                           matched.SKU
                                         );
                                         form.setFieldValue(
-                                          ["itemDetails", name, "stockList"],
+                                          ["itemDetails", name, "onHand"],
                                           matched.stock?.reduce(
                                             (sum, acc) =>
                                               sum + (acc.onHandQty || 0),
                                             0
                                           )
-                                        );
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "location"],
-                                          matched.stock?.[0]?.location || ""
                                         );
                                       }
                                     }}
@@ -321,21 +279,13 @@ const MoveOrderReq = () => {
                                           ""
                                         ); // clear code for manual input
                                         form.setFieldValue(
-                                          ["itemDetails", name, "issuePrice"],
-                                          ""
-                                        ); // clear issuePrice for manual input
-                                        form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
                                           ""
                                         ); // clear SKU for manual input
                                         form.setFieldValue(
-                                          ["itemDetails", name, "location"],
+                                          ["itemDetails", name, "onHand"],
                                           ""
-                                        ); // clear location for manual input
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "stockList"],
-                                          ""
-                                        ); // clear stockList for manual input
+                                        ); // clear onHand for manual input
                                       }
                                     }}
                                   />
@@ -362,14 +312,14 @@ const MoveOrderReq = () => {
                               <Col xs={4} sm={3}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "stockList"]}>
+                                  name={[name, "onHand"]}>
                                   <Input disabled placeholder="On-Hand" />
                                 </Form.Item>
                               </Col>
-                              <Col xs={4} sm={4}>
+                              <Col xs={4} sm={3}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "issueQty"]}
+                                  name={[name, "reqQty"]}
                                   rules={[
                                     {
                                       type: "number",
@@ -387,7 +337,7 @@ const MoveOrderReq = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col xs={4} sm={3}>
+                              <Col xs={4} sm={4}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "remarks"]}>
@@ -403,7 +353,8 @@ const MoveOrderReq = () => {
                                   height: "42px",
                                   justifyContent: "center",
                                 }}>
-                                <MinusCircleOutlined
+                                <DeleteTwoTone
+                                  twoToneColor="#eb2f96"
                                   onClick={() => remove(name)}
                                 />
                               </Col>
@@ -427,21 +378,6 @@ const MoveOrderReq = () => {
                   </Form.List>
                 </Form.Item>
               </div>
-              {/* <Row justify="end">
-                <Col span={24}>
-                  <Form.Item label={null}>
-                    <Button
-                      size="large"
-                      type="primary"
-                      htmlType="submit"
-                      loading={loading}
-                      block
-                      style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Submit
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row> */}
             </Col>
           </Row>
         </Form>

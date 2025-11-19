@@ -19,6 +19,12 @@ const UserAuthorizationTable = ({ data, setData }) => {
       own: { check: false, confirm: false, approve: false, hold: false },
       other: { check: false, confirm: false, approve: false, hold: false },
     },
+    {
+      key: "move-order",
+      module: "Move Order",
+      own: { check: false, confirm: false, approve: false, hold: false },
+      other: { check: false, confirm: false, approve: false, hold: false },
+    },
   ];
 
   const normalizeData = (data) => {

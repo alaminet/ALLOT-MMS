@@ -33,6 +33,7 @@ const Dashboard = () => {
 
   // User Permission Check
   const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
+  // PO Access
   const ownPOCheck = canAuthOwn("purchase-order", "check");
   const othersPOCheck = canAuthOther("purchase-order", "check");
   const ownPOConfirm = canAuthOwn("purchase-order", "confirm");
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const othersPOApprove = canAuthOther("purchase-order", "approve");
   const ownPOHold = canAuthOwn("purchase-order", "hold");
   const othersPOHold = canAuthOther("purchase-order", "hold");
+  // PR Access
   const ownPRCheck = canAuthOwn("purchase-requisition", "check");
   const othersPRCheck = canAuthOther("purchase-requisition", "check");
   const ownPRConfirm = canAuthOwn("purchase-requisition", "confirm");
@@ -49,6 +51,15 @@ const Dashboard = () => {
   const othersPRApprove = canAuthOther("purchase-requisition", "approve");
   const ownPRHold = canAuthOwn("purchase-requisition", "hold");
   const othersPRHold = canAuthOther("purchase-requisition", "hold");
+  // MO Access
+  const ownMOCheck = canAuthOwn("move-order", "check");
+  const othersMOCheck = canAuthOther("move-order", "check");
+  const ownMOConfirm = canAuthOwn("move-order", "confirm");
+  const othersMOConfirm = canAuthOther("move-order", "confirm");
+  const ownMOApprove = canAuthOwn("move-order", "approve");
+  const othersMOApprove = canAuthOther("move-order", "approve");
+  const ownMOHold = canAuthOwn("move-order", "hold");
+  const othersMOHold = canAuthOther("move-order", "hold");
 
   // Number Formatting
   const formatNumber = (num) => {
@@ -65,14 +76,21 @@ const Dashboard = () => {
     return null;
   }
   const getDashboardData = async () => {
+    // PO Scope
     const scopePOCheck = getScopeValue(ownPOCheck, othersPOCheck);
     const scopePOConfirm = getScopeValue(ownPOConfirm, othersPOConfirm);
     const scopePOApprove = getScopeValue(ownPOApprove, othersPOApprove);
     const scopePOHold = getScopeValue(ownPOHold, othersPOHold);
+    // PR Scope
     const scopePRCheck = getScopeValue(ownPRCheck, othersPRCheck);
     const scopePRConfirm = getScopeValue(ownPRConfirm, othersPRConfirm);
     const scopePRApprove = getScopeValue(ownPRApprove, othersPRApprove);
     const scopePRHold = getScopeValue(ownPRHold, othersPRHold);
+    // MO Scope
+    const scopeMOCheck = getScopeValue(ownMOCheck, othersMOCheck);
+    const scopeMOConfirm = getScopeValue(ownMOConfirm, othersMOConfirm);
+    const scopeMOApprove = getScopeValue(ownMOApprove, othersMOApprove);
+    const scopeMOHold = getScopeValue(ownMOHold, othersMOHold);
 
     // Assign only if not null
     const payload = {
@@ -84,6 +102,10 @@ const Dashboard = () => {
       ...(scopePRConfirm && { scopePRConfirm }),
       ...(scopePRApprove && { scopePRApprove }),
       ...(scopePRHold && { scopePRHold }),
+      ...(scopeMOCheck && { scopeMOCheck }),
+      ...(scopeMOConfirm && { scopeMOConfirm }),
+      ...(scopeMOApprove && { scopeMOApprove }),
+      ...(scopeMOHold && { scopeMOHold }),
     };
     try {
       await axios
@@ -290,7 +312,11 @@ const Dashboard = () => {
         {dashboardData?.MOApprovalList?.length > 0 && (
           <Col span={8}>
             <Card>
-              <ApprovalTable title="MO Approval" />
+              <ApprovalTable
+                title="MO Approval"
+                scope={"MO"}
+                tableData={dashboardData?.MOApprovalList}
+              />
             </Card>
           </Col>
         )}

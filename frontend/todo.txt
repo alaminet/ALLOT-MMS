@@ -185,7 +185,7 @@
         - Approved By
 # Delivery Challan
 # Reservation/Move Order
-    - Reservation Number (10001)
+    - Reservation Number (100001)
     - Date
     - Order Type
     - From Store
