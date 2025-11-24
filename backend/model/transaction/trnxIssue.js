@@ -6,6 +6,7 @@ const trnxIssueSchema = new Schema(
     orgId: String,
     code: Number,
     tnxType: String,
+    tnxRef: String,
     reference: String,
     headerText: String,
     costCenter: String,

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { Button, Flex, Modal, Table, Typography } from "antd";
+import { Button, Flex, message, Modal, Table, Typography } from "antd";
+import { usePermission } from "../hooks/usePermission";
+import moment from "moment";
 const { Text } = Typography;
 
 const MoveOrderDrawer = ({ title, MOid }) => {
@@ -9,8 +11,22 @@ const MoveOrderDrawer = ({ title, MOid }) => {
   const [queryData, setQueryData] = useState([]);
   const [open, setOpen] = useState(false);
 
+  // User Permission Check
+  const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
+  const own = canDoOwn("purchase-order", "view");
+  const others = canDoOther("purchase-order", "view");
+  const ownCheck = canAuthOwn("purchase-order", "check");
+  const othersCheck = canAuthOther("purchase-order", "check");
+  const ownConfirm = canAuthOwn("purchase-order", "confirm");
+  const othersConfirm = canAuthOther("purchase-order", "confirm");
+  const ownApprove = canAuthOwn("purchase-order", "approve");
+  const othersApprove = canAuthOther("purchase-order", "approve");
+  const ownHold = canAuthOwn("purchase-order", "hold");
+  const othersHold = canAuthOther("purchase-order", "hold");
+
   // Get data
   const getData = async (id) => {
+    setQueryData(null);
     const payload = { scope: "all", MOid: id };
     try {
       await axios
@@ -27,18 +43,13 @@ const MoveOrderDrawer = ({ title, MOid }) => {
           }
         )
         .then((res) => {
-          // message.success(res?.data?.message);
           setQueryData(res?.data?.items);
+          setOpen(true);
         });
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getData(MOid);
-  }, []);
-  console.log(queryData);
 
   // Table Content
   const columns = [
@@ -102,9 +113,79 @@ const MoveOrderDrawer = ({ title, MOid }) => {
     },
   ];
 
+  // Handle Status Update
+  const handleStatusUpdate = async (values) => {
+    const timeNow = moment(new Date());
+    const payload = {
+      status: values,
+    };
+
+    if (values == "Checked") {
+      payload.checkedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Confirmed") {
+      payload.confirmedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Approved") {
+      payload.approvedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Hold") {
+      payload.holdBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    if (values == "Closed") {
+      payload.closedBy = {
+        name: user?.name,
+        contact: user?.phone,
+        email: user?.email,
+        timeAt: timeNow,
+      };
+    }
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/transaction/move-order/update/${
+            queryData?._id
+          }`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          setOpen(false);
+        });
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
+
   return (
     <Flex vertical gap="middle" align="flex-start">
-      <Button type="link" onClick={() => setOpen(true)}>
+      <Button type="link" onClick={() => getData(MOid)}>
         {title}
       </Button>
       <Modal
@@ -117,10 +198,44 @@ const MoveOrderDrawer = ({ title, MOid }) => {
           xs: "95%",
           sm: "85%",
           md: "75%",
-          lg: "65%",
-          xl: "65%",
-          xxl: "565%",
-        }}>
+          // lg: "65%",
+          // xl: "65%",
+          // xxl: "65%",
+        }}
+        footer={(_, { OkBtn, CancelBtn }) => (
+          <>
+            <CancelBtn />
+            {/* <OkBtn /> */}
+            {((ownCheck && user?.id === queryData?.createdBy?._id) ||
+              (othersCheck && user?.id !== queryData?.createdBy?._id)) &&
+            queryData?.status == "In-Process" ? (
+              <Button
+                type="primary"
+                className="no-print"
+                onClick={() => handleStatusUpdate("Checked")}>
+                Checked
+              </Button>
+            ) : ((ownConfirm && user?.id === queryData?.createdBy?._id) ||
+                (othersConfirm && user?.id !== queryData?.createdBy?._id)) &&
+              queryData?.status == "Checked" ? (
+              <Button
+                type="primary"
+                className="no-print"
+                onClick={() => handleStatusUpdate("Confirmed")}>
+                Confirmed
+              </Button>
+            ) : ((ownApprove && user?.id === queryData?.createdBy?._id) ||
+                (othersApprove && user?.id !== queryData?.createdBy?._id)) &&
+              queryData?.status == "Confirmed" ? (
+              <Button
+                type="primary"
+                className="no-print"
+                onClick={() => handleStatusUpdate("Approved")}>
+                Approved
+              </Button>
+            ) : null}
+          </>
+        )}>
         <Table
           columns={columns}
           dataSource={queryData?.itemDetails}
@@ -130,8 +245,10 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               (sum, item) => sum + (item?.reqQty || 0),
               0
             );
-            const totalValue = queryData?.itemDetails?.map(
-              (item) => (item?.code?.avgPrice || 0) * (item?.reqQty || 0)
+            const totalValue = queryData?.itemDetails?.reduce(
+              (sum, item) =>
+                sum + (item?.code?.avgPrice || 0) * (item?.reqQty || 0),
+              0
             );
             return (
               <>

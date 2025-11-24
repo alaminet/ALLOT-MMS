@@ -127,7 +127,6 @@ const PurchaseRequisitiion = () => {
     getItems();
     getItemInfo();
   }, []);
-  console.log(form.getFieldValue("itemDetails"));
 
   return (
     <>

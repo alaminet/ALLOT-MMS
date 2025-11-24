@@ -53,6 +53,7 @@ import PurchaseOrderReqTable from "./pages/Purchase/Order/purchaseOrderReqTable.
 import PurchaseOrderViewTable from "./pages/Purchase/Order/purchaseOrderViewTable.jsx";
 import POReceiveLayout from "./pages/Transaction/Receive/POReceiveLayout.jsx";
 import PurchaseOrderPrintView from "./pages/Purchase/Order/purchaseOrderPrintView.jsx";
+import MOTableView from "./pages/Transaction/Issue/MOTableView.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -88,8 +89,9 @@ function App() {
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="issue" element={<Issue />}>
-                <Route path="" element={<IssueLayout />} />
+                <Route path="" element={<MOTableView />} />
                 <Route path="logs" element={<LogActivites />} />
+                <Route path="new" element={<IssueLayout />} />
               </Route>
               <Route path="tnx-report" element={<TnxReport />}>
                 <Route path="" element={<TnxReportLayout />} />

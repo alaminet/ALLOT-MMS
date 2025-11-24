@@ -46,6 +46,7 @@ const trnxMoveOrderSchema = new Schema(
         name: String,
         UOM: String,
         reqQty: Number,
+        issueQty: { type: Number, default: 0 },
         onHand: Number,
         remarks: String,
         isDeleted: {

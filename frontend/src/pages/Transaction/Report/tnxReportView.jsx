@@ -336,7 +336,7 @@ const TnxReportView = () => {
               </Table>
             </Col>
           </Row>
-          <Row justify="space-between" style={{ marginTop: "50px" }}>
+          {/* <Row justify="space-between" style={{ marginTop: "50px" }}>
             <Col
               span={5}
               style={{
@@ -372,8 +372,9 @@ const TnxReportView = () => {
                 {queryData?.approvedBy?.name}
               </span>
             </Col>
-          </Row>
+          </Row> */}
           <Button
+            style={{ marginTop: "10px" }}
             className="no-print"
             type="primary"
             onClick={() => handlePrint("A4 portrait")}>

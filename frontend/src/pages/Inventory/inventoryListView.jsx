@@ -133,24 +133,27 @@ const InventoryListView = () => {
         .then((res) => {
           // message.success(res.data.message);
           const tableArr = res?.data?.items?.flatMap((item) =>
-            item.stock?.map((stock) => ({
-              key: stock?._id,
-              name: item?.name,
-              code: item?.code,
-              SKU: item?.SKU,
-              UOM: item?.UOM?.code,
-              location: stock?.location,
-              locQty: stock?.onHandQty || 0,
-              onHandQty:
-                item?.stock?.reduce(
-                  (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-                  0
-                ) || 0,
-              safetyStock: item?.safetyStock || 0,
-              type: item?.type?.name,
-              access: item,
-              action: item?._id,
-            }))
+            item.stock?.map(
+              (stock) =>
+                stock?.onHandQty > 0 && {
+                  key: stock?._id,
+                  name: item?.name,
+                  code: item?.code,
+                  SKU: item?.SKU,
+                  UOM: item?.UOM?.code,
+                  location: stock?.location,
+                  locQty: stock?.onHandQty || 0,
+                  onHandQty:
+                    item?.stock?.reduce(
+                      (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
+                      0
+                    ) || 0,
+                  safetyStock: item?.safetyStock || 0,
+                  type: item?.type?.name,
+                  access: item,
+                  action: item?._id,
+                }
+            )
           );
           setQueryData(tableArr);
         });

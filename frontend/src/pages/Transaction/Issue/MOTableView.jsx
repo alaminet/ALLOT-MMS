@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import { Button, Flex, message, Table } from "antd";
 import axios from "axios";
 import moment from "moment";
+import { useSelector } from "react-redux";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { Button, Flex, message, Table, Input } from "antd";
 import { usePermission } from "../../../hooks/usePermission";
+import POReceiveFormView from "../Receive/POReceiveFormView";
 import NotAuth from "../../notAuth";
-import POReceiveFormView from "./POReceiveFormView";
+import MOIssueForm from "./MOIssueForm";
+const { Search } = Input;
 
-const POReceiveLayout = () => {
+const MOTableView = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const search = useOutletContext();
+  const [search, setSearch] = useState("");
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState([]);
   const [modifiedData, setModifiedData] = useState([]);
@@ -23,7 +25,7 @@ const POReceiveLayout = () => {
 
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("receive")) {
+  if (!canViewPage("issue")) {
     return <NotAuth />;
   }
   const own = canDoOwn(lastSegment, "view");
@@ -32,14 +34,14 @@ const POReceiveLayout = () => {
   // Table details
   const columns = [
     {
-      title: "PO No",
-      dataIndex: "PO",
-      key: "PO",
-      filters: [...new Set(queryData?.map((item) => item?.PO))].map((code) => ({
+      title: "MO No",
+      dataIndex: "MO",
+      key: "MO",
+      filters: [...new Set(queryData?.map((item) => item?.MO))].map((code) => ({
         text: code,
         value: code,
       })),
-      onFilter: (value, record) => record?.PO === value,
+      onFilter: (value, record) => record?.MO === value,
       filterSearch: true,
     },
 
@@ -63,18 +65,23 @@ const POReceiveLayout = () => {
       width: 200,
     },
     {
-      title: "PO Qty",
-      dataIndex: "POQty",
-      key: "POQty",
+      title: "MO Qty",
+      dataIndex: "reqQty",
+      key: "reqQty",
       responsive: ["md"],
     },
     {
-      title: "GRN Qty",
-      dataIndex: "GRNQty",
-      key: "GRNQty",
+      title: "Issue Qty",
+      dataIndex: "issuedQty",
+      key: "issuedQty",
       responsive: ["md"],
     },
-
+    {
+      title: "Req. Dept.",
+      dataIndex: "costCenter",
+      key: "costCenter",
+      responsive: ["md"],
+    },
     {
       title: "Req. By",
       dataIndex: "reqBy",
@@ -118,7 +125,7 @@ const POReceiveLayout = () => {
     try {
       await axios
         .post(
-          `${import.meta.env.VITE_API_URL}/api/purchase/order/view`,
+          `${import.meta.env.VITE_API_URL}/api/transaction/move-order/view`,
           payload,
           {
             headers: {
@@ -132,38 +139,32 @@ const POReceiveLayout = () => {
           const tableArr = res?.data?.items?.flatMap((item) =>
             item?.itemDetails?.map(
               (list) =>
-                list?.POQty > list?.GRNQty && {
-                  key: list?._id,
-                  PO: item?.code,
-                  code: list?.code,
-                  SKU: list?.code?.SKU || "NA",
+                list?.reqQty > list?.issueQty && {
+                  key: list._id,
+                  MO: item.code,
+                  code: list?.code?.code,
+                  SKU: list?.SKU || "NA",
                   name: list?.name,
                   UOM: list?.UOM,
-                  spec: list?.spec || "",
-                  POQty: list?.POQty,
-                  reqGRNQty: list?.POQty - list?.GRNQty,
-                  POPrice: list?.POPrice,
-                  reqPOPrice: list?.POPrice,
-                  PORemarks: list?.remarks,
-                  GRNRemarks: null,
-                  GRNQty: list?.GRNQty,
+                  reqQty: list?.reqQty,
+                  issuedQty: list?.issueQty,
+                  issueQty: list?.reqQty - list?.issueQty,
+                  issuePrice: list?.code?.avgPrice,
+                  remarks: list?.remarks,
+                  stock: list?.code?.stock,
+                  reference: item?.reference,
+                  headerText: item?.headerText,
+                  costCenter: item?.costCenter?.name,
                   reqBy: item?.requestedBy?.name,
-                  status: item?.status,
-                  supplier: item?.supplier,
-                  type: item?.type,
-                  note: item?.note,
-                  PRLineId: list?.PRLineId,
-                  PRRef: list?.PRRef,
                   createdAt: moment(item?.createdAt).format(
                     "MMM DD, YYYY h:mm A"
                   ),
-                  updatedAt: moment(item?.updatedAt).format(
-                    "MMM DD, YYYY h:mm A"
-                  ),
-                  POId: item?._id,
+                  MOid: item?._id,
+                  MOLineid: list?._id,
                 }
             )
           );
+
           setQueryData(tableArr);
         });
     } catch (error) {
@@ -174,28 +175,39 @@ const POReceiveLayout = () => {
   useEffect(() => {
     getTableData();
   }, [drawerOpen]);
-
   return (
     <>
       <Flex gap="middle" vertical>
         <Flex align="center" gap="middle" justify="space-between">
-          {hasSelected ? (
-            <>
-              <span>Selected {selectedRowKeys?.length} items</span>
+          <Flex gap={16} align="center">
+            {hasSelected ? (
+              <>
+                <span>Selected {selectedRowKeys?.length} items</span>
+                <Button
+                  type="primary"
+                  onClick={() => setDrawerOpen(!drawerOpen)}
+                  style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                  MO Issue
+                </Button>
+              </>
+            ) : (
               <Button
-                type="primary"
-                onClick={() => setDrawerOpen(!drawerOpen)}
+                disabled
                 style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                Make GRN
+                MO Issue
               </Button>
-            </>
-          ) : (
-            <Button
-              disabled
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
-              Make GRN
-            </Button>
-          )}
+            )}
+          </Flex>
+          <Search
+            className="search-field"
+            style={{
+              width: "300px",
+            }}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name"
+            // onSearch={onSearch}
+            enterButton
+          />
         </Flex>
         {!own && !others ? (
           <NotAuth />
@@ -204,7 +216,7 @@ const POReceiveLayout = () => {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item.name?.toLowerCase().includes(search?.toLowerCase())
+              item?.name?.toLowerCase().includes(search?.toLowerCase())
             )}
             // title={() => "Header"}
             sticky
@@ -225,7 +237,7 @@ const POReceiveLayout = () => {
           />
         )}
       </Flex>
-      <POReceiveFormView
+      <MOIssueForm
         drawerOpen={drawerOpen}
         setDrawerOpen={setDrawerOpen}
         data={modifiedData.length > 0 ? modifiedData : selectedRowData}
@@ -235,4 +247,4 @@ const POReceiveLayout = () => {
   );
 };
 
-export default POReceiveLayout;
+export default MOTableView;

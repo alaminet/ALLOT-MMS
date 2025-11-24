@@ -15,8 +15,8 @@ async function viewSingleMoveOrderCTR(req, res) {
       query["createdBy"] = { $ne: req.actionBy };
     }
 
-    if (data?.MOId) {
-      query["_id"] = data.MOId;
+    if (data?.MOid) {
+      query["_id"] = data.MOid;
     }
 
     const items = await TrnxMoveOrder.findOne(query)

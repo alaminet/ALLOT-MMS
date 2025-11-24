@@ -177,8 +177,6 @@ const PurchaseReqViewTable = () => {
       return; // stop execution
     }
     const payload = { scope };
-    console.log(payload);
-
     try {
       await axios
         .post(
@@ -192,8 +190,6 @@ const PurchaseReqViewTable = () => {
           }
         )
         .then((res) => {
-          console.log(res);
-
           message.success(res.data.message);
           const tableArr = res?.data?.items?.flatMap((item) =>
             item?.itemDetails.map((list) => ({

@@ -87,6 +87,7 @@ const ApprovalTable = ({ tableData, title, scope }) => {
       title: "Value",
       dataIndex: "value",
       key: "value",
+      align: "right",
     },
   ];
 
