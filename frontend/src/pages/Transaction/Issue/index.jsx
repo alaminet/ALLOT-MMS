@@ -5,11 +5,10 @@ import { usePermission } from "../../../hooks/usePermission";
 import BreadCrumbCustom from "../../../components/breadCrumbCustom";
 import NotAuth from "../../notAuth";
 
-
 const Issue = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get pathname
   const pathname = location.pathname;
   const lastSegment = pathname.split("/").filter(Boolean).pop();
@@ -48,7 +47,6 @@ const Issue = () => {
               Manual Issue
             </Button>
           ) : null}
-          
         </Flex>
       </Flex>
       <Outlet /> {/* Outlet for New and update layout */}

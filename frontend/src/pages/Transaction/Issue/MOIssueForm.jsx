@@ -1,9 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  DeleteColumnOutlined,
-  DeleteTwoTone,
-  PlusOutlined,
-} from "@ant-design/icons";
+import { DeleteTwoTone } from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -17,16 +13,10 @@ import {
   Table,
   Typography,
   message,
-  DatePicker,
 } from "antd";
 import axios from "axios";
 import { useSelector } from "react-redux";
 const { Option } = Select;
-const { Text, Title, Paragraph } = Typography;
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-dayjs.extend(customParseFormat);
-const dateFormat = "YYYY-MM-DD";
 
 // Table Edit Syntex
 const EditableContext = React.createContext(null);
@@ -94,81 +84,12 @@ const EditableCell = ({
 const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
   const user = useSelector((user) => user.loginSlice.login);
   const [dataSource, setDataSource] = useState(data);
-  const [supplierData, setSuppierData] = useState();
-  const [selectSupplier, setSelectSupplier] = useState();
   const [loading, setLoading] = useState(false);
-  const [costCenter, setCostCenter] = useState();
   const [form] = Form.useForm();
-
-  // Get Supplier data
-  const getSupplierData = async () => {
-    const payload = { scope: "all" };
-    try {
-      await axios
-        .post(`${import.meta.env.VITE_API_URL}/api/supplier/view`, payload, {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
-          },
-        })
-        .then((res) => {
-          const tableArr = res?.data?.items?.map((item, index) => ({
-            key: item._id,
-            value: item._id,
-            code: item?.code,
-            label: item?.name + " (" + item?.code + ")",
-            email: item?.email,
-            phone: item?.phone,
-            officeAddress: item?.officeAddress,
-          }));
-          setSuppierData(tableArr);
-        });
-    } catch (error) {
-      console.log(error);
-      message.error(error.response.data.error);
-    }
-  };
-
-  const onSupplierChange = (value) => {
-    const selectSupplier = supplierData?.filter((item) => item.key === value);
-    setSelectSupplier(selectSupplier[0]);
-  };
-
-  // Get Category List
-  const getItemInfo = async () => {
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
-        {
-          model: ["StoreLocation"],
-          scope: "all",
-        },
-        {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user?.token,
-          },
-        }
-      );
-
-      const tableArr = res?.data?.items?.map((item, index) => {
-        item.data = item?.data?.map((i) => ({
-          value: item?.modelName === "ItemUOM" ? i.code : i.name,
-          label: item?.modelName === "ItemUOM" ? i.code : i.name,
-        }));
-        return { ...item };
-      });
-      setCostCenter(tableArr);
-    } catch (error) {
-      message.error(error.response.data.error);
-    }
-  };
 
   // Update dataSource when drawer data changes
   useEffect(() => {
     setDataSource(data);
-    getSupplierData();
-    getItemInfo();
   }, [data]);
 
   const handleDelete = (key) => {
