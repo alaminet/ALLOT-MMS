@@ -49,10 +49,10 @@ const items = [
   // getItem("Order", "order", <FileDoneOutlined />),
   getItem("User", "user", <TeamOutlined />),
   getItem("Inventory", "inventory", <ShopOutlined />),
-  getItem("Supplier", "supplier", <ShopOutlined />),
   getItem("Purchase", "purchase", <ShopOutlined />, [
     getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
     getItem("Order", "purchase-order", <FileDoneOutlined />),
+    getItem("Supplier", "supplier", <ShopOutlined />),
   ]),
   getItem("Warehouse", "transaction", <ShopOutlined />, [
     getItem("Receive", "receive", <FileDoneOutlined />),
