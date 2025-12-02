@@ -108,32 +108,41 @@ const InventoryViewTable = () => {
         )
         .then((res) => {
           // message.success(res.data.message);
-          const tableArr = res?.data?.items?.flatMap((item) => ({
-            key: item._id,
-            name: item?.name,
-            SKU: item?.SKU,
-            UOM: item?.UOM?.code,
-            group: item?.group?.name,
-            issueQty:
-              item?.stock?.reduce(
-                (sum, stock) => sum + (Number(stock?.issueQty) || 0),
-                0
-              ) || 0,
-            recQty:
-              item?.stock?.reduce(
-                (sum, stock) => sum + (Number(stock?.recQty) || 0),
-                0
-              ) || 0,
-            onHandQty:
+          const tableArr = res?.data?.items?.flatMap((item) => {
+            const onHandStock =
               item?.stock?.reduce(
                 (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
                 0
-              ) || 0,
-            safetyStock: item?.safetyStock || 0,
-            type: item?.type.name,
-            access: item,
-            action: item?._id,
-          }));
+              ) || 0;
+            if (onHandStock > 0) {
+              return {
+                key: item._id,
+                name: item?.name,
+                SKU: item?.SKU,
+                UOM: item?.UOM?.code,
+                group: item?.group?.name,
+                issueQty:
+                  item?.stock?.reduce(
+                    (sum, stock) => sum + (Number(stock?.issueQty) || 0),
+                    0
+                  ) || 0,
+                recQty:
+                  item?.stock?.reduce(
+                    (sum, stock) => sum + (Number(stock?.recQty) || 0),
+                    0
+                  ) || 0,
+                onHandQty:
+                  item?.stock?.reduce(
+                    (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
+                    0
+                  ) || 0,
+                safetyStock: item?.safetyStock || 0,
+                type: item?.type.name,
+                access: item,
+                action: item?._id,
+              };
+            }
+          });
           setQueryData(tableArr);
         });
     } catch (error) {

@@ -4,6 +4,7 @@ const PurchaseOrder = require("../../model/purchaseOrder");
 const MoveOrder = require("../../model/transaction/trnxMoveOrder");
 const Member = require("../../model/member");
 const ItemInfo = require("../../model/master/itemInfo");
+const WebSetting = require("../../model/webSetting");
 
 async function viewDashboardCTR(req, res) {
   const data = req.body;
@@ -370,8 +371,14 @@ async function viewDashboardCTR(req, res) {
     }
 
     //   Liqued Stock
+    const webSettings = await WebSetting.findOne({ orgId: orgId });
     const liqStock = await ItemInfo.find({
-      SKU: { $in: [3100000143, 3100000147] },
+      SKU: {
+        $in: [
+          webSettings.dashboard.waterChart[0].SKU,
+          webSettings.dashboard.waterChart[1].SKU,
+        ],
+      },
     });
 
     // Type wise stock
@@ -415,6 +422,7 @@ async function viewDashboardCTR(req, res) {
         PRApprovalList: PRApprovalList,
         POApprovalList: POApprovalList,
         MOApprovalList: MOApprovalList,
+        webSettings: webSettings,
       },
     });
   } catch (error) {

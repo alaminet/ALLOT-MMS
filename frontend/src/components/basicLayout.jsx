@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import {
-  BellFilled,
+  AppstoreOutlined,
+  ArrowLeftOutlined,
+  ArrowRightOutlined,
   FileDoneOutlined,
-  GroupOutlined,
+  FileProtectOutlined,
+  FileSyncOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  NotificationFilled,
   PieChartOutlined,
   ProductOutlined,
   SettingOutlined,
   ShopOutlined,
+  ShoppingCartOutlined,
   TeamOutlined,
-  UsergroupAddOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -23,18 +25,13 @@ import {
   message,
   Flex,
   Typography,
-  Input,
   Button,
-  Popover,
-  Badge,
 } from "antd";
 const { Header, Content, Footer, Sider } = Layout;
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Loginuser } from "../features/userSlice";
-import logoDark from "../assets/logo_dark.svg";
 const { Text } = Typography;
-const { Search } = Input;
 // Navigation
 function getItem(label, key, icon, children) {
   return {
@@ -48,18 +45,18 @@ const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
   // getItem("Order", "order", <FileDoneOutlined />),
   getItem("User", "user", <TeamOutlined />),
-  getItem("Inventory", "inventory", <ShopOutlined />),
-  getItem("Purchase", "purchase", <ShopOutlined />, [
+  getItem("Purchase", "purchase", <ShoppingCartOutlined />, [
     getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
-    getItem("Order", "purchase-order", <FileDoneOutlined />),
-    getItem("Supplier", "supplier", <ShopOutlined />),
+    getItem("Order", "purchase-order", <FileProtectOutlined />),
+    getItem("Supplier", "supplier", <FileSyncOutlined />),
   ]),
   getItem("Warehouse", "transaction", <ShopOutlined />, [
-    getItem("Receive", "receive", <FileDoneOutlined />),
-    getItem("Issue", "issue", <FileDoneOutlined />),
+    getItem("Inventory", "inventory", <AppstoreOutlined />),
+    getItem("Receive", "receive", <ArrowRightOutlined />),
+    getItem("Issue", "issue", <ArrowLeftOutlined />),
     getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),
   ]),
-  getItem("Item", "item", <ProductOutlined />),
+  getItem("Settings", "settings", <SettingOutlined />),
   getItem("Master", "master", <ProductOutlined />, [
     getItem("Item List", "item-list", <FileDoneOutlined />),
     getItem("Item Details", "item-details", <FileDoneOutlined />),
@@ -155,6 +152,19 @@ const BasicLayout = () => {
     </Flex>
   );
 
+  const menuItems = [
+    ...filterMenuItems(items, allowedKeys),
+    {
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Logout",
+      danger: true,
+      onClick: () => {
+        handleLogout();
+      },
+    },
+  ];
+
   return (
     <>
       <ConfigProvider theme={customTheme}>
@@ -198,7 +208,7 @@ const BasicLayout = () => {
               theme="light"
               defaultSelectedKeys={["1"]}
               mode="inline"
-              items={filterMenuItems(items, allowedKeys)}
+              items={menuItems}
               onClick={handleMenu}
             />
           </Sider>
@@ -241,7 +251,7 @@ const BasicLayout = () => {
                   // onSearch={onSearch}
                   enterButton
                 /> */}
-                <Flex gap={10}>
+                {/* <Flex gap={10}>
                   <Button
                     className="top-icon-btn"
                     type="default"
@@ -267,7 +277,7 @@ const BasicLayout = () => {
                       icon={<UserOutlined />}
                     />
                   </Popover>
-                </Flex>
+                </Flex> */}
               </Flex>
             </Header>
             <Content style={{ margin: collapsed ? "0px 5px" : "0 16px" }}>

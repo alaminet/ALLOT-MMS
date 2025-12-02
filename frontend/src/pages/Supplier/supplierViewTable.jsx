@@ -91,7 +91,7 @@ const SupplierViewTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {(canDoOther(lastSegment, "view") ||
+            {/* {(canDoOther(lastSegment, "view") ||
               (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
               <Tooltip title="View">
                 <Button
@@ -99,7 +99,7 @@ const SupplierViewTable = () => {
                   icon={<EyeTwoTone />}
                 />
               </Tooltip>
-            )}
+            )} */}
             {(canDoOther(lastSegment, "edit") ||
               (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">

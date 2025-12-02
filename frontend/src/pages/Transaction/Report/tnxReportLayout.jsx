@@ -323,6 +323,33 @@ const TnxReportLayout = () => {
                 if (!endDate) return current && current > dayjs().endOf("day");
                 return (
                   current &&
+                  (current > dayjs().endOf("day") || current > endDate)
+                );
+              }}
+            />
+          </Form.Item>
+          <Form.Item name="endDate" initialValue={dayjs()}>
+            <DatePicker
+              placeholder="End Date"
+              disabledDate={(current) => {
+                const startDate = form.getFieldValue("startDate");
+                if (!startDate)
+                  return current && current > dayjs().endOf("day");
+                return (
+                  current &&
+                  (current > dayjs().endOf("day") || current < startDate)
+                );
+              }}
+            />
+          </Form.Item>
+          {/* <Form.Item name="startDate" initialValue={dayjs()}>
+            <DatePicker
+              placeholder="Start Date"
+              disabledDate={(current) => {
+                const endDate = form.getFieldValue("endDate");
+                if (!endDate) return current && current > dayjs().endOf("day");
+                return (
+                  current &&
                   (current > dayjs().endOf("day") ||
                     current < endDate.subtract(31, "day"))
                 );
@@ -365,7 +392,7 @@ const TnxReportLayout = () => {
                 );
               }}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item
             name="tnxType"
             initialValue="All"

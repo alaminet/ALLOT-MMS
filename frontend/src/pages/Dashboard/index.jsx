@@ -141,6 +141,7 @@ const Dashboard = () => {
   useEffect(() => {
     getDashboardData();
   }, []);
+  console.log(dashboardData);
 
   return (
     <>
@@ -322,80 +323,92 @@ const Dashboard = () => {
         )}
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-        <Col xs={24} lg={12}>
-          <Card>
-            <DualAxesChart
-              title="Weekly Order"
-              height={460}
-              cartData={dashboardData?.last7Days}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card>
-            <LineChart
-              title="Monthly Order"
-              height={460}
-              cartData={dashboardData?.yearly}
-            />
-          </Card>
-        </Col>
+        {dashboardData?.webSettings?.dashboard?.weeklyOrder?.status ? (
+          <Col xs={24} lg={12}>
+            <Card>
+              <DualAxesChart
+                title="Weekly Order"
+                height={460}
+                cartData={dashboardData?.last7Days}
+              />
+            </Card>
+          </Col>
+        ) : null}
+        {dashboardData?.webSettings?.dashboard?.monthlyOrder?.status ? (
+          <Col xs={24} lg={12}>
+            <Card>
+              <LineChart
+                title="Monthly Order"
+                height={460}
+                cartData={dashboardData?.yearly}
+              />
+            </Card>
+          </Col>
+        ) : null}
       </Row>
-      <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-        <Col lg={8}>
-          <Card>
-            <WaterWaveChart
-              title={`${
-                dashboardData?.liqStock[1]?.name
-              } (${dashboardData?.liqStock[1]?.onHand.toFixed(0)})`}
-              height={350}
-              percent={Number(
-                (
-                  (dashboardData?.liqStock?.find(
-                    (item) => item.SKU === "3100000147"
-                  )?.onHand || 0) / 10600
-                ).toFixed(2)
-              )}
-            />
-          </Card>
-        </Col>
-        <Col lg={8}>
-          <Card>
-            <WaterWaveChart
-              title={`${
-                dashboardData?.liqStock[0]?.name
-              } (${dashboardData?.liqStock[0]?.onHand.toFixed(0)})`}
-              height={350}
-              percent={Number(
-                (
-                  (dashboardData?.liqStock?.find(
-                    (item) => item.SKU === "3100000143"
-                  )?.onHand || 0) / 5300
-                ).toFixed(2)
-              )}
-            />
-          </Card>
-        </Col>
-        <Col lg={8}>
-          <Card>
-            <PaiChart height={350} cartData={dashboardData?.typeWiseStock} />
-          </Card>
-        </Col>
+      <Row wrap={false} gutter={[16, 16]} style={{ marginTop: "16px" }}>
+        {dashboardData?.webSettings?.dashboard?.waterChart[0]?.status ? (
+          <Col lg={8}>
+            <Card>
+              <WaterWaveChart
+                title={`${
+                  dashboardData?.liqStock[1]?.name
+                } (${dashboardData?.liqStock[1]?.onHand.toFixed(0)})`}
+                height={350}
+                percent={Number(
+                  (
+                    (dashboardData?.liqStock[0]?.onHand || 0) /
+                    dashboardData?.webSettings?.dashboard?.waterChart[0]?.Limit
+                  ).toFixed(2)
+                )}
+              />
+            </Card>
+          </Col>
+        ) : null}
+        {dashboardData?.webSettings?.dashboard?.waterChart[1]?.status ? (
+          <Col lg={8}>
+            <Card>
+              <WaterWaveChart
+                title={`${
+                  dashboardData?.liqStock[0]?.name
+                } (${dashboardData?.liqStock[0]?.onHand.toFixed(0)})`}
+                height={350}
+                percent={Number(
+                  (
+                    (dashboardData?.liqStock[1]?.onHand || 0) /
+                    dashboardData?.webSettings?.dashboard?.waterChart[1]?.Limit
+                  ).toFixed(2)
+                )}
+              />
+            </Card>
+          </Col>
+        ) : null}
+        {dashboardData?.webSettings?.dashboard?.safetyChart?.status ? (
+          <Col lg={8}>
+            <Card>
+              <PaiChart height={350} cartData={dashboardData?.typeWiseStock} />
+            </Card>
+          </Col>
+        ) : null}
       </Row>
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
         gutter={[16, 16]}>
-        <Col xs={24} lg={12}>
-          <Card>
-            <LastOrderedTbl tableData={dashboardData?.recentTransactions} />
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card>
-            <LastPRTbl tableData={dashboardData?.recentPurchaseReqs} />
-          </Card>
-        </Col>
+        {dashboardData?.webSettings?.dashboard?.moveOrderTable?.status ? (
+          <Col xs={24} lg={12}>
+            <Card>
+              <LastOrderedTbl tableData={dashboardData?.recentTransactions} />
+            </Card>
+          </Col>
+        ) : null}
+        {dashboardData?.webSettings?.dashboard?.PRTable?.status ? (
+          <Col xs={24} lg={12}>
+            <Card>
+              <LastPRTbl tableData={dashboardData?.recentPurchaseReqs} />
+            </Card>
+          </Col>
+        ) : null}
       </Row>
     </>
   );

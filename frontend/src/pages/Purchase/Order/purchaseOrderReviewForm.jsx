@@ -98,6 +98,7 @@ const PurchaseOrderReviewForm = ({
   const [supplierData, setSuppierData] = useState();
   const [selectSupplier, setSelectSupplier] = useState();
   const [businessSettings, setBusinessSettings] = useState();
+  const [webSettings, setWebSettings] = useState();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
@@ -344,11 +345,33 @@ const PurchaseOrderReviewForm = ({
     }
   };
 
+  // Get Web Settings
+  const getWebSettings = async () => {
+    try {
+      await axios
+        .get(`${import.meta.env.VITE_API_URL}/api/webSetting/view`, {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        })
+        .then((res) => {
+          const settings = res.data?.webSetting;
+          setWebSettings(settings);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      message.error(error.response.data.error);
+    }
+  };
+
   // Update dataSource when drawer data changes
   useEffect(() => {
     setDataSource(data);
     getSupplierData();
     getBusinessSettings();
+    getWebSettings();
     if (selectSupplier?.paymentInfo) {
       form.setFieldsValue({
         paymentMode: `Bank A/C Name: ${selectSupplier.paymentInfo.name || ""}
@@ -375,11 +398,16 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
         }}
         extra={
           <Space>
-            <Button onClick={onClose} style={{ borderRadius: "0px", padding: "10px 30px" }}>Cancel</Button>
+            <Button
+              onClick={onClose}
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              Cancel
+            </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
-              type="primary" style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              type="primary"
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Submit
             </Button>
           </Space>
@@ -461,24 +489,28 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
-              <Form.Item
-                name="delveryTerms"
-                label="Delivery Terms"
-                initialValue={`1. Delivery has to be done within 03 working days after receiving PO by the supplier.\n2. Delivery has to be done as per specification of PO and quotation.\n3. Incase of failure of work within the given time, supplier will be penalized as per company policy.\n4. If any damage or problem occurs with the product, the supplier/seller will immediately replace/make arrangements with a new product.`}>
-                <Input.TextArea
-                  rows={7}
-                  placeholder="Please enter Delivery Terms..."
-                />
-              </Form.Item>
-            </Col>
+            {webSettings && (
+              <>
+                <Col span={8}>
+                  <Form.Item
+                    name="delveryTerms"
+                    label="Delivery Terms"
+                    initialValue={webSettings?.terms?.deliveryTerms}>
+                    <Input.TextArea
+                      rows={7}
+                      placeholder="Please enter Delivery Terms..."
+                    />
+                  </Form.Item>
+                </Col>
+              </>
+            )}
           </Row>
           <Row gutter={[16, 16]}>
             <Col span={8}>
               <Form.Item
                 name="deliveryLocation"
                 label="Delivery Location"
-                initialValue={`Contact Person: \n${businessSettings?.businessAddress?.street}, ${businessSettings?.businessAddress?.city}, ${businessSettings?.businessAddress?.country}, ${businessSettings?.businessAddress?.postal}.`}>
+                initialValue={webSettings?.terms?.deliveryLocation}>
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
@@ -489,7 +521,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="billingLocation"
                 label="Bill Submission"
-                initialValue={`Contact Person: \n${businessSettings?.officeAddress?.street}, ${businessSettings?.officeAddress?.city}, ${businessSettings?.officeAddress?.country}, ${businessSettings?.officeAddress?.postal}.`}>
+                initialValue={webSettings?.terms?.billSubmission}>
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
@@ -500,7 +532,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="requiredDoc"
                 label="Documents Requied For Billing"
-                initialValue={`1. Fully signed PO copy accept by supplier.\n2. Delivery challan with receiving sign from inventory/warehouse officials.\n3. Mushok 6.3.\n4. Price quotation.`}>
+                initialValue={webSettings?.terms?.POReqDoc}>
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."
@@ -511,7 +543,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="paymentTerms"
                 label="Payment Terms"
-                initialValue={`1. 100% payment will be made within 30 working days of successful delivery of required .\n2. VAT and AIT applicable as per BD Govt. rules.`}>
+                initialValue={webSettings?.terms?.paymentTerms}>
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."
@@ -519,7 +551,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item name="paymentMode" label="Payment Methode">
+              <Form.Item name="paymentMode" label="Supplier Payment Methode">
                 <Input.TextArea
                   rows={5}
                   placeholder="Payment methode details..."
