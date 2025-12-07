@@ -49,6 +49,7 @@ const items = [
     getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
     getItem("Order", "purchase-order", <FileProtectOutlined />),
     getItem("Supplier", "supplier", <FileSyncOutlined />),
+    getItem("Report", "purchase-report", <FileDoneOutlined />),
   ]),
   getItem("Warehouse", "transaction", <ShopOutlined />, [
     getItem("Inventory", "inventory", <AppstoreOutlined />),

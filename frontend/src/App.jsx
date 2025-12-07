@@ -54,6 +54,8 @@ import PurchaseOrderViewTable from "./pages/Purchase/Order/purchaseOrderViewTabl
 import POReceiveLayout from "./pages/Transaction/Receive/POReceiveLayout.jsx";
 import PurchaseOrderPrintView from "./pages/Purchase/Order/purchaseOrderPrintView.jsx";
 import MOTableView from "./pages/Transaction/Issue/MOTableView.jsx";
+import PurchaseReport from "./pages/Purchase/Report/index.jsx";
+import PurchaseReportView from "./pages/Purchase/Report/purchaseReportView.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -114,6 +116,10 @@ function App() {
                 <Route path="new" element={<PurchaseOrderReqTable />} />
                 <Route path="update" element={<PurchaseRequisitiionUpdate />} />
                 <Route path="print" element={<PurchaseOrderPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="purchase-report" element={<PurchaseReport />}>
+                <Route path="" element={<PurchaseReportView />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>
