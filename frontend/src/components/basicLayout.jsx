@@ -107,8 +107,10 @@ const BasicLayout = () => {
 
   // handle Navigation
   const handleMenu = (e) => {
-    navigate(e.key);
-    setCurent(e.key);
+    if (e.key !== "logout") {
+      navigate(e.key);
+      setCurent(e.key);
+    }
   };
 
   const handleLogout = () => {
