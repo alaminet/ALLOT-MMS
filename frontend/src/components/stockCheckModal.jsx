@@ -16,11 +16,11 @@ const StockCheckModal = () => {
   const showLoading = () => {
     getItems();
     setOpen(true);
-    setLoading(true);
+    // setLoading(true);
     // Simple loading mock. You should add cleanup logic in real world.
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 2000);
   };
 
   // Table Options
@@ -79,7 +79,7 @@ const StockCheckModal = () => {
         Check Stock
       </Button>
       <Modal
-        title={<p>On-Hand Stock Status</p>}
+        title="On-Hand Stock Status"
         footer={false}
         loading={loading}
         open={open}
