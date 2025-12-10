@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import ApprovalTable from "./approvalTable";
 import { usePermission } from "../../hooks/usePermission";
 import MoveOrderReq from "../../components/moveOrderReq";
+import StockCheckModal from "../../components/stockCheckModal";
 const { Title, Text } = Typography;
 const Dashboard = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -159,9 +160,11 @@ const Dashboard = () => {
         <Col>
           <Flex
             justify="space-between"
+            gap={16}
             style={{
               marginBottom: "10px",
             }}>
+            <StockCheckModal />
             <MoveOrderReq />
           </Flex>
         </Col>
