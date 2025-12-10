@@ -45,9 +45,12 @@ const ApprovalTable = ({ tableData, title, scope }) => {
           scope === "MO"
             ? detail.code?.[priceField] || 0 // nested in code
             : detail[priceField] || 0; // direct property
+
         return sum + (detail[qtyFiled] || 0) * price;
-      }, 0),
+      }, 0)
+      .toFixed(0),
   }));
+  console.log(dataArr);
 
   const columns = [
     {

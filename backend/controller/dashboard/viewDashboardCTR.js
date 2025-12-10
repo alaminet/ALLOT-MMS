@@ -39,7 +39,7 @@ async function viewDashboardCTR(req, res) {
     if (data.scopePRApprove) PRstatuses.push("Confirmed");
 
     // 2. Apply statuses if any
-    if (PRstatuses.length) {
+    if (PRstatuses?.length) {
       PRquery.status = { $in: PRstatuses };
     }
 
@@ -61,7 +61,7 @@ async function viewDashboardCTR(req, res) {
 
     // 4. Get PR Approval List
     const PRApprovalList = [];
-    if (PRstatuses.length) {
+    if (PRstatuses?.length) {
       await PurchaseReq.find(PRquery)
         .sort({ createdAt: -1 }) // newest first
         .select(
@@ -85,7 +85,7 @@ async function viewDashboardCTR(req, res) {
     if (data.scopePOApprove) POstatuses.push("Confirmed");
 
     // 2. Apply statuses if any
-    if (POstatuses.length) {
+    if (POstatuses?.length) {
       POquery.status = { $in: POstatuses };
     }
 
@@ -107,7 +107,7 @@ async function viewDashboardCTR(req, res) {
 
     // 4. Get PR Approval List
     const POApprovalList = [];
-    if (POstatuses.length) {
+    if (POstatuses?.length) {
       await PurchaseOrder.find(POquery)
         .sort({ createdAt: -1 }) // newest first
         .select(
@@ -132,7 +132,7 @@ async function viewDashboardCTR(req, res) {
     if (data.scopeMOApprove) MOstatuses.push("Confirmed");
 
     // 2. Apply statuses if any
-    if (MOstatuses.length) {
+    if (MOstatuses?.length) {
       MOquery.status = { $in: MOstatuses };
     }
 
@@ -154,7 +154,7 @@ async function viewDashboardCTR(req, res) {
 
     // 4. Get PR Approval List
     const MOApprovalList = [];
-    if (MOstatuses.length) {
+    if (MOstatuses?.length) {
       await MoveOrder.find(MOquery)
         .sort({ createdAt: -1 }) // newest first
         .select(
