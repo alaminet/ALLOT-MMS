@@ -128,7 +128,11 @@ const TnxReportLayout = () => {
       key: "tnxRef",
       render: (text, record) => {
         const tnxType = record?.tnxQty > 0 ? "receive" : "issue";
-        return <Link to={`view?tnxType=${tnxType}&tnxId=${text}`}>{text}</Link>;
+        return (
+          <Link to={`view?tnxType=${tnxType}&tnxId=${text}`} target="_blank">
+            {text}
+          </Link>
+        );
       },
     },
     {

@@ -26,6 +26,7 @@ const MoveOrderReq = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
+  const [costCenter, setCostCenter] = useState();
   const [form] = Form.useForm();
 
   // Drawer options
@@ -47,7 +48,7 @@ const MoveOrderReq = () => {
         timeAt: new Date(),
       },
       createdBy: user?.id,
-      costCenter: user?.costCenter,
+      // costCenter: user?.costCenter,
     };
     setLoading(true);
     try {
@@ -112,8 +113,37 @@ const MoveOrderReq = () => {
     }
   };
 
+  // Get CostCenter List
+  const getCostCenter = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
+        {
+          model: ["CostCenter"],
+        },
+        {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        }
+      );
+      const tableArr = res?.data?.items?.map((item, index) => {
+        item.data = item?.data?.map((i) => ({
+          value: i._id,
+          label: item?.modelName === "ItemUOM" ? i.code : i.name,
+        }));
+        return { ...item };
+      });
+      setCostCenter(tableArr);
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
+
   useEffect(() => {
     getItems();
+    getCostCenter();
   }, []);
 
   return (
@@ -122,7 +152,7 @@ const MoveOrderReq = () => {
         onClick={showDrawer}
         icon={<PlusCircleOutlined />}
         type="primary"
-        lassName="borderBrand"
+        className="borderBrand"
         style={{ borderRadius: "0px" }}>
         Move Order
       </Button>
@@ -160,7 +190,7 @@ const MoveOrderReq = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
-                <Col lg={12} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="Referance"
                     name="reference"
@@ -173,12 +203,35 @@ const MoveOrderReq = () => {
                   </Form.Item>
                 </Col>
 
-                <Col lg={12} xs={24}>
+                <Col lg={8} xs={24}>
                   <Form.Item
                     label="Header Text"
                     name="headerText"
                     style={{ width: "100%" }}>
                     <Input placeholder="Header Text" maxLength={50} showCount />
+                  </Form.Item>
+                </Col>
+                <Col lg={8} xs={24}>
+                  <Form.Item
+                    label="Deptartment"
+                    name="costCenter"
+                    initialValue={user?.costCenter}
+                    style={{ width: "100%" }}>
+                    <Select
+                      allowClear
+                      options={
+                        costCenter?.filter(
+                          (item) => item.modelName === "CostCenter"
+                        )[0]?.data
+                      }
+                      showSearch
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      placeholder="Cost Center"
+                    />
                   </Form.Item>
                 </Col>
               </Row>

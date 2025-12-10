@@ -84,12 +84,42 @@ const EditableCell = ({
 const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
   const user = useSelector((user) => user.loginSlice.login);
   const [dataSource, setDataSource] = useState(data);
+  const [costCenter, setCostCenter] = useState();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  // Get CostCenter List
+  const getCostCenter = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/master/itemDetails/viewAll`,
+        {
+          model: ["CostCenter"],
+        },
+        {
+          headers: {
+            Authorization: import.meta.env.VITE_SECURE_API_KEY,
+            token: user?.token,
+          },
+        }
+      );
+      const tableArr = res?.data?.items?.map((item, index) => {
+        item.data = item?.data?.map((i) => ({
+          value: item?.modelName === "ItemUOM" ? i.code : i.name,
+          label: item?.modelName === "ItemUOM" ? i.code : i.name,
+        }));
+        return { ...item };
+      });
+      setCostCenter(tableArr);
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
+  };
 
   // Update dataSource when drawer data changes
   useEffect(() => {
     setDataSource(data);
+    getCostCenter();
   }, [data]);
 
   const handleDelete = (key) => {
@@ -166,6 +196,38 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
             const index = newData.findIndex((item) => record.key === item.key);
             if (index > -1) {
               newData[index] = { ...newData[index], location: value };
+              setDataSource(newData);
+              // Pass modified data back to parent
+              onSelectChange(
+                newData.map((item) => item.key),
+                newData
+              );
+            }
+          }}
+        />
+      ),
+    },
+    {
+      title: "Used Dept.",
+      dataIndex: "costCenter",
+      width: 200,
+      render: (_, record) => (
+        <Select
+          variant="borderless"
+          style={{ width: "100%" }}
+          allowClear
+          defaultValue={_}
+          showSearch
+          options={
+            costCenter?.filter((item) => item.modelName === "CostCenter")[0]
+              ?.data
+          }
+          placeholder="Select Used Dept."
+          onChange={(value) => {
+            const newData = [...dataSource];
+            const index = newData.findIndex((item) => record.key === item.key);
+            if (index > -1) {
+              newData[index] = { ...newData[index], costCenter: value };
               setDataSource(newData);
               // Pass modified data back to parent
               onSelectChange(
@@ -297,7 +359,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
 
     // Convert the grouped data into an array of payloads
     const payloads = Object.values(POGroups);
-    console.log("submit", payloads);
+    // console.log("submit", payloads);
 
     try {
       // Send each PO group as a separate GRN

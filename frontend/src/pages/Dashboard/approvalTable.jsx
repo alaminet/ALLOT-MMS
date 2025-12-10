@@ -31,6 +31,7 @@ const ApprovalTable = ({ tableData, title, scope }) => {
       : null;
 
   const dataArr = Object.values(tableData || {}).map((item, key) => ({
+    key: key,
     id: item._id,
     date: moment(item?.createdAt).format("DD-MMM-YY"),
     refNo: item?.code,
