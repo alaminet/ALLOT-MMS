@@ -140,9 +140,10 @@ const UserAuthorizationTable = ({ data, setData }) => {
         dataSource={mergedValue}
         rowSelection={rowSelection}
         sticky
-        scroll={{ x: 1200 }}>
+        scroll={{ x: 1200 }}
+      >
         <ColumnGroup title="Authorization Point">
-          <Column title="Module" dataIndex="module" key="module" />
+          <Column title="Module" dataIndex="module" key="module" fixed="left" />
         </ColumnGroup>
         <ColumnGroup title="Own Cost-Center">
           <Column

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { Button, Flex, message, Modal, Table, Typography } from "antd";
+import { Button, Flex, message, Modal, Table, Typography, Grid } from "antd";
 import { usePermission } from "../hooks/usePermission";
 import moment from "moment";
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const MoveOrderDrawer = ({ title, MOid }) => {
   const user = useSelector((user) => user.loginSlice.login);
   const [queryData, setQueryData] = useState([]);
+  const screens = useBreakpoint();
   const [open, setOpen] = useState(false);
 
   // User Permission Check
@@ -57,6 +59,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       title: "SKU",
       dataIndex: "SKU",
       key: "SKU",
+      responsive: ["lg"],
     },
     {
       title: "Name",
@@ -67,11 +70,13 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       title: "UOM",
       dataIndex: "UOM",
       key: "UOM",
+      responsive: ["lg"],
     },
     {
       title: "Unit Price",
       dataIndex: "code",
       key: "code",
+      responsive: ["lg"],
       render: (_, record) => <span>{_?.avgPrice}</span>,
     },
     {
@@ -93,6 +98,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       title: "On-Hand",
       dataIndex: "code",
       key: "code",
+      responsive: ["lg"],
       render: (_, record) => {
         const totalOnHand = _?.stock.reduce(
           (sum, item) => sum + (item.onHandQty || 0),
@@ -212,7 +218,8 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Checked")}>
+                onClick={() => handleStatusUpdate("Checked")}
+              >
                 Checked
               </Button>
             ) : ((ownConfirm && user?.id === queryData?.createdBy?._id) ||
@@ -221,7 +228,8 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Confirmed")}>
+                onClick={() => handleStatusUpdate("Confirmed")}
+              >
                 Confirmed
               </Button>
             ) : ((ownApprove && user?.id === queryData?.createdBy?._id) ||
@@ -230,12 +238,14 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Approved")}>
+                onClick={() => handleStatusUpdate("Approved")}
+              >
                 Approved
               </Button>
             ) : null}
           </>
-        )}>
+        )}
+      >
         <Table
           columns={columns}
           dataSource={queryData?.itemDetails}
@@ -253,7 +263,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
             return (
               <>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={3} />
+                  <Table.Summary.Cell index={0} colSpan={screens.lg ? 3 : 0} />
                   <Table.Summary.Cell index={1}>
                     <Text strong>Total</Text>
                   </Table.Summary.Cell>

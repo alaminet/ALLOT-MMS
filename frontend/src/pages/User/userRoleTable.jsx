@@ -237,9 +237,10 @@ const UserRoleTable = ({ data, setData }) => {
         dataSource={mergedValue}
         rowSelection={rowSelection}
         sticky
-        scroll={{ x: 1200 }}>
+        scroll={{ x: 1200 }}
+      >
         <ColumnGroup title="Access Point">
-          <Column title="Module" dataIndex="module" key="module" />
+          <Column title="Module" dataIndex="module" key="module" fixed="left" />
           <Column
             align="center"
             title="Page Access"

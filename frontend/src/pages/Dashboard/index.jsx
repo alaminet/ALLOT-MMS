@@ -136,7 +136,8 @@ const Dashboard = () => {
         <Col>
           <Title
             style={{ textAlign: "center", margin: "0" }}
-            className="colorLink form-title">
+            className="colorLink form-title"
+          >
             Hi, {user?.name}!
           </Title>
           <Text type="secondary">
@@ -149,7 +150,8 @@ const Dashboard = () => {
             gap={16}
             style={{
               marginBottom: "10px",
-            }}>
+            }}
+          >
             <StockCheckModal />
             <MoveOrderReq />
           </Flex>
@@ -158,13 +160,15 @@ const Dashboard = () => {
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
-        gutter={[16, 16]}>
+        gutter={[16, 16]}
+      >
         <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Tooltip
               title={`${Math.abs(dashboardData?.daily?.value)}(${Math.abs(
                 dashboardData?.daily?.qty
-              )})`}>
+              )})`}
+            >
               <Statistic
                 title="Today Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.daily?.value))}
@@ -183,7 +187,8 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(
                 dashboardData?.last7Days[6]?.value
-              )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}>
+              )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}
+            >
               <Statistic
                 title="Lastday Order(Qty)"
                 value={formatNumber(
@@ -204,7 +209,8 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.weekly?.value)}(${Math.abs(
                 dashboardData?.weekly?.qty
-              )})`}>
+              )})`}
+            >
               <Statistic
                 title="Weekly Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.weekly?.value))}
@@ -223,7 +229,8 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.monthly?.value)}(${Math.abs(
                 dashboardData?.monthly?.qty
-              )})`}>
+              )})`}
+            >
               <Statistic
                 title="Monthly Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.monthly?.value))}
@@ -242,7 +249,8 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.weeklyPR?.value)}(${Math.abs(
                 dashboardData?.weeklyPR?.qty
-              )})`}>
+              )})`}
+            >
               <Statistic
                 title="Weekly PR(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.weeklyPR?.value))}
@@ -261,7 +269,8 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.monthlyPR?.value)}(${Math.abs(
                 dashboardData?.monthlyPR?.qty
-              )})`}>
+              )})`}
+            >
               <Statistic
                 title="Monthly PR(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.monthlyPR?.value))}
@@ -278,7 +287,7 @@ const Dashboard = () => {
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
         {dashboardData?.PRApprovalList?.length > 0 && (
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <ApprovalTable
                 title="PR Approval"
@@ -289,7 +298,7 @@ const Dashboard = () => {
           </Col>
         )}
         {dashboardData?.POApprovalList?.length > 0 && (
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <ApprovalTable
                 title="PO Approval"
@@ -300,7 +309,7 @@ const Dashboard = () => {
           </Col>
         )}
         {dashboardData?.MOApprovalList?.length > 0 && (
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <ApprovalTable
                 title="MO Approval"
@@ -335,9 +344,9 @@ const Dashboard = () => {
           </Col>
         ) : null}
       </Row>
-      <Row wrap={false} gutter={[16, 16]} style={{ marginTop: "16px" }}>
+      <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
         {dashboardData?.webSettings?.dashboard?.waterChart[0]?.status ? (
-          <Col lg={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <WaterWaveChart
                 title={`${
@@ -355,7 +364,7 @@ const Dashboard = () => {
           </Col>
         ) : null}
         {dashboardData?.webSettings?.dashboard?.waterChart[1]?.status ? (
-          <Col lg={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <WaterWaveChart
                 title={`${
@@ -373,7 +382,7 @@ const Dashboard = () => {
           </Col>
         ) : null}
         {dashboardData?.webSettings?.dashboard?.safetyChart?.status ? (
-          <Col lg={8}>
+          <Col xs={24} lg={8}>
             <Card>
               <PaiChart height={350} cartData={dashboardData?.typeWiseStock} />
             </Card>
@@ -383,7 +392,8 @@ const Dashboard = () => {
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
-        gutter={[16, 16]}>
+        gutter={[16, 16]}
+      >
         {dashboardData?.webSettings?.dashboard?.moveOrderTable?.status ? (
           <Col xs={24} lg={12}>
             <Card>
