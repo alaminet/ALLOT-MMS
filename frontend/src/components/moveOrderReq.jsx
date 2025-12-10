@@ -31,6 +31,8 @@ const MoveOrderReq = () => {
 
   // Drawer options
   const showDrawer = () => {
+    getItems();
+    getCostCenter();
     setOpen(true);
   };
   const onClose = () => {
@@ -140,11 +142,6 @@ const MoveOrderReq = () => {
       message.error(error.response.data.error);
     }
   };
-
-  useEffect(() => {
-    getItems();
-    getCostCenter();
-  }, []);
 
   return (
     <>

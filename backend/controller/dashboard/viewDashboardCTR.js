@@ -370,16 +370,28 @@ async function viewDashboardCTR(req, res) {
       monthlyBreakdown[monthKey].value += Math.round(value);
     }
 
-    //   Liqued Stock
+    //   Liqued Stock - include `limit` value from webSettings.dashboard.waterChart
     const webSettings = await WebSetting.findOne({ orgId: orgId });
-    const liqStock = await ItemInfo.find({
-      SKU: {
-        $in: [
-          webSettings.dashboard.waterChart[0].SKU,
-          webSettings.dashboard.waterChart[1].SKU,
-        ],
-      },
-    });
+    const waterChart = webSettings.dashboard.waterChart || [];
+    const skus = waterChart.map((w) => w.SKU).filter(Boolean);
+
+    const liqStockRaw = await ItemInfo.find({
+      SKU: { $in: skus },
+    }).lean();
+
+    // Build a map from SKU -> limit (if limit field exists on the waterChart entries)
+    const limitMap = waterChart.reduce((acc, w) => {
+      if (w && w.SKU) acc[String(w.SKU)] = w.Limit ?? null;
+      return acc;
+    }, {});
+
+    // Attach `limit` to each liqStock item based on its SKU
+    const liqStock = liqStockRaw.map((it) => ({
+      SKU: it.SKU,
+      name: it.name,
+      onHand: it.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0) || 0,
+      limit: limitMap[String(it.SKU)] ?? null,
+    }));
 
     // Type wise stock
     const typeWiseStock = await ItemInfo.aggregate([

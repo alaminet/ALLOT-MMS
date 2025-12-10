@@ -119,20 +119,6 @@ const Dashboard = () => {
         .then((res) => {
           // message.success(res.data.message);
           setDashboardData(res?.data?.data);
-          const leqItems = res?.data?.data?.liqStock?.map((item) => {
-            return {
-              name: item.name,
-              SKU: item.SKU,
-              onHand: item.stock?.reduce(
-                (acc, s) => acc + (s.onHandQty || 0),
-                0
-              ),
-            };
-          });
-          setDashboardData((prevData) => ({
-            ...prevData,
-            liqStock: leqItems,
-          }));
         });
     } catch (error) {
       message.error(error.response.data.error);
@@ -361,7 +347,7 @@ const Dashboard = () => {
                 percent={Number(
                   (
                     (dashboardData?.liqStock[0]?.onHand || 0) /
-                    dashboardData?.webSettings?.dashboard?.waterChart[0]?.Limit
+                    dashboardData?.liqStock[0]?.limit
                   ).toFixed(2)
                 )}
               />
@@ -379,7 +365,7 @@ const Dashboard = () => {
                 percent={Number(
                   (
                     (dashboardData?.liqStock[1]?.onHand || 0) /
-                    dashboardData?.webSettings?.dashboard?.waterChart[1]?.Limit
+                    dashboardData?.liqStock[1]?.limit
                   ).toFixed(2)
                 )}
               />

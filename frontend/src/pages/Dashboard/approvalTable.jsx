@@ -50,7 +50,7 @@ const ApprovalTable = ({ tableData, title, scope }) => {
       }, 0)
       .toFixed(0),
   }));
-  console.log(dataArr);
+  // console.log(dataArr);
 
   const columns = [
     {
