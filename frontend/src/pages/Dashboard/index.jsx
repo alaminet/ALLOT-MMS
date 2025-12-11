@@ -136,8 +136,7 @@ const Dashboard = () => {
         <Col>
           <Title
             style={{ textAlign: "center", margin: "0" }}
-            className="colorLink form-title"
-          >
+            className="colorLink form-title">
             Hi, {user?.name}!
           </Title>
           <Text type="secondary">
@@ -150,8 +149,7 @@ const Dashboard = () => {
             gap={16}
             style={{
               marginBottom: "10px",
-            }}
-          >
+            }}>
             <StockCheckModal />
             <MoveOrderReq />
           </Flex>
@@ -160,15 +158,13 @@ const Dashboard = () => {
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
-        gutter={[16, 16]}
-      >
+        gutter={[16, 16]}>
         <Col xs={12} md={8} lg={4}>
           <Card variant="borderless">
             <Tooltip
               title={`${Math.abs(dashboardData?.daily?.value)}(${Math.abs(
                 dashboardData?.daily?.qty
-              )})`}
-            >
+              )})`}>
               <Statistic
                 title="Today Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.daily?.value))}
@@ -187,8 +183,7 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(
                 dashboardData?.last7Days[6]?.value
-              )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}
-            >
+              )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}>
               <Statistic
                 title="Lastday Order(Qty)"
                 value={formatNumber(
@@ -209,8 +204,7 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.weekly?.value)}(${Math.abs(
                 dashboardData?.weekly?.qty
-              )})`}
-            >
+              )})`}>
               <Statistic
                 title="Weekly Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.weekly?.value))}
@@ -229,8 +223,7 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.monthly?.value)}(${Math.abs(
                 dashboardData?.monthly?.qty
-              )})`}
-            >
+              )})`}>
               <Statistic
                 title="Monthly Order(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.monthly?.value))}
@@ -249,8 +242,7 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.weeklyPR?.value)}(${Math.abs(
                 dashboardData?.weeklyPR?.qty
-              )})`}
-            >
+              )})`}>
               <Statistic
                 title="Weekly PR(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.weeklyPR?.value))}
@@ -269,8 +261,7 @@ const Dashboard = () => {
             <Tooltip
               title={`${Math.abs(dashboardData?.monthlyPR?.value)}(${Math.abs(
                 dashboardData?.monthlyPR?.qty
-              )})`}
-            >
+              )})`}>
               <Statistic
                 title="Monthly PR(Qty)"
                 value={formatNumber(Math.abs(dashboardData?.monthlyPR?.value))}
@@ -354,9 +345,11 @@ const Dashboard = () => {
                 } (${dashboardData?.liqStock[0]?.onHand?.toFixed(0)})`}
                 height={350}
                 percent={Number(
-                  (dashboardData?.liqStock[0]?.onHand || 0) /
-                    dashboardData?.liqStock[0]?.limit
-                )?.toFixed(2)}
+                  (
+                    (dashboardData?.liqStock[0]?.onHand || 0) /
+                    (dashboardData?.liqStock[0]?.limit || 1)
+                  ).toFixed(2)
+                )}
               />
             </Card>
           </Col>
@@ -370,9 +363,11 @@ const Dashboard = () => {
                 } (${dashboardData?.liqStock[1]?.onHand?.toFixed(0)})`}
                 height={350}
                 percent={Number(
-                  (dashboardData?.liqStock[1]?.onHand || 0) /
-                    dashboardData?.liqStock[1]?.limit
-                )?.toFixed(2)}
+                  (
+                    (dashboardData?.liqStock[1]?.onHand || 0) /
+                    (dashboardData?.liqStock[1]?.limit || 1)
+                  ).toFixed(2)
+                )}
               />
             </Card>
           </Col>
@@ -388,8 +383,7 @@ const Dashboard = () => {
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
-        gutter={[16, 16]}
-      >
+        gutter={[16, 16]}>
         {dashboardData?.webSettings?.dashboard?.moveOrderTable?.status ? (
           <Col xs={24} lg={12}>
             <Card>
