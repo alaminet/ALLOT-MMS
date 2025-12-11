@@ -58,6 +58,7 @@ const LastPRTbl = ({ tableData }) => {
       title: "Requested By",
       dataIndex: "createdBy",
       key: "createdBy",
+      responsive: ["lg"],
     },
     {
       title: "Qty",

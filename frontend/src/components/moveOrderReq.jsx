@@ -150,7 +150,8 @@ const MoveOrderReq = () => {
         icon={<PlusCircleOutlined />}
         type="primary"
         className="borderBrand"
-        style={{ borderRadius: "0px" }}>
+        style={{ borderRadius: "0px" }}
+      >
         Move Order
       </Button>
       <Drawer
@@ -164,18 +165,21 @@ const MoveOrderReq = () => {
           <Space>
             <Button
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Submit
             </Button>
           </Space>
-        }>
+        }
+      >
         <Form
           form={form}
           name="new"
@@ -183,7 +187,8 @@ const MoveOrderReq = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="borderlessInput">
+          className="borderlessInput"
+        >
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
@@ -191,7 +196,8 @@ const MoveOrderReq = () => {
                   <Form.Item
                     label="Referance"
                     name="reference"
-                    style={{ width: "100%" }}>
+                    style={{ width: "100%" }}
+                  >
                     <Input
                       placeholder="Movement Ref."
                       maxLength={50}
@@ -204,7 +210,8 @@ const MoveOrderReq = () => {
                   <Form.Item
                     label="Header Text"
                     name="headerText"
-                    style={{ width: "100%" }}>
+                    style={{ width: "100%" }}
+                  >
                     <Input placeholder="Header Text" maxLength={50} showCount />
                   </Form.Item>
                 </Col>
@@ -213,7 +220,8 @@ const MoveOrderReq = () => {
                     label="Deptartment"
                     name="costCenter"
                     initialValue={user?.costCenter}
-                    style={{ width: "100%" }}>
+                    style={{ width: "100%" }}
+                  >
                     <Select
                       allowClear
                       options={
@@ -232,10 +240,11 @@ const MoveOrderReq = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <div lg={24} xs={24}>
+              <div>
                 <Form.Item
                   label="Item Details"
-                  style={{ marginBottom: "35px" }}>
+                  style={{ marginBottom: "35px" }}
+                >
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
@@ -272,7 +281,8 @@ const MoveOrderReq = () => {
                                       required: true,
                                       message: "Enter name",
                                     },
-                                  ]}>
+                                  ]}
+                                >
                                   <Select
                                     allowClear
                                     showSearch
@@ -355,14 +365,16 @@ const MoveOrderReq = () => {
                                       required: true,
                                       message: "Enter UOM",
                                     },
-                                  ]}>
+                                  ]}
+                                >
                                   <Input disabled placeholder="UOM" />
                                 </Form.Item>
                               </Col>
-                              <Col xs={4} sm={3}>
+                              <Col xs={0} sm={3}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "onHand"]}>
+                                  name={[name, "onHand"]}
+                                >
                                   <Input disabled placeholder="On-Hand" />
                                 </Form.Item>
                               </Col>
@@ -380,7 +392,8 @@ const MoveOrderReq = () => {
                                               new Error("Greater then 0")
                                             ),
                                     },
-                                  ]}>
+                                  ]}
+                                >
                                   <InputNumber
                                     placeholder="Req. Qty"
                                     style={{ width: "100%" }}
@@ -390,7 +403,8 @@ const MoveOrderReq = () => {
                               <Col xs={4} sm={4}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "remarks"]}>
+                                  name={[name, "remarks"]}
+                                >
                                   <Input placeholder="Remarks" />
                                 </Form.Item>
                               </Col>
@@ -402,7 +416,8 @@ const MoveOrderReq = () => {
                                   alignItems: "center",
                                   height: "42px",
                                   justifyContent: "center",
-                                }}>
+                                }}
+                              >
                                 <DeleteTwoTone
                                   twoToneColor="#eb2f96"
                                   onClick={() => remove(name)}
@@ -419,7 +434,8 @@ const MoveOrderReq = () => {
                             style={{
                               borderRadius: "0px",
                               padding: "10px 30px",
-                            }}>
+                            }}
+                          >
                             + Add Item
                           </Button>
                         </Form.Item>
