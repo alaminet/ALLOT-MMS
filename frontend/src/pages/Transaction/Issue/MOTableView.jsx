@@ -42,6 +42,19 @@ const MOTableView = () => {
       onFilter: (value, record) => record?.MO === value,
       filterSearch: true,
     },
+    {
+      title: "Ref.No",
+      dataIndex: "reference",
+      key: "reference",
+      filters: [...new Set(queryData?.map((item) => item?.reference))].map(
+        (code) => ({
+          text: code,
+          value: code,
+        })
+      ),
+      onFilter: (value, record) => record?.reference === value,
+      filterSearch: true,
+    },
 
     {
       title: "SKU",

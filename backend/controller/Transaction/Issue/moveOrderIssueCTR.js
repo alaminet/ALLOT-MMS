@@ -66,9 +66,10 @@ async function moveOrderIssueCTR(req, res, next) {
       }
 
       const lastItem = await TrnxIssue.findOne({}).sort({ _id: -1 });
+      const nextCode = lastItem?.code ? lastItem.code + 1 : 10001;
       const newData = new TrnxIssue({
         orgId: req.orgId,
-        code: lastItem?.code ? lastItem.code + 1 : 10001,
+        code: nextCode,
         tnxType: data.tnxType,
         tnxRef: data.tnxRef,
         reference: data.reference,
@@ -90,7 +91,6 @@ async function moveOrderIssueCTR(req, res, next) {
         updatedBy: req.actionBy,
       });
       await newData.save();
-
       // Tnx Detials Added
       const tnxDetails = newData.itemDetails.map((item) => ({
         orgId: newData.orgId,
@@ -160,7 +160,7 @@ async function moveOrderIssueCTR(req, res, next) {
         await item.save();
       }
       res.status(201).send({
-        message: `Goods issued ID #${newData.code}`,
+        message: `GI ID #${newData.code} for MO ID#${newData.tnxRef}`,
       });
 
       // Move Order issue Qty update

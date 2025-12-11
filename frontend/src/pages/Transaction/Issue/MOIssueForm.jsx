@@ -13,6 +13,7 @@ import {
   Table,
   Typography,
   message,
+  notification,
 } from "antd";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -362,27 +363,33 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     // console.log("submit", payloads);
 
     try {
-      // Send each PO group as a separate GRN
-      const responses = await Promise.all(
-        payloads.map((payload) =>
-          axios.post(
-            `${import.meta.env.VITE_API_URL}/api/transaction/issue/MO-Issue`,
-            payload,
-            {
-              headers: {
-                Authorization: import.meta.env.VITE_SECURE_API_KEY,
-                token: user?.token,
-              },
-            }
-          )
-        )
-      );
+      // Send each PO group as a separate GRN sequentially so backend
+      // assigns unique incrementing codes reliably.
+      const responses = [];
+      for (const payload of payloads) {
+        const res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/transaction/issue/MO-Issue`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          }
+        );
+        // show notification per successful creation
+        notification.success({
+          message: "Success",
+          description: res.data.message,
+          duration: 0,
+        });
+        responses.push(res);
+      }
 
       // Check if all requests were successful
       const allSuccess = responses.every((res) => res.status === 201);
 
       if (allSuccess) {
-        message.success("All MO issue created successfully");
         setDataSource([]);
         onSelectChange([], []);
         form.resetFields();
