@@ -20,6 +20,7 @@ dayjs.extend(customParseFormat);
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import MoveOrderDrawer from "../../../components/moveOrderDrawer";
 
 const MoReportTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -139,21 +140,10 @@ const MoReportTable = () => {
       ),
       onFilter: (value, record) => record?.code === value,
       filterSearch: true,
-      render: (text, record) => {
-        const type =
-          record?.tnxType === "Purchase Requisition"
-            ? "purchase-requisition"
-            : "purchase-order";
-        return (
-          <Link
-            to={`/${type}/print?ref=${record?.action?._id}`}
-            target="_blank">
-            {text}
-          </Link>
-        );
-      },
+      render: (text, record) => (
+        <MoveOrderDrawer title={text} MOid={record?.action?._id} />
+      ),
     },
-
     {
       title: "SKU",
       dataIndex: "SKU",
