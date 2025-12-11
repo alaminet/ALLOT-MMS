@@ -132,7 +132,12 @@ const MOTableView = () => {
       message.warning("You are not authorized");
       return; // stop execution
     }
-    const payload = { scope, status: "Approved" };
+    const payload = {
+      scope,
+      status: "Approved",
+      startDate: "Invalid date",
+      endDate: "Invalid date",
+    };
     try {
       await axios
         .post(
