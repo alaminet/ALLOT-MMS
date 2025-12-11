@@ -13,17 +13,16 @@ const MoveOrderDrawer = ({ title, MOid }) => {
 
   // User Permission Check
   const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
-  const own = canDoOwn("purchase-order", "view");
-  const others = canDoOther("purchase-order", "view");
-  const ownCheck = canAuthOwn("purchase-order", "check");
-  const othersCheck = canAuthOther("purchase-order", "check");
-  const ownConfirm = canAuthOwn("purchase-order", "confirm");
-  const othersConfirm = canAuthOther("purchase-order", "confirm");
-  const ownApprove = canAuthOwn("purchase-order", "approve");
-  const othersApprove = canAuthOther("purchase-order", "approve");
-  const ownHold = canAuthOwn("purchase-order", "hold");
-  const othersHold = canAuthOther("purchase-order", "hold");
-
+  const own = canDoOwn("move-order", "view");
+  const others = canDoOther("move-order", "view");
+  const ownCheck = canAuthOwn("move-order", "check");
+  const othersCheck = canAuthOther("move-order", "check");
+  const ownConfirm = canAuthOwn("move-order", "confirm");
+  const othersConfirm = canAuthOther("move-order", "confirm");
+  const ownApprove = canAuthOwn("move-order", "approve");
+  const othersApprove = canAuthOther("move-order", "approve");
+  const ownHold = canAuthOwn("move-order", "hold");
+  const othersHold = canAuthOther("move-order", "hold");
   // Get data
   const getData = async (id) => {
     setQueryData(null);
