@@ -18,7 +18,10 @@ const BreadCrumbCustom = () => {
       const url = `/${pathSnippets.slice(0, idx + 1).join("/")}`;
       return {
         title: (
-          <Link to={url} className="colorLink">
+          <Link
+            to={url}
+            className="colorLink"
+            style={{ textTransform: "uppercase" }}>
             {snippet.charAt(0).toUpperCase() + snippet.slice(1)}
           </Link>
         ),

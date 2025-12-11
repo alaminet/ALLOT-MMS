@@ -55,7 +55,8 @@ const items = [
     getItem("Inventory", "inventory", <AppstoreOutlined />),
     getItem("Receive", "receive", <ArrowRightOutlined />),
     getItem("Issue", "issue", <ArrowLeftOutlined />),
-    getItem("Report", "tnx-report", <FileDoneOutlined />),
+    getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),
+    getItem("MO-Report", "mo-report", <FileDoneOutlined />),
   ]),
   getItem("Settings", "settings", <SettingOutlined />),
   getItem("Master", "master", <ProductOutlined />, [

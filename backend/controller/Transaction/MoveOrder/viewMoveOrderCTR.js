@@ -14,10 +14,26 @@ async function viewMoveOrderCTR(req, res) {
       query["createdBy"] = { $ne: req.actionBy };
     }
 
-    if (data?.status) {
+    if (data?.status && data.status !== "All") {
       query["status"] = data.status;
     }
+    if (data.code) {
+      query["itemDetails.code"] = data.code;
+    }
 
+    // Dynamically add createdAt filter
+    if (
+      data?.startDate !== "Invalid date" ||
+      data?.endDate !== "Invalid date"
+    ) {
+      query.createdAt = {};
+      if (data?.startDate !== "Invalid date") {
+        query.createdAt.$gte = new Date(data.startDate);
+      }
+      if (data?.endDate !== "Invalid date") {
+        query.createdAt.$lte = new Date(data.endDate);
+      }
+    }
     const items = await TrnxMoveOrder.find(query)
       .sort({ createdAt: -1 })
       .populate({
