@@ -336,24 +336,6 @@ const Dashboard = () => {
         ) : null}
       </Row>
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-        {dashboardData?.webSettings?.dashboard?.waterChart[0]?.status ? (
-          <Col xs={24} lg={8}>
-            <Card>
-              <WaterWaveChart
-                title={`${
-                  dashboardData?.liqStock[0]?.name
-                } (${dashboardData?.liqStock[0]?.onHand?.toFixed(0)})`}
-                height={350}
-                percent={Number(
-                  (
-                    (dashboardData?.liqStock[0]?.onHand || 0) /
-                    (dashboardData?.liqStock[0]?.limit || 1)
-                  ).toFixed(2)
-                )}
-              />
-            </Card>
-          </Col>
-        ) : null}
         {dashboardData?.webSettings?.dashboard?.waterChart[1]?.status ? (
           <Col xs={24} lg={8}>
             <Card>
@@ -366,6 +348,24 @@ const Dashboard = () => {
                   (
                     (dashboardData?.liqStock[1]?.onHand || 0) /
                     (dashboardData?.liqStock[1]?.limit || 1)
+                  ).toFixed(2)
+                )}
+              />
+            </Card>
+          </Col>
+        ) : null}
+        {dashboardData?.webSettings?.dashboard?.waterChart[0]?.status ? (
+          <Col xs={24} lg={8}>
+            <Card>
+              <WaterWaveChart
+                title={`${
+                  dashboardData?.liqStock[0]?.name
+                } (${dashboardData?.liqStock[0]?.onHand?.toFixed(0)})`}
+                height={350}
+                percent={Number(
+                  (
+                    (dashboardData?.liqStock[0]?.onHand || 0) /
+                    (dashboardData?.liqStock[0]?.limit || 1)
                   ).toFixed(2)
                 )}
               />
