@@ -76,7 +76,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       dataIndex: "code",
       key: "code",
       responsive: ["lg"],
-      render: (_, record) => <span>{_?.avgPrice}</span>,
+      render: (_, record) => <span>{_?.avgPrice?.toFixed(2)}</span>,
     },
     {
       title: "Req. Qty",
@@ -217,8 +217,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Checked")}
-              >
+                onClick={() => handleStatusUpdate("Checked")}>
                 Checked
               </Button>
             ) : ((ownConfirm && user?.id === queryData?.createdBy?._id) ||
@@ -227,8 +226,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Confirmed")}
-              >
+                onClick={() => handleStatusUpdate("Confirmed")}>
                 Confirmed
               </Button>
             ) : ((ownApprove && user?.id === queryData?.createdBy?._id) ||
@@ -237,14 +235,12 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Approved")}
-              >
+                onClick={() => handleStatusUpdate("Approved")}>
                 Approved
               </Button>
             ) : null}
           </>
-        )}
-      >
+        )}>
         <Table
           columns={columns}
           dataSource={queryData?.itemDetails}
