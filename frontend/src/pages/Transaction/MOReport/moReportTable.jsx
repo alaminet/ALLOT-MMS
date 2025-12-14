@@ -87,7 +87,7 @@ const MoReportTable = () => {
               UOM: subItem?.UOM,
               qty: subItem?.reqQty,
               issueQty: subItem?.issueQty,
-              unitPrice: subItem?.code?.avgPrice || 0,
+              unitPrice: Number(subItem?.code?.avgPrice || 0).toFixed(2),
               status: item?.status,
               createdBy: item?.createdBy?.name,
               updatedBy: item?.updatedBy?.name,
@@ -205,7 +205,7 @@ const MoReportTable = () => {
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
           }}>
-          {record.qty * record.unitPrice}
+          {Number(record.qty * record.unitPrice || 0)?.toFixed(2)}
         </div>
       ),
     },
@@ -224,7 +224,7 @@ const MoReportTable = () => {
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
           }}>
-          {record.issueQty * record.unitPrice}
+          {Number(record.issueQty * record.unitPrice || 0)?.toFixed(2)}
         </div>
       ),
     },
