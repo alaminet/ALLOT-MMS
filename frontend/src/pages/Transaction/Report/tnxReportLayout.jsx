@@ -158,7 +158,7 @@ const TnxReportLayout = () => {
           value: item,
         })
       ),
-      onFilter: (value, record) => record?.code === value,
+      onFilter: (value, record) => record?.docRef === value,
       filterSearch: true,
     },
     {

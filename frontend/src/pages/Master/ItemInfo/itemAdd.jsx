@@ -61,7 +61,6 @@ const ItemAdd = () => {
             "ItemType",
             "CostCenter",
             "StoreLocation",
-            "Transaction",
           ],
         },
         {
