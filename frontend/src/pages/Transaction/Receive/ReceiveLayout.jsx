@@ -54,7 +54,7 @@ const ReceiveLayout = () => {
           },
         }
       );
-      console.log(res.data);
+      // console.log(res.data);
 
       // Build notification content safely
       const respMessage = res.data?.message || res.data?.status || "success";

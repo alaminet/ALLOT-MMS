@@ -18,6 +18,7 @@ import {
   Typography,
   message,
   DatePicker,
+  notification,
 } from "antd";
 import axios from "axios";
 import { useSelector } from "react-redux";
@@ -410,48 +411,43 @@ const POReceiveFormView = ({
       );
 
       // Check if all requests were successful
-      const allSuccess = responses.every((res) => res.status === 201);
+      responses.map((res) => {
+        // Build notification content safely
+        const respMessage = res.data?.message || res.data?.status || "success";
+        const respSteps = res.data?.steps || [];
+        const notiDescription = respSteps.length
+          ? respSteps.map((item, i) => <p key={i}>{item?.message}</p>)
+          : null;
 
-      if (allSuccess) {
-        message.success("All GRNs created successfully");
+        if (res.data?.status === "failed") {
+          notification.error({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        } else if (res.data?.status === "partial") {
+          notification.warning({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        } else {
+          notification.success({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        }
         setDataSource([]);
         onSelectChange([], []);
         form.resetFields();
         setLoading(false);
         onClose();
-      } else {
-        throw new Error("Some GRNs failed to create");
-      }
+      });
     } catch (error) {
       setLoading(false);
       message.error(error.response?.data?.error || "Error creating GRNs");
     }
-
-    // try {
-    //   await axios
-    //     .post(
-    //       `${import.meta.env.VITE_API_URL}/api/transaction/receive/new`,
-    //       payload,
-    //       {
-    //         headers: {
-    //           Authorization: import.meta.env.VITE_SECURE_API_KEY,
-    //           token: user?.token,
-    //         },
-    //       }
-    //     )
-    //     .then((res) => {
-    //       message.success(res.data.message);
-    //       setDataSource([]);
-    //       setSelectSupplier(null);
-    //       onSelectChange([], []);
-    //       form.resetFields();
-    //       setLoading(false);
-    //       onClose();
-    //     });
-    // } catch (error) {
-    //   setLoading(false);
-    //   message.error(error.response.data.error);
-    // }
   };
 
   return (
