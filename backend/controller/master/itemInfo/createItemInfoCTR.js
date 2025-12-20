@@ -13,7 +13,7 @@ async function createItemInfoCTR(req, res, next) {
       if (existingItemInfo) {
         return res.status(400).send({ error: "Item already exists" });
       } else {
-        const lastItem = await ItemInfo.findOne({}).sort({ _id: -1 });
+        const lastItem = await ItemInfo.findOne({}).sort({ code: -1 });
         const newItemInfo = new ItemInfo({
           orgId: req.orgId,
           code: lastItem?.code + 1 || 1000000001,

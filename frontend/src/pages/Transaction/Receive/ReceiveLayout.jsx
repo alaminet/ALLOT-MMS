@@ -42,8 +42,6 @@ const ReceiveLayout = () => {
       receivedAt: values.receivedAt.$d,
       createdBy: user?.id,
     };
-    console.log(formData);
-
     setLoading(true);
     try {
       const res = await axios.post(
@@ -56,19 +54,40 @@ const ReceiveLayout = () => {
           },
         }
       );
-      notification.success({
-        message: "Success",
-        description: res.data.message,
-        duration: 0,
-        onClose: () => {
-          // your custom logic here
-        },
-      });
+      console.log(res.data);
+
+      // Build notification content safely
+      const respMessage = res.data?.message || res.data?.status || "success";
+      const respSteps = res.data?.steps || [];
+      const notiDescription = respSteps.length
+        ? respSteps.map((item) => <p>{item?.message}</p>)
+        : null;
+
+      if (res.data?.status === "failed") {
+        notification.error({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      } else if (res.data?.status === "partial") {
+        notification.warning({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      } else {
+        notification.success({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      }
       setLoading(false);
       getItems();
       getItemInfo();
       form.resetFields();
     } catch (error) {
+      console.log(error);
       setLoading(false);
       message.error(error.response.data.error);
     }
@@ -431,7 +450,7 @@ const ReceiveLayout = () => {
                                   },
                                 ]}>
                                 <InputNumber
-                                  placeholder="Req. Qty"
+                                  placeholder="Rec. Qty"
                                   style={{ width: "100%" }}
                                 />
                               </Form.Item>

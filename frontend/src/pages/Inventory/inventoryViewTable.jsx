@@ -86,6 +86,12 @@ const InventoryViewTable = () => {
       // responsive: ["lg"],
     },
     {
+      title: "Item Type",
+      dataIndex: "type",
+      key: "type",
+      responsive: ["lg"],
+    },
+    {
       title: "Item Group",
       dataIndex: "group",
       key: "group",

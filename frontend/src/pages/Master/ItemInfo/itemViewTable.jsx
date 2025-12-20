@@ -123,7 +123,6 @@ const ItemViewTable = () => {
       key: "safetyStock",
       responsive: ["md"],
     },
-
     {
       title: "Action",
       key: "action",

@@ -129,7 +129,7 @@ const POReceiveFormView = ({
           setSuppierData(tableArr);
         });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
 
       message.error(error.response.data.error);
     }
