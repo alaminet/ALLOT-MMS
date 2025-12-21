@@ -37,15 +37,26 @@ const ItemDetailsView = () => {
   if (!canViewPage("item-details")) {
     return <NotAuth />;
   }
-  const own = canDoOwn(lastSegment, "view");
-  const others = canDoOther(lastSegment, "view");
+
+  const ownView = canDoOwn(lastSegment, "view");
+  const othersView = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   // Table data get form
   const onFinish = async (values) => {
     setQueryData([]);
     setFindData(values);
     const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -83,6 +94,7 @@ const ItemDetailsView = () => {
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
             updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
             access: { ...item, model: findModel },
+            createdBy: item?.createdBy?._id,
             action: item?._id,
           }));
           setQueryData(tableArr);
@@ -127,17 +139,22 @@ const ItemDetailsView = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {(canDoOther(lastSegment, "view") ||
-              (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
+            {ownView && user.id === record?.createdBy ? (
               <Tooltip title="View">
                 <Button
                   onClick={() => handleView(record.access)}
                   icon={<EyeTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
+            ) : othersView && user.id !== record?.createdBy ? (
+              <Tooltip title="View">
+                <Button
+                  onClick={() => handleView(record.access)}
+                  icon={<EyeTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>
@@ -150,9 +167,21 @@ const ItemDetailsView = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
+            ) : othersEdit && user.id !== record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        UpdateInfo: record.access,
+                      },
+                    })
+                  }
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownDelete && user.id === record?.createdBy ? (
               <Tooltip title="Delete">
                 <Button
                   onClick={() =>
@@ -166,9 +195,21 @@ const ItemDetailsView = () => {
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : othersDelete && user.id !== record?.createdBy ? (
+              <Tooltip title="Delete">
+                <Button
+                  onClick={() =>
+                    handleChange(
+                      record.action,
+                      "isDeleted",
+                      true,
+                      record.access.model
+                    )
+                  }
+                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),

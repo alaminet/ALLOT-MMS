@@ -30,8 +30,12 @@ const ItemViewTable = () => {
   if (!canViewPage("item-list")) {
     return <NotAuth />;
   }
-  const own = canDoOwn(lastSegment, "view");
-  const others = canDoOther(lastSegment, "view");
+  const ownView = canDoOwn(lastSegment, "view");
+  const othersView = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   const columns = [
     {
@@ -132,17 +136,22 @@ const ItemViewTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {(canDoOther(lastSegment, "view") ||
-              (canDoOwn(lastSegment, "view") && user.id == record.action)) && (
+            {ownView && user.id === record?.createdBy ? (
               <Tooltip title="View">
                 <Button
                   onClick={() => handleView(record.access)}
                   icon={<EyeTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
+            ) : othersView && user.id !== record?.createdBy ? (
+              <Tooltip title="View">
+                <Button
+                  onClick={() => handleView(record.access)}
+                  icon={<EyeTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>
@@ -155,9 +164,21 @@ const ItemViewTable = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
+            ) : othersEdit && user.id !== record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        productInfo: record.access,
+                      },
+                    })
+                  }
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownDelete && user.id === record?.createdBy ? (
               <Tooltip title="Delete">
                 <Button
                   onClick={(e) =>
@@ -166,9 +187,16 @@ const ItemViewTable = () => {
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : othersDelete && user.id !== record?.createdBy ? (
+              <Tooltip title="Delete">
+                <Button
+                  onClick={(e) =>
+                    handleChange(record.action, "isDeleted", true)
+                  }
+                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -176,7 +204,13 @@ const ItemViewTable = () => {
   ];
   const getTableData = async () => {
     const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) return setQueryData([]);
     const payload = { scope };
     try {
@@ -209,6 +243,7 @@ const ItemViewTable = () => {
             status: item?.status,
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
             updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+            createdBy: item?.createdBy?._id,
             access: item,
             action: item?._id,
           }));
@@ -250,7 +285,7 @@ const ItemViewTable = () => {
   }, []);
   return (
     <>
-      {!own && !others ? (
+      {!ownView && !othersView ? (
         <NotAuth />
       ) : (
         <Table
@@ -260,17 +295,17 @@ const ItemViewTable = () => {
           )}
           // title={() => "Header"}
           sticky
-           pagination={{
-          showSizeChanger: true,
-          pageSizeOptions: [
-            "10",
-            "20",
-            "50",
-            queryData?.length?.toString() || "100",
-          ],
-          // showTotal: (total) => `Total ${total} items`,
-          defaultPageSize: 10,
-        }}
+          pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: [
+              "10",
+              "20",
+              "50",
+              queryData?.length?.toString() || "100",
+            ],
+            // showTotal: (total) => `Total ${total} items`,
+            defaultPageSize: 10,
+          }}
           scroll={{
             x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
           }}
