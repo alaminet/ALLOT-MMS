@@ -31,8 +31,14 @@ const SupplierViewTable = () => {
   if (!canViewPage("supplier")) {
     return <NotAuth />;
   }
-  const own = canDoOwn(lastSegment, "view");
-  const others = canDoOther(lastSegment, "view");
+  // const own = canDoOwn(lastSegment, "view");
+  // const others = canDoOther(lastSegment, "view");
+  const ownView = canDoOwn(lastSegment, "view");
+  const othersView = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   const columns = [
     {
@@ -100,8 +106,7 @@ const SupplierViewTable = () => {
                 />
               </Tooltip>
             )} */}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
+            {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>
@@ -114,9 +119,21 @@ const SupplierViewTable = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
+            ) : othersEdit && user.id !== record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        refData: record.access,
+                      },
+                    })
+                  }
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownDelete && user.id === record?.createdBy ? (
               <Tooltip title="Delete">
                 <Button
                   onClick={(e) =>
@@ -125,9 +142,16 @@ const SupplierViewTable = () => {
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : othersDelete && user.id !== record?.createdBy ? (
+              <Tooltip title="Delete">
+                <Button
+                  onClick={(e) =>
+                    handleChange(record.action, "isDeleted", true)
+                  }
+                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -135,7 +159,13 @@ const SupplierViewTable = () => {
   ];
   const getTableData = async () => {
     const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -174,6 +204,7 @@ const SupplierViewTable = () => {
             status: item?.status,
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
             updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+            createdBy: item?.createdBy?._id,
             access: item,
             action: item?._id,
           }));
