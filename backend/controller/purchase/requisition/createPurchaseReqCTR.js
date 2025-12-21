@@ -6,7 +6,7 @@ async function createPurchaseReqCTR(req, res, next) {
     if (!data.itemDetails) {
       return res.status(400).send({ error: "Item is required" });
     } else {
-      const lastItem = await PurchaseReq.findOne({}).sort({ _id: -1 });
+      const lastItem = await PurchaseReq.findOne({}).sort({ code: -1 });
       const newData = new PurchaseReq({
         orgId: req.orgId,
         code: lastItem?.code + 1 || 3000000001,

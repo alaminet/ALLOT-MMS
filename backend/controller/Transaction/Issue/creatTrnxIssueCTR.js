@@ -64,7 +64,7 @@ async function creatTrnxIssueCTR(req, res, next) {
         }
       }
 
-      const lastItem = await TrnxIssue.findOne({}).sort({ _id: -1 });
+      const lastItem = await TrnxIssue.findOne({}).sort({ code: -1 });
       const newData = new TrnxIssue({
         orgId: req.orgId,
         code: lastItem?.code ? lastItem.code + 1 : 10001,

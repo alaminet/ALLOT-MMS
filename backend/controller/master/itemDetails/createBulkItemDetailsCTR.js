@@ -59,7 +59,7 @@ async function createBulkItemDetailsCTR(req, res, next) {
     const existingCodes = new Set(existing.map((e) => e.code?.toUpperCase()));
 
     // Get last code
-    const lastItem = await Model.findOne({}).sort({ _id: -1 }).select("code");
+    const lastItem = await Model.findOne({}).sort({ code: -1 }).select("code");
     const lastCode = parseInt(lastItem?.code, 10);
     const defaultCode =
       modelName === "ItemGroup"

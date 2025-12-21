@@ -10,7 +10,7 @@ async function creatPOGRNRecCTR(req, res, next) {
     if (!data.itemDetails) {
       return res.status(400).send({ error: "Item is required" });
     } else {
-      const lastItem = await TrnxReceive.findOne({}).sort({ _id: -1 });
+      const lastItem = await TrnxReceive.findOne({}).sort({ code: -1 });
       const newData = new TrnxReceive({
         orgId: req.orgId,
         code: lastItem?.code ? lastItem.code + 1 : 5000000001,

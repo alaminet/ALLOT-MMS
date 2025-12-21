@@ -13,7 +13,7 @@ async function createSupplierCTR(req, res, next) {
       if (existingData) {
         return res.status(400).send({ error: "Data already exists" });
       } else {
-        const lastItem = await Supplier.findOne({}).sort({ _id: -1 });
+        const lastItem = await Supplier.findOne({}).sort({ code: -1 });
         const newData = new Supplier({
           orgId: req.orgId,
           code: lastItem?.code + 1 || 2000000001,

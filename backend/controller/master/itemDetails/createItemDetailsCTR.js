@@ -46,7 +46,7 @@ async function createItemDetailsCTR(req, res, next) {
             : modelName === "CostCenter"
             ? 6001
             : null;
-        const lastItem = await Model.findOne({}).sort({ _id: -1 });
+        const lastItem = await Model.findOne({}).sort({ code: -1 });
         const lastCode = parseInt(lastItem?.code, 10);
         query.code = Number.isNaN(lastCode) ? modelDefaultsCode : lastCode + 1;
       }

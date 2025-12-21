@@ -13,7 +13,7 @@ async function createOrgUserCTR(req, res, next) {
       if (existingData) {
         return res.status(400).send({ error: "Data already exists" });
       } else {
-        const lastItem = await OrgUser.findOne({}).sort({ _id: -1 });
+        const lastItem = await OrgUser.findOne({}).sort({ orgId: -1 });
         const newData = new OrgUser({
           orgId: lastItem?.orgId + 1 || 1001,
           orgName: data?.orgName?.trim(),
