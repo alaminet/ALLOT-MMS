@@ -32,8 +32,12 @@ const PurchaseReqViewTable = () => {
   if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
-  const own = canDoOwn(lastSegment, "view");
-  const others = canDoOther(lastSegment, "view");
+  const ownView = canDoOwn(lastSegment, "view");
+  const othersView = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   const columns = [
     {
@@ -133,8 +137,7 @@ const PurchaseReqViewTable = () => {
                 />
               </Tooltip>
             )} */}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
+            {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
                   disabled={record?.POAvl || record?.status !== "In-Process"}
@@ -148,9 +151,22 @@ const PurchaseReqViewTable = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
+            ) : othersEdit && user.id !== record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  disabled={record?.POAvl || record?.status !== "In-Process"}
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        refData: record.access,
+                      },
+                    })
+                  }
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownDelete && user.id === record?.createdBy ? (
               <Tooltip title="Delete">
                 <Button
                   disabled={record.POQty > 0}
@@ -160,9 +176,17 @@ const PurchaseReqViewTable = () => {
                   icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : othersDelete && user.id !== record?.createdBy ? (
+              <Tooltip title="Delete">
+                <Button
+                  disabled={record.POQty > 0}
+                  onClick={(e) =>
+                    handleChange(record.action, record.key, "isDeleted", true)
+                  }
+                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -170,7 +194,13 @@ const PurchaseReqViewTable = () => {
   ];
   const getTableData = async () => {
     const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -206,6 +236,7 @@ const PurchaseReqViewTable = () => {
               status: item?.status,
               createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              createdBy: item?.createdBy?._id,
               access: item,
               action: item?._id,
               POAvl: item?.itemDetails.some((itm) => itm.POQty > 0),
@@ -217,6 +248,7 @@ const PurchaseReqViewTable = () => {
       message.error(error.response.data.error);
     }
   };
+  console.log(queryData);
 
   // Handle Veiw table data
   const handleView = (values) => {
@@ -249,7 +281,7 @@ const PurchaseReqViewTable = () => {
   }, []);
   return (
     <>
-      {!own && !others ? (
+      {!ownView && !othersView ? (
         <NotAuth />
       ) : (
         <Table
