@@ -79,6 +79,7 @@ const PurchaseRequisitiion = () => {
       const tableArr = res?.data?.items?.map((item, index) => ({
         label: item?.name,
         value: item?._id,
+        search: item?.name + "-" + item?.SKU + "-" + item?.code,
         code: item?.code,
         UOM: item?.UOM?.code,
         price: item?.avgPrice,
@@ -310,7 +311,7 @@ const PurchaseRequisitiion = () => {
                                   onSearch={(searchText) => {
                                     const filtered = itemList
                                       .filter((item) =>
-                                        item.label
+                                        item.search
                                           .toLowerCase()
                                           .includes(searchText.toLowerCase())
                                       )
