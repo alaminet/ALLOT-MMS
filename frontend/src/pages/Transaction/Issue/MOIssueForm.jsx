@@ -307,7 +307,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
   };
 
   const handleFormSubmit = async (values) => {
-    // setLoading(true);
+    setLoading(true);
     // Validate required fields before submission
     if (dataSource?.some((item) => !item.location)) {
       message.error("Please select location for all items");
@@ -327,11 +327,11 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
       return;
     }
 
-    // Group items by PO and create proper payload structure
-    const POGroups = dataSource.reduce((acc, item) => {
-      const poNumber = item.MO; // Assuming PO is the purchase order number
-      if (!acc[poNumber]) {
-        acc[poNumber] = {
+    // Group items by MO and create proper payload structure
+    const MOGroups = dataSource.reduce((acc, item) => {
+      const moNumber = item.MO; // Assuming MO is the move order number
+      if (!acc[moNumber]) {
+        acc[moNumber] = {
           itemDetails: [],
           headerText: item?.headerText,
           reference: item?.reference,
@@ -341,8 +341,8 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
         };
       }
 
-      // Add this item to the PO's itemDetails array
-      acc[poNumber].itemDetails.push({
+      // Add this item to the MO's itemDetails array
+      acc[moNumber].itemDetails.push({
         MOid: item?.MOid,
         MOLineid: item?.MOLineid,
         code: item?.code || null,
@@ -359,8 +359,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     }, {});
 
     // Convert the grouped data into an array of payloads
-    const payloads = Object.values(POGroups);
-    // console.log("submit", payloads);
+    const payloads = Object.values(MOGroups);
 
     try {
       // Send each PO group as a separate GRN sequentially so backend
@@ -377,27 +376,42 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
             },
           }
         );
-        // show notification per successful creation
-        notification.success({
-          message: "Success",
-          description: res.data.message,
-          duration: 0,
-        });
         responses.push(res);
       }
-
       // Check if all requests were successful
-      const allSuccess = responses.every((res) => res.status === 201);
+      responses.map((res) => {
+        // Build notification content safely
+        const respMessage = res.data?.message || res.data?.status || "success";
+        const respSteps = res.data?.steps || [];
+        const notiDescription = respSteps.length
+          ? respSteps.map((item, i) => <p key={i}>{item?.message}</p>)
+          : null;
 
-      if (allSuccess) {
+        if (res.data?.status === "failed") {
+          notification.error({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        } else if (res.data?.status === "partial") {
+          notification.warning({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        } else {
+          notification.success({
+            message: respMessage,
+            description: notiDescription,
+            duration: 0,
+          });
+        }
         setDataSource([]);
         onSelectChange([], []);
         form.resetFields();
         setLoading(false);
         onClose();
-      } else {
-        throw new Error("Some MO issue failed to create");
-      }
+      });
     } catch (error) {
       setLoading(false);
       message.error(error.response?.data?.error || "Error creating");
@@ -419,6 +433,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
         extra={
           <Space>
             <Button
+              loading={loading}
               onClick={onClose}
               style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Cancel

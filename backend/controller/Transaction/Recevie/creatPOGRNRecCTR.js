@@ -50,7 +50,7 @@ async function creatPOGRNRecCTR(req, res, next) {
           code: "RECORD_CREATED",
         });
       } catch (err) {
-        console.error(err);
+        
         responseSteps.push({
           orgId: req.orgId,
           actionBy: req.actionBy,
@@ -100,7 +100,6 @@ async function creatPOGRNRecCTR(req, res, next) {
           count: newTnx.length,
         });
       } catch (err) {
-        console.error(err);
         // attempt to collect inserted docs if available
         const insertedCount =
           (err && err.insertedDocs && err.insertedDocs.length) || 0;

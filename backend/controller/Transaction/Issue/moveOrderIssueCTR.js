@@ -90,7 +90,41 @@ async function moveOrderIssueCTR(req, res, next) {
         createdBy: req.actionBy,
         updatedBy: req.actionBy,
       });
-      await newData.save();
+
+      // collect step messages as structured objects
+      const responseSteps = [];
+      // Create record
+      try {
+        await newData.save();
+        responseSteps.push({
+          orgId: req.orgId,
+          actionBy: req.actionBy,
+          controller: "moveOrderIssueCTR",
+          step: "createRecord",
+          status: "success",
+          message: `New goods issue record created #${newData.code}`,
+          code: "RECORD_CREATED",
+        });
+      } catch (err) {
+        responseSteps.push({
+          orgId: req.orgId,
+          actionBy: req.actionBy,
+          controller: "moveOrderIssueCTR",
+          step: "createRecord",
+          status: "failed",
+          message: `Failed to create goods issue record #${newData.code}`,
+          code: "RECORD_CREATE_FAILED",
+          details: err.message,
+        });
+        // critical failure — stop processing and return
+        return res.status(500).send({
+          message: "Failed to create goods issue record",
+          code: newData.code,
+          status: "failed",
+          steps: responseSteps,
+        });
+      }
+
       // Tnx Detials Added
       const tnxDetails = newData.itemDetails.map((item) => ({
         orgId: newData.orgId,
@@ -112,63 +146,155 @@ async function moveOrderIssueCTR(req, res, next) {
         createdBy: newData.createdBy,
         updatedBy: newData.updatedBy,
       }));
-      await TrnxDetails.insertMany(tnxDetails);
+
+      let newTnx = [];
+      try {
+        newTnx = await TrnxDetails.insertMany(tnxDetails);
+        responseSteps.push({
+          orgId: req.orgId,
+          actionBy: req.actionBy,
+          controller: "moveOrderIssueCTR",
+          step: "insertTnx",
+          status: "success",
+          message: `Transaction details created (${newTnx.length} items)`,
+          code: "TNX_INSERTED",
+          count: newTnx.length,
+        });
+      } catch (err) {
+        // attempt to collect inserted docs if available
+        const insertedCount =
+          (err && err.insertedDocs && err.insertedDocs.length) || 0;
+        newTnx = (err && err.insertedDocs) || [];
+        responseSteps.push({
+          orgId: req.orgId,
+          actionBy: req.actionBy,
+          controller: "moveOrderIssueCTR",
+          step: "insertTnx",
+          status: "failed",
+          message: `Transaction insert failed (${insertedCount} inserted)`,
+          code: "TNX_INSERT_FAILED",
+          details: err.message,
+        });
+        // continue processing item updates for best-effort
+      }
 
       // Item Info Updated
+      const updatedItems = [];
       for (const element of newData.itemDetails) {
-        const item = await ItemInfo.findOne({ code: element.code });
-        if (!item) continue;
+        try {
+          const item = await ItemInfo.findOne({ code: element.code });
+          if (!item) {
+            responseSteps.push({
+              orgId: req.orgId,
+              actionBy: req.actionBy,
+              controller: "moveOrderIssueCTR",
+              step: "updateItem",
+              status: "skipped",
+              message: `"${element.name}" Item with code not found, skipped update`,
+              code: "ITEM_NOT_FOUND",
+              item: { code: element.code, location: element.location },
+            });
+            continue;
+          }
 
-        const newQty = element.issueQty * -1;
-        const newPrice = element.issuePrice;
+          const newQty = element.issueQty * -1;
+          const newPrice = element.issuePrice;
 
-        // Find existing stock entry by location
-        const index = item.stock.findIndex(
-          (s) => s.location === element.location
-        );
+          // Find existing stock entry by location
+          const index = item.stock.findIndex(
+            (s) => s.location === element.location
+          );
 
-        let existingQty = 0;
-        let existingPrice = item.avgPrice || 0;
+          let existingQty = 0;
+          let existingPrice = item.avgPrice || 0;
 
-        if (index !== -1) {
-          // Overwrite existing stock entry
-          const existingLoc = item.stock[index];
-          existingQty = existingLoc.issueQty || 0;
+          if (index !== -1) {
+            // Overwrite existing stock entry
+            const existingLoc = item.stock[index];
+            existingQty = existingLoc.issueQty || 0;
 
-          item.stock[index] = {
+            item.stock[index] = {
+              location: element.location,
+              recQty: existingLoc.recQty || 0,
+              issueQty: existingQty + newQty,
+              onHandQty: (existingLoc.onHandQty || 0) - newQty,
+            };
+          } else {
+            // Insert new stock entry
+            item.stock.push({
+              location: element.location,
+              recQty: 0,
+              issueQty: newQty,
+              onHandQty: newQty,
+            });
+          }
+
+          // Calculate avgPrice using weighted average
+          const totalQty = existingQty + newQty;
+          const existingValue = existingQty * existingPrice;
+          const newValue = element.issueQty * newPrice;
+          item.avgPrice =
+            totalQty > 0 ? (existingValue - newValue) / totalQty : newPrice;
+
+          await item.save();
+
+          updatedItems.push({
+            code: element.code,
             location: element.location,
-            recQty: existingLoc.recQty || 0,
-            issueQty: existingQty + newQty,
-            onHandQty: (existingLoc.onHandQty || 0) - newQty,
-          };
-        } else {
-          // Insert new stock entry
-          item.stock.push({
-            location: element.location,
-            recQty: 0,
             issueQty: newQty,
-            onHandQty: newQty,
           });
+          responseSteps.push({
+            orgId: req.orgId,
+            actionBy: req.actionBy,
+            controller: "moveOrderIssueCTR",
+            step: "updateItem",
+            status: "success",
+            message: `Item ${element.code} updated (location: ${element.location}, issue Qty: ${newQty})`,
+            code: "ITEM_UPDATED",
+            item: { code: element.code, location: element.location },
+          });
+        } catch (err) {
+          responseSteps.push({
+            orgId: req.orgId,
+            actionBy: req.actionBy,
+            controller: "moveOrderIssueCTR",
+            step: "updateItem",
+            status: "failed",
+            message: `Item ${element.code} update failed`,
+            code: "ITEM_UPDATE_FAILED",
+            item: { code: element.code, location: element.location },
+            details: err.message,
+          });
+          // continue with next item
+          continue;
         }
-
-        // Calculate avgPrice using weighted average
-        const totalQty = existingQty + newQty;
-        const existingValue = existingQty * existingPrice;
-        const newValue = element.issueQty * newPrice;
-        item.avgPrice =
-          totalQty > 0 ? (existingValue - newValue) / totalQty : newPrice;
-        await item.save();
       }
-      res.status(201).send({
-        message: `GI ID #${newData.code} for MO ID#${newData.tnxRef}`,
-      });
+      // res.status(201).send({
+      //   message: `GI ID #${newData.code} for MO ID#${newData.tnxRef}`,
+      // });
 
       // Move Order issue Qty update
       for (const item of data.itemDetails) {
-        await TrnxMoveOrder.findOneAndUpdate(
-          { _id: item.MOid, "itemDetails._id": item.MOLineid },
-          { $inc: { "itemDetails.$.issueQty": item.issueQty } }
-        );
+        try {
+          await TrnxMoveOrder.findOneAndUpdate(
+            { _id: item.MOid, "itemDetails._id": item.MOLineid },
+            { $inc: { "itemDetails.$.issueQty": item.issueQty } }
+          );
+        } catch (err) {
+          responseSteps.push({
+            orgId: req.orgId,
+            actionBy: req.actionBy,
+            controller: "moveOrderIssueCTR",
+            step: "updateMO",
+            status: "failed",
+            message: `Item ${element.code} MO update failed`,
+            code: "MO_UPDATE_FAILED",
+            item: { code: element.code, location: element.location },
+            details: err.message,
+          });
+          // continue with next item
+          continue;
+        }
       }
       // Add Log activites
       const logData = {
@@ -178,6 +304,44 @@ async function moveOrderIssueCTR(req, res, next) {
         action: `Goods issued ID #${newData.code}`,
       };
       req.log = logData;
+      req.serverLog = responseSteps;
+
+      // Compute summary counts and overall status
+      const successCount = responseSteps.filter(
+        (s) => s.status === "success"
+      ).length;
+      const failedCount = responseSteps.filter(
+        (s) => s.status === "failed"
+      ).length;
+      const skippedCount = responseSteps.filter(
+        (s) => s.status === "skipped"
+      ).length;
+
+      let overallStatus = "completed";
+      let statusCode = 201;
+      if (failedCount > 0 && successCount > 0) {
+        overallStatus = "partial";
+        statusCode = 207; // Multi-Status
+      } else if (failedCount > 0 && successCount === 0) {
+        overallStatus = "failed";
+        statusCode = 500;
+      }
+
+      // Final response with aggregated steps
+      res.status(statusCode).send({
+        message: `GI ID #${newData.code} for MO ID#${newData.tnxRef} - process ${overallStatus}`,
+        code: newData.code,
+        status: overallStatus,
+        steps: responseSteps,
+        counts: {
+          success: successCount,
+          failed: failedCount,
+          skipped: skippedCount,
+        },
+        tnxCount: newTnx.length || 0,
+        updatedItems,
+        newDataId: newData._id,
+      });
       next();
     }
   } catch (error) {
