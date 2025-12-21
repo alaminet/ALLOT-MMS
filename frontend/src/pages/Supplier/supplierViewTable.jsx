@@ -31,8 +31,7 @@ const SupplierViewTable = () => {
   if (!canViewPage("supplier")) {
     return <NotAuth />;
   }
-  // const own = canDoOwn(lastSegment, "view");
-  // const others = canDoOther(lastSegment, "view");
+
   const ownView = canDoOwn(lastSegment, "view");
   const othersView = canDoOther(lastSegment, "view");
   const ownEdit = canDoOwn(lastSegment, "edit");

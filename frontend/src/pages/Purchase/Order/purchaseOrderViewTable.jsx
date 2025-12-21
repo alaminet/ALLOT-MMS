@@ -44,8 +44,14 @@ const PurchaseOrderViewTable = () => {
   if (!canViewPage("purchase-requisition")) {
     return <NotAuth />;
   }
-  const own = canDoOwn(lastSegment, "view");
-  const others = canDoOther(lastSegment, "view");
+  // const own = canDoOwn(lastSegment, "view");
+  // const others = canDoOther(lastSegment, "view");
+  const ownView = canDoOwn(lastSegment, "view");
+  const othersView = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   const columns = [
     {
@@ -161,23 +167,30 @@ const PurchaseOrderViewTable = () => {
                 />
               </Tooltip>
             )} */}
-            {(canDoOther(lastSegment, "edit") ||
-              (canDoOwn(lastSegment, "edit") && user.id == record.action)) && (
-              <>
-                <Tooltip title="Edit">
-                  <Button
-                    disabled={record.GRNAvl || record?.status !== "In-Process"}
-                    onClick={() => {
-                      setEditPOId(record.action);
-                      setDrawerOpen(true);
-                    }}
-                    icon={<EditTwoTone />}
-                  />
-                </Tooltip>
-              </>
-            )}
-            {(canDoOwn(lastSegment, "delete") && user.id == record.action) ||
-            (canDoOther(lastSegment, "delete") && user.id !== record.action) ? (
+            {ownEdit && user.id === record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  disabled={record.GRNAvl || record?.status !== "In-Process"}
+                  onClick={() => {
+                    setEditPOId(record.action);
+                    setDrawerOpen(true);
+                  }}
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : othersEdit && user.id !== record?.createdBy ? (
+              <Tooltip title="Edit">
+                <Button
+                  disabled={record.GRNAvl || record?.status !== "In-Process"}
+                  onClick={() => {
+                    setEditPOId(record.action);
+                    setDrawerOpen(true);
+                  }}
+                  icon={<EditTwoTone />}
+                />
+              </Tooltip>
+            ) : null}
+            {ownDelete && user.id === record?.createdBy ? (
               <Tooltip title="Delete">
                 <Popconfirm
                   disabled={record.GRNQty > 0}
@@ -191,9 +204,21 @@ const PurchaseOrderViewTable = () => {
                   />
                 </Popconfirm>
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : othersDelete && user.id !== record?.createdBy ? (
+              <Tooltip title="Delete">
+                <Popconfirm
+                  disabled={record.GRNQty > 0}
+                  title="Sure to delete?"
+                  onConfirm={() =>
+                    handleChange(record.action, record.key, "isDeleted", true)
+                  }>
+                  <Button
+                    icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                    disabled={record.GRNQty > 0}
+                  />
+                </Popconfirm>
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -201,7 +226,13 @@ const PurchaseOrderViewTable = () => {
   ];
   const getTableData = async () => {
     const scope =
-      own && others ? "all" : own ? "own" : others ? "others" : null;
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -240,6 +271,7 @@ const PurchaseOrderViewTable = () => {
               status: item?.status,
               createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              createdBy: item?.createdBy?._id,
               access: item,
               action: item?._id,
               GRNAvl: item?.itemDetails.some((itm) => itm.GRNQty > 0),
@@ -283,7 +315,7 @@ const PurchaseOrderViewTable = () => {
   }, [drawerOpen]);
   return (
     <>
-      {!own && !others ? (
+      {!ownView && !othersView ? (
         <NotAuth />
       ) : (
         <Table
