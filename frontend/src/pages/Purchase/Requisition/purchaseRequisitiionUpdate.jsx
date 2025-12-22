@@ -81,6 +81,7 @@ const PurchaseRequisitiionUpdate = () => {
         value: item?._id,
         code: item?.code,
         UOM: item?.UOM?.code,
+         SKU: item?.SKU,
         price: item?.avgPrice,
         onHandQty: item?.stock?.reduce(
           (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
@@ -305,6 +306,19 @@ const PurchaseRequisitiionUpdate = () => {
                                 <Form.Item
                                   {...restField}
                                   name={[name, "name"]}
+                                  help={
+                                  form.getFieldValue([
+                                    "itemDetails",
+                                    name,
+                                    "SKU",
+                                  ])
+                                    ? `SKU: ${form.getFieldValue([
+                                        "itemDetails",
+                                        name,
+                                        "SKU",
+                                      ])}`
+                                    : ""
+                                }
                                   rules={[
                                     {
                                       required: true,
@@ -322,7 +336,7 @@ const PurchaseRequisitiionUpdate = () => {
                                             .includes(searchText.toLowerCase())
                                         )
                                         .map((item) => ({
-                                          label: item.label,
+                                          label: item.label + "-" + item.SKU,
                                           value: item.label,
                                         }));
                                       setFilteredOptions(filtered);
@@ -340,6 +354,10 @@ const PurchaseRequisitiionUpdate = () => {
                                           ["itemDetails", name, "code"],
                                           matched.value
                                         );
+                                        form.setFieldValue(
+                                        ["itemDetails", name, "SKU"],
+                                        matched.SKU
+                                      );
                                         form.setFieldValue(
                                           ["itemDetails", name, "unitPrice"],
                                           matched.price
