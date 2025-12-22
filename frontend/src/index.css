@@ -250,5 +250,5 @@ th.ant-table-cell {
 
 /* ant-select-dropdown */
 .ant-select-dropdown {
-  width: fit-content !important;
+  max-width: auto !important;
 }
