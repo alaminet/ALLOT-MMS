@@ -13,8 +13,8 @@ import {
   QRCode,
   Flex,
 } from "antd";
-import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
-import { useLocation } from "react-router-dom";
+import { EditOutlined, PlusOutlined, PrinterOutlined } from "@ant-design/icons";
+import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useEffect } from "react";
 import axios from "axios";
@@ -44,6 +44,7 @@ function handlePrint(layout = "A4 landscape") {
 
 const PurchaseReqPrintView = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const navigate = useNavigate();
   const location = useLocation();
   const { refData } = location.state || {};
   const [inputValues, setInputValues] = useState({});
@@ -54,6 +55,8 @@ const PurchaseReqPrintView = () => {
   const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
   const own = canDoOwn("purchase-requisition", "view");
   const others = canDoOther("purchase-requisition", "view");
+  const ownEdit = canDoOwn("purchase-requisition", "edit");
+  const othersEdit = canDoOther("purchase-requisition", "edit");
   const ownCheck = canAuthOwn("purchase-requisition", "check");
   const othersCheck = canAuthOther("purchase-requisition", "check");
   const ownConfirm = canAuthOwn("purchase-requisition", "confirm");
@@ -308,6 +311,7 @@ const PurchaseReqPrintView = () => {
     getData();
     getBusinessDetails();
   }, []);
+  console.log(queryData);
 
   return (
     <>
@@ -665,6 +669,39 @@ const PurchaseReqPrintView = () => {
               </ColumnGroup>
             </Table>
             <Flex gap={16} style={{ marginTop: "16px" }}>
+              {/* ownEdit othersEdit */}
+              {queryData?.status === "In-Process" &&
+              ownEdit &&
+              user.id === queryData?.createdBy?._id ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() =>
+                    navigate("/purchase-requisition/update", {
+                      state: {
+                        refData: queryData,
+                      },
+                    })
+                  }>
+                  <EditOutlined />
+                </Button>
+              ) : queryData?.status === "In-Process" &&
+                othersEdit &&
+                user.id !== queryData?.createdBy?._id ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() =>
+                    navigate("/purchase-requisition/update", {
+                      state: {
+                        refData: queryData,
+                      },
+                    })
+                  }>
+                  <EditOutlined />
+                </Button>
+              ) : null}
+
               <Button
                 type="dashed"
                 className="no-print"
