@@ -248,3 +248,7 @@ th.ant-table-cell {
   font-size: 20px !important;
 }
 
+/* ant-select-dropdown */
+.ant-select-dropdown {
+  width: auto !important;
+}

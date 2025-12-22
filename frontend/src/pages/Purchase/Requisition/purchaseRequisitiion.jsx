@@ -81,6 +81,7 @@ const PurchaseRequisitiion = () => {
         value: item?._id,
         search: item?.name + "-" + item?.SKU + "-" + item?.code,
         code: item?.code,
+        SKU: item?.SKU,
         UOM: item?.UOM?.code,
         price: item?.avgPrice,
         onHandQty: item?.stock?.reduce(
@@ -257,7 +258,7 @@ const PurchaseRequisitiion = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <div lg={24} xs={24}>
+              <div lg={24} xs={24} className="form-select-dropdown">
                 <Form.Item
                   label="Item Details"
                   style={{ marginBottom: "35px" }}>
@@ -300,6 +301,19 @@ const PurchaseRequisitiion = () => {
                               <Form.Item
                                 {...restField}
                                 name={[name, "name"]}
+                                help={
+                                  form.getFieldValue([
+                                    "itemDetails",
+                                    name,
+                                    "SKU",
+                                  ])
+                                    ? `SKU: ${form.getFieldValue([
+                                        "itemDetails",
+                                        name,
+                                        "SKU",
+                                      ])}`
+                                    : ""
+                                }
                                 rules={[
                                   {
                                     required: true,
@@ -316,7 +330,7 @@ const PurchaseRequisitiion = () => {
                                           .includes(searchText.toLowerCase())
                                       )
                                       .map((item) => ({
-                                        label: item.label,
+                                        label: item.label + "-" + item.SKU,
                                         value: item.label,
                                       }));
                                     setFilteredOptions(filtered);
@@ -333,6 +347,10 @@ const PurchaseRequisitiion = () => {
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
                                         matched.value
+                                      );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "SKU"],
+                                        matched.SKU
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
