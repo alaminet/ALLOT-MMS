@@ -81,7 +81,7 @@ const PurchaseRequisitiionUpdate = () => {
         value: item?._id,
         code: item?.code,
         UOM: item?.UOM?.code,
-         SKU: item?.SKU,
+        SKU: item?.SKU,
         price: item?.avgPrice,
         onHandQty: item?.stock?.reduce(
           (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
@@ -307,18 +307,18 @@ const PurchaseRequisitiionUpdate = () => {
                                   {...restField}
                                   name={[name, "name"]}
                                   help={
-                                  form.getFieldValue([
-                                    "itemDetails",
-                                    name,
-                                    "SKU",
-                                  ])
-                                    ? `SKU: ${form.getFieldValue([
-                                        "itemDetails",
-                                        name,
-                                        "SKU",
-                                      ])}`
-                                    : ""
-                                }
+                                    form.getFieldValue([
+                                      "itemDetails",
+                                      name,
+                                      "SKU",
+                                    ])
+                                      ? `SKU: ${form.getFieldValue([
+                                          "itemDetails",
+                                          name,
+                                          "SKU",
+                                        ])}`
+                                      : ""
+                                  }
                                   rules={[
                                     {
                                       required: true,
@@ -355,9 +355,9 @@ const PurchaseRequisitiionUpdate = () => {
                                           matched.value
                                         );
                                         form.setFieldValue(
-                                        ["itemDetails", name, "SKU"],
-                                        matched.SKU
-                                      );
+                                          ["itemDetails", name, "SKU"],
+                                          matched.SKU
+                                        );
                                         form.setFieldValue(
                                           ["itemDetails", name, "unitPrice"],
                                           matched.price
@@ -379,24 +379,24 @@ const PurchaseRequisitiionUpdate = () => {
                                       if (!matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          ""
-                                        ); // clear UOM for manual input
+                                          null
+                                        );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          ""
-                                        ); // clear code for manual input
+                                          null
+                                        );
                                         form.setFieldValue(
                                           ["itemDetails", name, "unitPrice"],
-                                          ""
-                                        ); // clear unitPrice for manual input
+                                          null
+                                        );
                                         form.setFieldValue(
                                           ["itemDetails", name, "onHandQty"],
-                                          ""
-                                        ); // clear unitPrice for manual input
+                                          null
+                                        );
                                         form.setFieldValue(
                                           ["itemDetails", name, "spec"],
-                                          ""
-                                        ); // clear unitPrice for manual input
+                                          null
+                                        );
                                       }
                                     }}
                                     placeholder="Item name"
@@ -428,7 +428,15 @@ const PurchaseRequisitiionUpdate = () => {
                                 </Form.Item>
                               </Col>
                               <Col span={2}>
-                                <Form.Item {...restField} name={[name, "UOM"]}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "UOM"]}
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "UOM",
+                                    },
+                                  ]}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="UOM"

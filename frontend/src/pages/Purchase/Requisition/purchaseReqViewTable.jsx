@@ -248,7 +248,6 @@ const PurchaseReqViewTable = () => {
       message.error(error.response.data.error);
     }
   };
-  console.log(queryData);
 
   // Handle Veiw table data
   const handleView = (values) => {
