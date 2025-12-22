@@ -373,24 +373,24 @@ const PurchaseRequisitiion = () => {
                                     if (!matched) {
                                       form.setFieldValue(
                                         ["itemDetails", name, "UOM"],
-                                        ""
-                                      ); // clear UOM for manual input
+                                        null
+                                      );
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
-                                        ""
-                                      ); // clear code for manual input
+                                        null
+                                      );
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
-                                        ""
-                                      ); // clear unitPrice for manual input
+                                        null
+                                      );
                                       form.setFieldValue(
                                         ["itemDetails", name, "onHandQty"],
-                                        ""
-                                      ); // clear unitPrice for manual input
+                                        null
+                                      );
                                       form.setFieldValue(
                                         ["itemDetails", name, "spec"],
-                                        ""
-                                      ); // clear unitPrice for manual input
+                                        null
+                                      );
                                     }
                                   }}
                                   placeholder="Item name"
@@ -414,7 +414,15 @@ const PurchaseRequisitiion = () => {
                               </Form.Item>
                             </Col>
                             <Col span={2}>
-                              <Form.Item {...restField} name={[name, "UOM"]}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "UOM"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "UOM",
+                                  },
+                                ]}>
                                 <Input placeholder="UOM" />
                               </Form.Item>
                             </Col>
