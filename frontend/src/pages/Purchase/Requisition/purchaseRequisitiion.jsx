@@ -265,9 +265,20 @@ const PurchaseRequisitiion = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row justify="space-between">
+                        <Row
+                          justify="space-between"
+                          style={{
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 1000,
+                            background: "#fff",
+                            padding: "8px 0",
+                          }}>
                           <Col span={4} style={{ fontWeight: "600" }}>
-                            Name
+                            Name <span style={{ color: "red" }}>*</span>
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "600" }}>
+                            SKU/Code
                           </Col>
                           <Col span={3} style={{ fontWeight: "600" }}>
                             Specification
@@ -276,7 +287,7 @@ const PurchaseRequisitiion = () => {
                             Brand
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
-                            UOM
+                            UOM<span style={{ color: "red" }}>*</span>
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
                             Unit Price
@@ -285,11 +296,9 @@ const PurchaseRequisitiion = () => {
                             On-Hand Qty
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
-                            Req. Qty
+                            Req. Qty<span style={{ color: "red" }}>*</span>
                           </Col>
-                          <Col span={3} style={{ fontWeight: "600" }}>
-                            Plan
-                          </Col>
+
                           <Col span={3} style={{ fontWeight: "600" }}>
                             Remarks
                           </Col>
@@ -380,6 +389,10 @@ const PurchaseRequisitiion = () => {
                                         null
                                       );
                                       form.setFieldValue(
+                                        ["itemDetails", name, "SKU"],
+                                        null
+                                      );
+                                      form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
                                         null
                                       );
@@ -393,7 +406,7 @@ const PurchaseRequisitiion = () => {
                                       );
                                     }
                                   }}
-                                  placeholder="Item name"
+                                  placeholder="Item Name/SKU"
                                 />
                               </Form.Item>
                               <Form.Item
@@ -401,6 +414,11 @@ const PurchaseRequisitiion = () => {
                                 {...restField}
                                 name={[name, "code"]}>
                                 <Input placeholder="Code" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={3}>
+                              <Form.Item {...restField} name={[name, "SKU"]}>
+                                <Input placeholder="SKU/Code" />
                               </Form.Item>
                             </Col>
                             <Col span={3}>
@@ -453,13 +471,7 @@ const PurchaseRequisitiion = () => {
                                 <Input placeholder="Req. Qty" />
                               </Form.Item>
                             </Col>
-                            <Col span={3}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, "consumePlan"]}>
-                                <Input placeholder="Consume Plan" />
-                              </Form.Item>
-                            </Col>
+
                             <Col span={3}>
                               <Form.Item
                                 {...restField}

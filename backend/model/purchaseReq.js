@@ -47,6 +47,7 @@ const purchaseReqSchema = new Schema(
           default: null,
         },
         name: String,
+        SKU: String,
         spec: String,
         UOM: String,
         brand: String,

@@ -226,7 +226,7 @@ const PurchaseReqViewTable = () => {
               key: list?._id,
               PR: item?.code,
               code: list?.code?.code || "NA",
-              SKU: list?.code?.SKU || "NA",
+              SKU: list?.code?.SKU || list?.SKU || "NA",
               name: list?.name,
               reqQty: list?.reqQty,
               POQty: list?.POQty,

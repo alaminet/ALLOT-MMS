@@ -57,6 +57,7 @@ async function updatePurchaseReqCTR(req, res, next) {
             note: updatedData.note,
             itemDetails: updatedData.itemDetails.map((dtl) => ({
               name: dtl.name,
+              SKU: dtl.SKU,
               code: dtl.code !== "" ? dtl.code : null,
               spec: dtl.spec,
               UOM: dtl.UOM,

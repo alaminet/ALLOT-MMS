@@ -19,6 +19,7 @@ async function createPurchaseReqCTR(req, res, next) {
         note: data.note,
         itemDetails: data.itemDetails?.map((dtl) => ({
           name: dtl.name,
+          SKU: dtl.SKU,
           code: dtl.code !== "" ? dtl.code : null,
           spec: dtl.spec,
           brand: dtl.brand,

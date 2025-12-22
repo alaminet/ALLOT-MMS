@@ -33,6 +33,9 @@ function handlePrint(layout = "A4 landscape") {
       @page {
         size: ${layout};
       }
+      p{
+      font-size: 12px;
+      }
     }
   `;
   document.head.appendChild(styleTag);
@@ -103,7 +106,7 @@ const PurchaseReqPrintView = () => {
       dataIndex: "code",
       key: "code",
       className: "cell-top-left",
-      render: (text, record, index) => text?.SKU,
+      render: (text, record, index) => text?.SKU || record?.SKU || "NA",
     },
     {
       title: "Name",
@@ -319,7 +322,7 @@ const PurchaseReqPrintView = () => {
               <Col span={6}></Col>
               <Col span={12}>
                 <Typography style={{ textAlign: "center" }}>
-                  <Title style={{ margin: "0" }}>
+                  <Title level={2} style={{ margin: "0" }}>
                     {businessDetails?.orgName}
                   </Title>
                   <Text style={{ display: "block" }}>
@@ -334,7 +337,7 @@ const PurchaseReqPrintView = () => {
                       ". #" +
                       businessDetails?.phone?.office}
                   </Text>
-                  <Title level={3} style={{ margin: "0" }}>
+                  <Title level={4} style={{ margin: "0" }}>
                     PURCHASE REQUISITION FORM
                   </Title>
                 </Typography>
@@ -375,7 +378,7 @@ const PurchaseReqPrintView = () => {
                 </p>
                 <p>
                   <strong>Email: </strong>
-                  {queryData?.requestedBy?.contact}
+                  {queryData?.requestedBy?.email}
                 </p>
                 <p>
                   <strong>Phone No.: </strong>
@@ -398,7 +401,7 @@ const PurchaseReqPrintView = () => {
               </Col>
             </Row>
             <Table
-              bordered
+              // bordered
               className="purchase-table"
               columns={columns}
               dataSource={queryData?.itemDetails}
@@ -472,6 +475,7 @@ const PurchaseReqPrintView = () => {
                 style={{
                   textAlign: "center",
                   borderTop: "1px solid black",
+                  fontSize: "12px",
                 }}>
                 Prepared By
                 <span style={{ display: "block" }}>
@@ -480,7 +484,11 @@ const PurchaseReqPrintView = () => {
               </Col>
               <Col
                 span={5}
-                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                style={{
+                  textAlign: "center",
+                  borderTop: "1px solid black",
+                  fontSize: "12px",
+                }}>
                 Checked By
                 <span style={{ display: "block" }}>
                   {queryData?.confirmedBy?.name}
@@ -488,7 +496,11 @@ const PurchaseReqPrintView = () => {
               </Col>
               <Col
                 span={5}
-                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                style={{
+                  textAlign: "center",
+                  borderTop: "1px solid black",
+                  fontSize: "12px",
+                }}>
                 Confirmed By
                 <span style={{ display: "block" }}>
                   {queryData?.checkedBy?.name}
@@ -496,7 +508,11 @@ const PurchaseReqPrintView = () => {
               </Col>
               <Col
                 span={5}
-                style={{ textAlign: "center", borderTop: "1px solid black" }}>
+                style={{
+                  textAlign: "center",
+                  borderTop: "1px solid black",
+                  fontSize: "12px",
+                }}>
                 Approved By
                 <span style={{ display: "block" }}>
                   {queryData?.approvedBy?.name}
@@ -504,7 +520,7 @@ const PurchaseReqPrintView = () => {
               </Col>
             </Row>
             <Table
-              bordered
+              // bordered
               className="justification-table"
               pagination={false}
               // dataSource={data}
@@ -632,7 +648,7 @@ const PurchaseReqPrintView = () => {
                 />
                 <Column
                   align="center"
-                  title="Production Target"
+                  title="Purpose"
                   dataIndex="consumePlan"
                   key="consumePlan"
                   render={(_, record) => (

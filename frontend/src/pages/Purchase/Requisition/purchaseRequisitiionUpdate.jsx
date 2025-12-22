@@ -265,7 +265,10 @@ const PurchaseRequisitiionUpdate = () => {
                       <>
                         <Row justify="space-between">
                           <Col span={4} style={{ fontWeight: "600" }}>
-                            Name
+                            Name<span style={{ color: "red" }}>*</span>
+                          </Col>
+                          <Col span={3} style={{ fontWeight: "600" }}>
+                            SKU/Code
                           </Col>
                           <Col span={3} style={{ fontWeight: "600" }}>
                             Specification
@@ -274,7 +277,7 @@ const PurchaseRequisitiionUpdate = () => {
                             Brand
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
-                            UOM
+                            UOM<span style={{ color: "red" }}>*</span>
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
                             Unit Price
@@ -283,10 +286,7 @@ const PurchaseRequisitiionUpdate = () => {
                             On-Hand Qty
                           </Col>
                           <Col span={2} style={{ fontWeight: "600" }}>
-                            Req. Qty
-                          </Col>
-                          <Col span={3} style={{ fontWeight: "600" }}>
-                            Plan
+                            Req. Qty<span style={{ color: "red" }}>*</span>
                           </Col>
                           <Col span={3} style={{ fontWeight: "600" }}>
                             Remarks
@@ -382,6 +382,10 @@ const PurchaseRequisitiionUpdate = () => {
                                           null
                                         );
                                         form.setFieldValue(
+                                          ["itemDetails", name, "SKU"],
+                                          null
+                                        );
+                                        form.setFieldValue(
                                           ["itemDetails", name, "code"],
                                           null
                                         );
@@ -407,6 +411,14 @@ const PurchaseRequisitiionUpdate = () => {
                                   {...restField}
                                   name={[name, "code"]}>
                                   <Input placeholder="Code" />
+                                </Form.Item>
+                              </Col>
+                              <Col span={3}>
+                                <Form.Item {...restField} name={[name, "SKU"]}>
+                                  <Input
+                                    disabled={isDisabled}
+                                    placeholder="SKU/Code"
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={3}>
@@ -479,16 +491,7 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={3}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "consumePlan"]}>
-                                  <Input
-                                    disabled={isDisabled}
-                                    placeholder="Consume Plan"
-                                  />
-                                </Form.Item>
-                              </Col>
+
                               <Col span={3}>
                                 <Form.Item
                                   {...restField}
