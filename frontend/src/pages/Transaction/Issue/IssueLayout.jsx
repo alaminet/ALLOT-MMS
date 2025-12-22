@@ -31,13 +31,13 @@ const IssueLayout = () => {
 
   // Form submission
   const onFinish = async (values) => {
+    setLoading(true);
     const formData = {
       ...values,
       documentAt: values.documentAt.$d,
       issuedAt: values.issuedAt.$d,
       createdBy: user?.id,
     };
-    setLoading(true);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/transaction/issue/new`,
@@ -49,19 +49,41 @@ const IssueLayout = () => {
           },
         }
       );
-      notification.success({
-        message: "Success",
-        description: res.data.message,
-        duration: 0,
-        onClose: () => {
-          // your custom logic here
-        },
-      });
+
+      // Build notification content safely
+      const respMessage = res.data?.message || res.data?.status || "success";
+      const respSteps = res.data?.steps || [];
+      const notiDescription = respSteps.length
+        ? respSteps.map((item, i) => <p key={i}>{item?.message}</p>)
+        : null;
+
+      if (res.data?.status === "failed") {
+        notification.error({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      } else if (res.data?.status === "partial") {
+        notification.warning({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      } else {
+        notification.success({
+          message: respMessage,
+          description: notiDescription,
+          duration: 0,
+        });
+      }
       setLoading(false);
       getItems();
       getItemInfo();
       form.resetFields();
+      // alskjd
     } catch (error) {
+      console.log(error);
+
       setLoading(false);
       //   message.error(error.response.data.error);
       notification.error({

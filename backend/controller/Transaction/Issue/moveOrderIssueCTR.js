@@ -269,9 +269,6 @@ async function moveOrderIssueCTR(req, res, next) {
           continue;
         }
       }
-      // res.status(201).send({
-      //   message: `GI ID #${newData.code} for MO ID#${newData.tnxRef}`,
-      // });
 
       // Move Order issue Qty update
       for (const item of data.itemDetails) {
