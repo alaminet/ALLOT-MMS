@@ -11,8 +11,8 @@ const UserRoleTable = ({ data, setData }) => {
       key: "dashboard",
       module: "Dashboard",
       pageAccess: { view: true },
-      // own: { create: false, edit: false, view: false, delete: false },
-      // other: { create: false, edit: false, view: false, delete: false },
+      own: { view: false },
+      other: { view: false },
     },
     {
       key: "user",
@@ -195,31 +195,32 @@ const UserRoleTable = ({ data, setData }) => {
       const isSelected = newSelectedRowKeys.includes(row.key);
 
       if (!wasSelected && isSelected) {
-        // Newly selected: grant full permissions
+        // Newly selected: grant permissions only for existing keys
+        const grantPermissions = (group) =>
+          group
+            ? Object.fromEntries(Object.keys(group).map((k) => [k, true]))
+            : null;
+
         return {
           ...row,
           pageAccess: { view: true },
-          // Only set own/other if those groups exist for this module; otherwise keep null
-          own: row.own
-            ? { create: true, edit: true, view: true, delete: true }
-            : null,
-          other: row.other
-            ? { create: true, edit: true, view: true, delete: true }
-            : null,
+          own: grantPermissions(row.own),
+          other: grantPermissions(row.other),
         };
       }
 
       if (wasSelected && !isSelected) {
-        // Newly deselected: reset permissions
+        // Newly deselected: reset permissions only for existing keys
+        const revokePermissions = (group) =>
+          group
+            ? Object.fromEntries(Object.keys(group).map((k) => [k, false]))
+            : null;
+
         return {
           ...row,
           pageAccess: { view: false },
-          own: row.own
-            ? { create: false, edit: false, view: false, delete: false }
-            : null,
-          other: row.other
-            ? { create: false, edit: false, view: false, delete: false }
-            : null,
+          own: revokePermissions(row.own),
+          other: revokePermissions(row.other),
         };
       }
 
@@ -244,8 +245,7 @@ const UserRoleTable = ({ data, setData }) => {
         dataSource={mergedValue}
         rowSelection={rowSelection}
         sticky
-        scroll={{ x: 1200 }}
-      >
+        scroll={{ x: 1200 }}>
         <ColumnGroup title="Access Point">
           <Column title="Module" dataIndex="module" key="module" fixed="left" />
           <Column
@@ -271,27 +271,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="Create"
             dataIndex="own-create"
             key="own-create"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.own?.create}
-            //     onChange={handleCheckboxChange(record?.key, "own", "create")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.create}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "create"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasCreate =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "create");
+              return hasCreate ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.create)}
+                  onChange={handleCheckboxChange(record?.key, "own", "create")}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -299,27 +288,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="Edit"
             dataIndex="own-edit"
             key="own-edit"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.own?.edit}
-            //     onChange={handleCheckboxChange(record?.key, "own", "edit")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.edit}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "edit"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasEdit =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "edit");
+              return hasEdit ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.edit)}
+                  onChange={handleCheckboxChange(record?.key, "own", "edit")}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -327,27 +305,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="View"
             dataIndex="own-view"
             key="own-view"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.own?.view}
-            //     onChange={handleCheckboxChange(record?.key, "own", "view")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.view}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "view"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasView =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "view");
+              return hasView ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.view)}
+                  onChange={handleCheckboxChange(record?.key, "own", "view")}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -355,27 +322,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="Delete"
             dataIndex="own-delete"
             key="own-delete"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.own?.delete}
-            //     onChange={handleCheckboxChange(record?.key, "own", "delete")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.delete}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "delete"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasDelete =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "delete");
+              return hasDelete ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.delete)}
+                  onChange={handleCheckboxChange(record?.key, "own", "delete")}
+                />
+              ) : "-";
             }}
           />
         </ColumnGroup>
@@ -385,27 +341,20 @@ const UserRoleTable = ({ data, setData }) => {
             title="Create"
             dataIndex="other-create"
             key="other-create"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.other?.create}
-            //     onChange={handleCheckboxChange(record?.key, "other", "create")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.create}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "create"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasCreate =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "create");
+              return hasCreate ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.create)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "other",
+                    "create"
+                  )}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -413,27 +362,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="Edit"
             dataIndex="other-edit"
             key="other-edit"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.other?.edit}
-            //     onChange={handleCheckboxChange(record?.key, "other", "edit")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.edit}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "edit"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasEdit =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "edit");
+              return hasEdit ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.edit)}
+                  onChange={handleCheckboxChange(record?.key, "other", "edit")}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -441,27 +379,16 @@ const UserRoleTable = ({ data, setData }) => {
             title="View"
             dataIndex="other-view"
             key="other-view"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.other?.view}
-            //     onChange={handleCheckboxChange(record?.key, "other", "view")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.view}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "view"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasView =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "view");
+              return hasView ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.view)}
+                  onChange={handleCheckboxChange(record?.key, "other", "view")}
+                />
+              ) : "-";
             }}
           />
           <Column
@@ -469,27 +396,20 @@ const UserRoleTable = ({ data, setData }) => {
             title="Delete"
             dataIndex="other-delete"
             key="other-delete"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.other?.delete}
-            //     onChange={handleCheckboxChange(record?.key, "other", "delete")}
-            //   />
-            // )}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.delete}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "delete"
-                      )}
-                    />
-                  ) : null}
-                </>
-              );
+              const hasDelete =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "delete");
+              return hasDelete ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.delete)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "other",
+                    "delete"
+                  )}
+                />
+              ) : "-";
             }}
           />
         </ColumnGroup>

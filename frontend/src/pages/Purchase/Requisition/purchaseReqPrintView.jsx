@@ -311,7 +311,6 @@ const PurchaseReqPrintView = () => {
     getData();
     getBusinessDetails();
   }, []);
-  console.log(queryData);
 
   return (
     <>
