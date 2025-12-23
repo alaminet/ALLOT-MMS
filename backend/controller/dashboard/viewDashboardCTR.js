@@ -8,7 +8,6 @@ const WebSetting = require("../../model/webSetting");
 
 async function viewDashboardCTR(req, res) {
   const data = req.body;
-
   try {
     const orgId = req.orgId;
     const actionBy = req.actionBy;
@@ -152,7 +151,7 @@ async function viewDashboardCTR(req, res) {
       MOquery.costCenter = { $ne: memberDlts.costCenter._id };
     }
 
-    // 4. Get PR Approval List
+    // 4. Get MO Approval List
     const MOApprovalList = [];
     if (MOstatuses?.length) {
       await MoveOrder.find(MOquery)
@@ -191,231 +190,249 @@ async function viewDashboardCTR(req, res) {
     const startOfYear = new Date(now.getFullYear(), 0, 1);
     const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
 
+    // base query for tnx details
     const baseQuery = {
       orgId,
       tnxQty: { $lte: 0 },
       isDeleted: false,
     };
-
-    if (!memberDlts.isAdmin) {
-      baseQuery.costCenter = costCenter;
-    }
-
-    //   last 10 transactions
-    const recentTransactions = await TrnxDetails.find(baseQuery)
-      .sort({ issuedAt: -1 }) // newest first
-      .select("itemName tnxQty itemPrice issuedAt tnxRef")
-      .limit(10)
-      .lean();
-
-    // last 10 PR
+    // base query for PR
     const baseQueryPR = {
       orgId,
       isDeleted: false,
       "itemDetails.isDeleted": false,
     };
-    if (!memberDlts.isAdmin) {
-      baseQueryPR.costCenter = memberDlts.costCenter._id;
-    }
-    const recentPurchaseReqs = await PurchaseReq.find(baseQueryPR)
-      .sort({ createdAt: -1 }) // newest first
-      .select("createdAt code type itemDetails requestedBy")
-      .limit(10)
-      .lean();
+    let recentTransactions = [];
+    let recentPurchaseReqs = [];
+    let webSettings = {};
+    let dailySummary = {};
+    let weeklySummary = {};
+    let monthlySummary = {};
+    let weeklyPRSummary = {};
+    let monthlyPRSummary = {};
+    let sevenDayBreakdown = {};
+    let monthlyBreakdown = {};
+    let liqStock = [];
+    let typeWiseStock = [];
+    if (data?.scope) {
+      if (data?.scope === "own") {
+        baseQuery["costCenter"] = costCenter;
+        baseQueryPR["costCenter"] = memberDlts.costCenter._id;
+      } else if (data?.scope === "others") {
+        baseQuery["costCenter"] = { $ne: costCenter };
+        baseQueryPR["costCenter"] = { $ne: memberDlts.costCenter._id };
+      }
 
-    const [daily, weekly, monthly, last7Days, yearly, weeklyPR, monthlyPR] =
-      await Promise.all([
-        TrnxDetails.find({
-          ...baseQuery,
-          documentAt: { $gte: startOfToday, $lte: endOfNow },
-        }).lean(),
-        TrnxDetails.find({
-          ...baseQuery,
-          documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
-        }).lean(),
-        TrnxDetails.find({
-          ...baseQuery,
-          documentAt: { $gte: startOfMonth, $lte: endOfNow },
-        }).lean(),
-        TrnxDetails.find({
-          ...baseQuery,
-          documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
-        }).lean(),
-        TrnxDetails.find({
-          ...baseQuery,
-          documentAt: { $gte: startOfYear, $lte: endOfYear },
-        }).lean(),
+      //   last 10 transactions
+      recentTransactions = await TrnxDetails.find(baseQuery)
+        .sort({ issuedAt: -1 }) // newest first
+        .select("itemName tnxQty itemPrice issuedAt tnxRef")
+        .limit(10)
+        .lean();
 
-        // for PR details
-        PurchaseReq.find({
-          ...baseQueryPR,
-          createdAt: { $gte: sevenDaysAgo, $lte: endOfNow },
-        }).lean(),
-        PurchaseReq.find({
-          ...baseQueryPR,
-          createdAt: { $gte: startOfMonth, $lte: endOfNow },
-        }).lean(),
-      ]);
+      // last 10 PR
+      recentPurchaseReqs = await PurchaseReq.find(baseQueryPR)
+        .sort({ createdAt: -1 }) // newest first
+        .select("createdAt code type itemDetails requestedBy")
+        .limit(10)
+        .lean();
 
-    // for Tnx details
-    const sumQty = (arr) => arr.reduce((sum, d) => sum + (d.tnxQty || 0), 0);
-    const sumVal = (arr) =>
-      arr.reduce((sum, d) => sum + (d.itemPrice || 0) * (d.tnxQty || 0), 0);
+      // Graph Data Collections
+      const [daily, weekly, monthly, last7Days, yearly, weeklyPR, monthlyPR] =
+        await Promise.all([
+          TrnxDetails.find({
+            ...baseQuery,
+            documentAt: { $gte: startOfToday, $lte: endOfNow },
+          }).lean(),
+          TrnxDetails.find({
+            ...baseQuery,
+            documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+          }).lean(),
+          TrnxDetails.find({
+            ...baseQuery,
+            documentAt: { $gte: startOfMonth, $lte: endOfNow },
+          }).lean(),
+          TrnxDetails.find({
+            ...baseQuery,
+            documentAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+          }).lean(),
+          TrnxDetails.find({
+            ...baseQuery,
+            documentAt: { $gte: startOfYear, $lte: endOfYear },
+          }).lean(),
 
-    // for PR details
-    const sumPRQty = (arr) =>
-      arr?.reduce((total, doc) => {
-        const itemSum =
-          doc?.itemDetails
-            ?.filter((d) => d?.isDeleted === false)
-            .reduce((sum, d) => sum + (d?.reqQty || 0), 0) || 0;
-        return total + itemSum;
-      }, 0);
-    const sumPRVal = (arr) =>
-      arr?.reduce((total, doc) => {
-        const itemSum =
-          doc?.itemDetails
-            ?.filter((d) => d?.isDeleted === false)
-            .reduce(
-              (sum, d) => sum + (d?.unitPrice || 0) * (d?.reqQty || 0),
-              0
-            ) || 0;
-        return total + itemSum;
-      }, 0);
+          // for PR details
+          PurchaseReq.find({
+            ...baseQueryPR,
+            createdAt: { $gte: sevenDaysAgo, $lte: endOfNow },
+          }).lean(),
+          PurchaseReq.find({
+            ...baseQueryPR,
+            createdAt: { $gte: startOfMonth, $lte: endOfNow },
+          }).lean(),
+        ]);
 
-    const dailySummary = {
-      qty: sumQty(daily),
-      value: Math.round(sumVal(daily)),
-    };
+      // for Tnx details
+      const sumQty = (arr) => arr.reduce((sum, d) => sum + (d.tnxQty || 0), 0);
+      const sumVal = (arr) =>
+        arr.reduce((sum, d) => sum + (d.itemPrice || 0) * (d.tnxQty || 0), 0);
 
-    const weeklySummary = {
-      qty: sumQty(weekly),
-      value: Math.round(sumVal(weekly)),
-    };
+      // for PR details
+      const sumPRQty = (arr) =>
+        arr?.reduce((total, doc) => {
+          const itemSum =
+            doc?.itemDetails
+              ?.filter((d) => d?.isDeleted === false)
+              .reduce((sum, d) => sum + (d?.reqQty || 0), 0) || 0;
+          return total + itemSum;
+        }, 0);
+      const sumPRVal = (arr) =>
+        arr?.reduce((total, doc) => {
+          const itemSum =
+            doc?.itemDetails
+              ?.filter((d) => d?.isDeleted === false)
+              .reduce(
+                (sum, d) => sum + (d?.unitPrice || 0) * (d?.reqQty || 0),
+                0
+              ) || 0;
+          return total + itemSum;
+        }, 0);
 
-    const monthlySummary = {
-      qty: sumQty(monthly),
-      value: Math.round(sumVal(monthly) || 0),
-    };
-
-    const weeklyPRSummary = {
-      qty: sumPRQty(weeklyPR),
-      value: Math.round(sumPRVal(weeklyPR)),
-    };
-
-    const monthlyPRSummary = {
-      qty: sumPRQty(monthlyPR),
-      value: Math.round(sumPRVal(monthlyPR)),
-    };
-    const sevenDayBreakdown = {};
-    // Step 1: Pre-fill keys 1–7 with actual date names
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(now);
-      date.setDate(now.getDate() - (6 - i)); // oldest to newest
-      const key = i + 1; // numeric key: 1 to 7
-      sevenDayBreakdown[key] = {
-        qty: 0,
-        value: 0,
-        name: date.toISOString().slice(0, 10), // "YYYY-MM-DD"
+      dailySummary = {
+        qty: sumQty(daily),
+        value: Math.round(sumVal(daily)),
       };
-    }
 
-    // Step 2: Merge actual transaction data
-    for (const tx of last7Days) {
-      const txDate = new Date(tx.issuedAt).toISOString().slice(0, 10); // "YYYY-MM-DD"
-      // Match transaction date to one of the 7 pre-filled entries
-      for (let i = 1; i <= 7; i++) {
-        if (sevenDayBreakdown[i].name === txDate) {
-          const qty = tx.tnxQty || 0;
-          const price = tx.itemPrice || 0;
-          const value = price * qty;
-          sevenDayBreakdown[i].qty += qty;
-          sevenDayBreakdown[i].value += Math.round(value);
-          break;
+      weeklySummary = {
+        qty: sumQty(weekly),
+        value: Math.round(sumVal(weekly)),
+      };
+
+      monthlySummary = {
+        qty: sumQty(monthly),
+        value: Math.round(sumVal(monthly) || 0),
+      };
+
+      weeklyPRSummary = {
+        qty: sumPRQty(weeklyPR),
+        value: Math.round(sumPRVal(weeklyPR)),
+      };
+
+      monthlyPRSummary = {
+        qty: sumPRQty(monthlyPR),
+        value: Math.round(sumPRVal(monthlyPR)),
+      };
+
+      // Step 1: Pre-fill keys 1–7 with actual date names
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(now);
+        date.setDate(now.getDate() - (6 - i)); // oldest to newest
+        const key = i + 1; // numeric key: 1 to 7
+        sevenDayBreakdown[key] = {
+          qty: 0,
+          value: 0,
+          name: date.toISOString().slice(0, 10), // "YYYY-MM-DD"
+        };
+      }
+
+      // Step 2: Merge actual transaction data
+      for (const tx of last7Days) {
+        const txDate = new Date(tx.issuedAt).toISOString().slice(0, 10); // "YYYY-MM-DD"
+        // Match transaction date to one of the 7 pre-filled entries
+        for (let i = 1; i <= 7; i++) {
+          if (sevenDayBreakdown[i].name === txDate) {
+            const qty = tx.tnxQty || 0;
+            const price = tx.itemPrice || 0;
+            const value = price * qty;
+            sevenDayBreakdown[i].qty += qty;
+            sevenDayBreakdown[i].value += Math.round(value);
+            break;
+          }
         }
       }
-    }
 
-    //Monthly Qty & Values
-    const monthNames = [
-      "JAN",
-      "FEB",
-      "MAR",
-      "APR",
-      "MAY",
-      "JUN",
-      "JUL",
-      "AUG",
-      "SEP",
-      "OCT",
-      "NOV",
-      "DEC",
-    ];
-    const monthlyBreakdown = {};
-    for (let m = 0; m < 12; m++) {
-      const key = m + 1; // 1 to 12
-      monthlyBreakdown[key] = { qty: 0, value: 0, name: monthNames[m] };
-    }
-    for (const tx of yearly) {
-      const date = new Date(tx.issuedAt);
-      const monthKey = date.getMonth() + 1; // 1 to 12
+      //Monthly Qty & Values
+      const monthNames = [
+        "JAN",
+        "FEB",
+        "MAR",
+        "APR",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG",
+        "SEP",
+        "OCT",
+        "NOV",
+        "DEC",
+      ];
 
-      if (!monthlyBreakdown[monthKey]) {
-        monthlyBreakdown[monthKey] = { qty: 0, value: 0 };
+      // Monthly Breakdown
+      for (let m = 0; m < 12; m++) {
+        const key = m + 1; // 1 to 12
+        monthlyBreakdown[key] = { qty: 0, value: 0, name: monthNames[m] };
       }
-      const qty = tx.tnxQty || 0;
-      const price = tx.itemPrice || 0;
-      const value = price * qty;
-      monthlyBreakdown[monthKey].qty += qty;
-      monthlyBreakdown[monthKey].value += Math.round(value);
-    }
+      for (const tx of yearly) {
+        const date = new Date(tx.issuedAt);
+        const monthKey = date.getMonth() + 1; // 1 to 12
 
-    //   Liqued Stock - include `limit` value from webSettings.dashboard.waterChart
-    const webSettings = await WebSetting.findOne({ orgId: orgId });
-    const waterChart = webSettings.dashboard.waterChart || [];
-    const skus = waterChart.map((w) => w.SKU).filter(Boolean);
+        if (!monthlyBreakdown[monthKey]) {
+          monthlyBreakdown[monthKey] = { qty: 0, value: 0 };
+        }
+        const qty = tx.tnxQty || 0;
+        const price = tx.itemPrice || 0;
+        const value = price * qty;
+        monthlyBreakdown[monthKey].qty += qty;
+        monthlyBreakdown[monthKey].value += Math.round(value);
+      }
 
-    const liqStockRaw = await ItemInfo.find({
-      SKU: { $in: skus },
-    }).lean();
+      //   Liqued Stock - include `limit` value from webSettings.dashboard.waterChart
+      webSettings = await WebSetting.findOne({ orgId: orgId });
+      const waterChart = webSettings.dashboard.waterChart || [];
+      const skus = waterChart.map((w) => w.SKU).filter(Boolean);
 
-    // Build a map from SKU -> limit (if limit field exists on the waterChart entries)
-    const limitMap = waterChart.reduce((acc, w) => {
-      if (w && w.SKU) acc[String(w.SKU)] = w.Limit ?? null;
-      return acc;
-    }, {});
+      const liqStockRaw = await ItemInfo.find({
+        SKU: { $in: skus },
+      }).lean();
 
-    // Attach `limit` to each liqStock item based on its SKU
-    const liqStock = liqStockRaw.map((it) => ({
-      SKU: it.SKU,
-      name: it.name,
-      onHand: it.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0) || 0,
-      limit: limitMap[String(it.SKU)] ?? null,
-    }));
+      // Build a map from SKU -> limit (if limit field exists on the waterChart entries)
+      const limitMap = waterChart.reduce((acc, w) => {
+        if (w && w.SKU) acc[String(w.SKU)] = w.Limit ?? null;
+        return acc;
+      }, {});
 
-    // Type wise stock
-    const typeWiseStock = await ItemInfo.aggregate([
-      { $match: { orgId, isDeleted: false } },
-      { $unwind: "$stock" },
-      {
-        $lookup: {
-          from: "item_types",
-          localField: "type",
-          foreignField: "_id",
-          as: "typeInfo",
-        },
-      },
-      { $unwind: "$typeInfo" },
-      {
-        $group: {
-          _id: "$typeInfo.name",
-          totalQty: { $sum: "$stock.onHandQty" },
-          totalValue: {
-            $sum: { $multiply: ["$stock.onHandQty", "$avgPrice"] },
+      // Attach `limit` to each liqStock item based on its SKU
+      liqStock = liqStockRaw.map((it) => ({
+        SKU: it.SKU,
+        name: it.name,
+        onHand: it.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0) || 0,
+        limit: limitMap[String(it.SKU)] ?? null,
+      }));
+
+      // Type wise stock
+      typeWiseStock = await ItemInfo.aggregate([
+        { $match: { orgId, isDeleted: false } },
+        { $unwind: "$stock" },
+        {
+          $lookup: {
+            from: "item_types",
+            localField: "type",
+            foreignField: "_id",
+            as: "typeInfo",
           },
         },
-      },
-    ]);
+        { $unwind: "$typeInfo" },
+        {
+          $group: {
+            _id: "$typeInfo.name",
+            totalQty: { $sum: "$stock.onHandQty" },
+            totalValue: {
+              $sum: { $multiply: ["$stock.onHandQty", "$avgPrice"] },
+            },
+          },
+        },
+      ]);
+    }
 
     res.status(200).send({
       message: "Dashboard data retrieved",

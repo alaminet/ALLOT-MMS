@@ -34,6 +34,9 @@ const Dashboard = () => {
 
   // User Permission Check
   const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
+  //Data View
+  const ownView = canDoOwn("dashboard", "view");
+  const othersView = canDoOther("dashboard", "view");
   // PO Access
   const ownPOCheck = canAuthOwn("purchase-order", "check");
   const othersPOCheck = canAuthOther("purchase-order", "check");
@@ -77,6 +80,16 @@ const Dashboard = () => {
     return null;
   }
   const getDashboardData = async () => {
+    // Report View Scope
+    const scope =
+      ownView && othersView
+        ? "all"
+        : ownView
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
+
     // PO Scope
     const scopePOCheck = getScopeValue(ownPOCheck, othersPOCheck);
     const scopePOConfirm = getScopeValue(ownPOConfirm, othersPOConfirm);
@@ -95,6 +108,7 @@ const Dashboard = () => {
 
     // Assign only if not null
     const payload = {
+      scope,
       ...(scopePOCheck && { scopePOCheck }),
       ...(scopePOConfirm && { scopePOConfirm }),
       ...(scopePOApprove && { scopePOApprove }),
@@ -155,127 +169,132 @@ const Dashboard = () => {
           </Flex>
         </Col>
       </Row>
-      <Row
-        style={{ marginTop: "16px" }}
-        justify="space-between"
-        gutter={[16, 16]}>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(dashboardData?.daily?.value)}(${Math.abs(
-                dashboardData?.daily?.qty
-              )})`}>
-              <Statistic
-                title="Today Order(Qty)"
-                value={formatNumber(Math.abs(dashboardData?.daily?.value))}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowUpOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.daily?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(
-                dashboardData?.last7Days[6]?.value
-              )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}>
-              <Statistic
-                title="Lastday Order(Qty)"
-                value={formatNumber(
-                  Math.abs(dashboardData?.last7Days[6]?.value)
-                )}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowDownOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.last7Days[6]?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(dashboardData?.weekly?.value)}(${Math.abs(
-                dashboardData?.weekly?.qty
-              )})`}>
-              <Statistic
-                title="Weekly Order(Qty)"
-                value={formatNumber(Math.abs(dashboardData?.weekly?.value))}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowDownOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.weekly?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(dashboardData?.monthly?.value)}(${Math.abs(
-                dashboardData?.monthly?.qty
-              )})`}>
-              <Statistic
-                title="Monthly Order(Qty)"
-                value={formatNumber(Math.abs(dashboardData?.monthly?.value))}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowDownOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.monthly?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(dashboardData?.weeklyPR?.value)}(${Math.abs(
-                dashboardData?.weeklyPR?.qty
-              )})`}>
-              <Statistic
-                title="Weekly PR(Qty)"
-                value={formatNumber(Math.abs(dashboardData?.weeklyPR?.value))}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowDownOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.weeklyPR?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-        <Col xs={12} md={8} lg={4}>
-          <Card variant="borderless">
-            <Tooltip
-              title={`${Math.abs(dashboardData?.monthlyPR?.value)}(${Math.abs(
-                dashboardData?.monthlyPR?.qty
-              )})`}>
-              <Statistic
-                title="Monthly PR(Qty)"
-                value={formatNumber(Math.abs(dashboardData?.monthlyPR?.value))}
-                precision={0}
-                valueStyle={{ color: "#cf1322" }}
-                // prefix={<ArrowDownOutlined />}
-                suffix={`(${formatNumber(
-                  Math.abs(dashboardData?.monthlyPR?.qty)
-                )})`}
-              />
-            </Tooltip>
-          </Card>
-        </Col>
-      </Row>
+      {ownView || othersView ? (
+        <Row
+          style={{ marginTop: "16px" }}
+          justify="space-between"
+          gutter={[16, 16]}>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(dashboardData?.daily?.value)}(${Math.abs(
+                  dashboardData?.daily?.qty
+                )})`}>
+                <Statistic
+                  title="Today Order(Qty)"
+                  value={formatNumber(Math.abs(dashboardData?.daily?.value))}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowUpOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.daily?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(
+                  dashboardData?.last7Days[6]?.value
+                )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}>
+                <Statistic
+                  title="Lastday Order(Qty)"
+                  value={formatNumber(
+                    Math.abs(dashboardData?.last7Days[6]?.value)
+                  )}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowDownOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.last7Days[6]?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(dashboardData?.weekly?.value)}(${Math.abs(
+                  dashboardData?.weekly?.qty
+                )})`}>
+                <Statistic
+                  title="Weekly Order(Qty)"
+                  value={formatNumber(Math.abs(dashboardData?.weekly?.value))}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowDownOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.weekly?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(dashboardData?.monthly?.value)}(${Math.abs(
+                  dashboardData?.monthly?.qty
+                )})`}>
+                <Statistic
+                  title="Monthly Order(Qty)"
+                  value={formatNumber(Math.abs(dashboardData?.monthly?.value))}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowDownOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.monthly?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(dashboardData?.weeklyPR?.value)}(${Math.abs(
+                  dashboardData?.weeklyPR?.qty
+                )})`}>
+                <Statistic
+                  title="Weekly PR(Qty)"
+                  value={formatNumber(Math.abs(dashboardData?.weeklyPR?.value))}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowDownOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.weeklyPR?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+          <Col xs={12} md={8} lg={4}>
+            <Card variant="borderless">
+              <Tooltip
+                title={`${Math.abs(dashboardData?.monthlyPR?.value)}(${Math.abs(
+                  dashboardData?.monthlyPR?.qty
+                )})`}>
+                <Statistic
+                  title="Monthly PR(Qty)"
+                  value={formatNumber(
+                    Math.abs(dashboardData?.monthlyPR?.value)
+                  )}
+                  precision={0}
+                  valueStyle={{ color: "#cf1322" }}
+                  // prefix={<ArrowDownOutlined />}
+                  suffix={`(${formatNumber(
+                    Math.abs(dashboardData?.monthlyPR?.qty)
+                  )})`}
+                />
+              </Tooltip>
+            </Card>
+          </Col>
+        </Row>
+      ) : null}
+
       <Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
         {dashboardData?.PRApprovalList?.length > 0 && (
           <Col xs={24} lg={8}>
