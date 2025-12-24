@@ -1,11 +1,56 @@
 import { Table } from "antd";
 import { CheckSquareTwoTone, CloseSquareTwoTone } from "@ant-design/icons";
+import { useMemo } from "react";
 const { Column, ColumnGroup } = Table;
 
 const UserRoleViewTable = ({ data }) => {
+  // Row Data
+  const initialData = [
+    {
+      key: "dashboard",
+      module: "Dashboard",
+      pageAccess: { view: true },
+      own: { view: false },
+      other: { view: false },
+    },
+    {
+      key: "user",
+      module: "User",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+
+    // {
+    //   key: "settings",
+    //   module: "Settings",
+    //   pageAccess: { view: false },
+    //   own: { create: false, edit: false, view: false, delete: false },
+    //   other: { create: false, edit: false, view: false, delete: false },
+    // },
+  ];
+
+  const mergedValue = useMemo(() => {
+    return initialData.map((item) => {
+      const override = data?.find((d) => d.key === item.key);
+      if (!override) return item;
+      return {
+        ...item,
+        ...override,
+        // Keep null for other/own when the base item doesn't define them
+        other: item.other
+          ? { ...item.other, ...override?.other }
+          : override?.other ?? null,
+        own: item.own
+          ? { ...item.own, ...override?.own }
+          : override?.own ?? null,
+        pageAccess: { ...item.pageAccess, ...override?.pageAccess },
+      };
+    });
+  }, [data]);
   return (
     <>
-      <Table bordered pagination={false} dataSource={data} sticky>
+      <Table bordered pagination={false} dataSource={mergedValue} sticky>
         <ColumnGroup title="Access Point">
           <Column title="Module" dataIndex="module" key="module" />
           <Column

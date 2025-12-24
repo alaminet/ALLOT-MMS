@@ -1,11 +1,40 @@
 import { Table } from "antd";
 import { CheckSquareTwoTone, CloseSquareTwoTone } from "@ant-design/icons";
+import { initInputToken } from "antd/es/input/style";
+import { useMemo } from "react";
 const { Column, ColumnGroup } = Table;
 
 const UserAuthorizationViewTable = ({ data }) => {
+  // Row Data
+  const initialData = [
+    {
+      key: "purchase-order",
+      module: "Purchase Order",
+      own: { check: false, confirm: false, approve: false, hold: false },
+      other: { check: false, confirm: false, approve: false, hold: false },
+    },
+  ];
+  // Data marged with inititaldata
+  const mergedValue = useMemo(() => {
+    return initialData.map((item) => {
+      const override = data?.find((d) => d.key === item.key);
+      if (!override) return item;
+      return {
+        ...item,
+        ...override,
+        // Keep null for other/own when the base item doesn't define them
+        other: item.other
+          ? { ...item.other, ...override?.other }
+          : override?.other ?? null,
+        own: item.own
+          ? { ...item.own, ...override?.own }
+          : override?.own ?? null,
+      };
+    });
+  }, [data]);
   return (
     <>
-      <Table bordered pagination={false} dataSource={data} sticky>
+      <Table bordered pagination={false} dataSource={mergedValue} sticky>
         <ColumnGroup title="Authorization Point">
           <Column title="Module" dataIndex="module" key="module" />
         </ColumnGroup>

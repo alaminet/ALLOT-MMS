@@ -160,7 +160,7 @@ const BasicLayout = () => {
     ...filterMenuItems(items, allowedKeys),
     {
       key: "profile",
-      icon: <LockOutlined />,
+      icon: <UserOutlined />,
       label: "Profile",
       onClick: () => navigate("/profile"),
     },
