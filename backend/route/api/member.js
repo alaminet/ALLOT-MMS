@@ -6,12 +6,13 @@ const secureJWT = require("../../middleware/secureJWT");
 const viewAllMemberCTR = require("../../controller/member/viewAllMemberCTR");
 const updateMemberCTR = require("../../controller/member/updateMemberCTR");
 const getAccessCTR = require("../../controller/authentication/getAccessCTR");
+const changePasswordCTR = require("../../controller/member/changePasswordCTR");
 
 const route = express.Router();
 
 route.post("/new", secureJWT, createMemberCTR);
 route.post("/login", secureAPI, loginCTR);
-// route.post("/change-password", secureJWT, changesPasswordController);
+route.post("/change-password", secureAPI, secureJWT, changePasswordCTR);
 // route.post("/reset-password", resetPasswordController);
 // route.post("/forgot-password", forgotPasswordController);
 

@@ -25,6 +25,9 @@ async function updateMemberCTR(req, res, next) {
           expiresIn: "9h",
         });
         bcrypt.hash(updatedData?.password, 10, async function (err, hash) {
+          if (err) {
+            return res.status(500).send({ error: "Error hashing password" });
+          }
           updatedData.password = hash;
           updatedData.token = token;
           updatedMember = await Member.findByIdAndUpdate(id, updatedData, {

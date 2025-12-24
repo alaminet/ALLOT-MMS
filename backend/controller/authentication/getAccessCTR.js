@@ -17,16 +17,16 @@ async function getAccessCTR(req, res) {
         res.status(200).send({
           message: "Access retrieved successfully",
           member: {
-            id: existingMember._id,
-            name: existingMember.name,
-            email: existingMember.email,
-            phone: existingMember.phone,
-            costCenter: existingMember.costCenter._id,
-            costCenterName: existingMember.costCenter.name,
-            access: existingMember.access,
-            authorization: existingMember.authorization,
-            isAdmin: existingMember.isAdmin,
-            token: existingMember.token,
+            id: existingMember?._id,
+            name: existingMember?.name,
+            email: existingMember?.email,
+            phone: existingMember?.phone,
+            costCenter: existingMember?.costCenter?._id,
+            costCenterName: existingMember?.costCenter?.name,
+            access: existingMember?.access,
+            authorization: existingMember?.authorization,
+            isAdmin: existingMember?.isAdmin,
+            token: existingMember?.token,
           },
         });
       }

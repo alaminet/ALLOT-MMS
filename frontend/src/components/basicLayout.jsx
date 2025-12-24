@@ -16,6 +16,7 @@ import {
   ShoppingCartOutlined,
   TeamOutlined,
   UserOutlined,
+  LockOutlined,
 } from "@ant-design/icons";
 import {
   Layout,
@@ -157,6 +158,12 @@ const BasicLayout = () => {
 
   const menuItems = [
     ...filterMenuItems(items, allowedKeys),
+    {
+      key: "profile",
+      icon: <LockOutlined />,
+      label: "Profile",
+      onClick: () => navigate("/profile"),
+    },
     {
       key: "logout",
       icon: <LogoutOutlined />,

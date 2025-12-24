@@ -60,6 +60,7 @@ import PurchaseReport from "./pages/Purchase/Report/index.jsx";
 import PurchaseReportView from "./pages/Purchase/Report/purchaseReportView.jsx";
 import MOReport from "./pages/Transaction/MOReport/index.jsx";
 import MoReportTable from "./pages/Transaction/MOReport/moReportTable.jsx";
+import Profile from "./pages/Profile/index.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -71,6 +72,7 @@ function App() {
             <Route path="" element={<Home />} />
             <Route path="/dashboard" element={<Home />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/user" element={<User />}>
               <Route path="" element={<UserTable />} />
               <Route path="new" element={<UserNew />} />
