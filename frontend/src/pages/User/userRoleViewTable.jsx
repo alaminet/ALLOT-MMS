@@ -30,60 +30,80 @@ const UserRoleViewTable = ({ data }) => {
             title="Create"
             dataIndex="own-create"
             key="own-create"
-            render={(_, record) =>
-              record.own ? (
+            render={(_, record) => {
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "create");
+              return hasField ? (
                 record.own?.create ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="Edit"
             dataIndex="own-edit"
             key="own-edit"
-            render={(_, record) =>
-              record.own ? (
+            render={(_, record) => {
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "edit");
+              return hasField ? (
                 record.own?.edit ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="View"
             dataIndex="own-view"
             key="own-view"
-            render={(_, record) =>
-              record.own ? (
+            render={(_, record) => {
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "view");
+              return hasField ? (
                 record.own?.view ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="Delete"
             dataIndex="own-delete"
             key="own-delete"
-            render={(_, record) =>
-              record.own ? (
+            render={(_, record) => {
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "delete");
+              return hasField ? (
                 record.own?.delete ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
         </ColumnGroup>
         <ColumnGroup title="Others Data">
@@ -92,60 +112,80 @@ const UserRoleViewTable = ({ data }) => {
             title="Create"
             dataIndex="other-create"
             key="other-create"
-            render={(_, record) =>
-              record.other ? (
+            render={(_, record) => {
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "create");
+              return hasField ? (
                 record.other?.create ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="Edit"
             dataIndex="other-edit"
             key="other-edit"
-            render={(_, record) =>
-              record.other ? (
+            render={(_, record) => {
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "edit");
+              return hasField ? (
                 record.other?.edit ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="View"
             dataIndex="other-view"
             key="other-view"
-            render={(_, record) =>
-              record.other ? (
+            render={(_, record) => {
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "view");
+              return hasField ? (
                 record.other?.view ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
           <Column
             align="center"
             title="Delete"
             dataIndex="other-delete"
             key="other-delete"
-            render={(_, record) =>
-              record.other ? (
+            render={(_, record) => {
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "delete");
+              return hasField ? (
                 record.other?.delete ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
-            }
+              ) : (
+                "-"
+              );
+            }}
           />
         </ColumnGroup>
       </Table>

@@ -25,9 +25,6 @@ async function updatePurchaseReqCTR(req, res, next) {
           },
           { new: true }
         );
-        res.status(200).send({
-          message: "Line Deleted",
-        });
 
         // matched line items
         const matchedItem = changedData.itemDetails.find(
@@ -41,6 +38,33 @@ async function updatePurchaseReqCTR(req, res, next) {
           action: `"${matchedItem?.name}" deleted from PR "${changedData.code}"`,
         };
         req.log = logData;
+        return res.status(200).send({
+          message: "Line Deleted",
+        });
+        next();
+      } else if (updatedData.status) {
+        const changedData = await PurchaseReq.findByIdAndUpdate(
+          id,
+          {
+            ...updatedData,
+            updatedBy: req.actionBy,
+          },
+          {
+            new: true,
+          }
+        ); // Exclude sensitive fields
+
+        // Add Log activities
+        const logData = {
+          orgId: req.orgId,
+          id: req.actionBy,
+          refModel: "Purchase-Requisition",
+          action: `PR "${changedData.code}" updated`,
+        };
+        req.log = logData;
+        return res.status(200).send({
+          message: "Data updated",
+        });
         next();
       } else {
         const changedData = await PurchaseReq.findByIdAndUpdate(
@@ -70,17 +94,11 @@ async function updatePurchaseReqCTR(req, res, next) {
             })),
             updatedBy: req.actionBy,
           },
-          // {
-          //   ...updatedData,
-          //   updatedBy: req.actionBy,
-          // },
           {
             new: true,
           }
         ); // Exclude sensitive fields
-        res.status(200).send({
-          message: "Data updated",
-        });
+
         // Add Log activities
         const logData = {
           orgId: req.orgId,
@@ -89,6 +107,9 @@ async function updatePurchaseReqCTR(req, res, next) {
           action: `PR "${changedData.code}" updated`,
         };
         req.log = logData;
+        return res.status(200).send({
+          message: "Data updated",
+        });
         next();
       }
     }

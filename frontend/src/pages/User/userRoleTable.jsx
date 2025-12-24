@@ -280,7 +280,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.own?.create)}
                   onChange={handleCheckboxChange(record?.key, "own", "create")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -297,7 +299,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.own?.edit)}
                   onChange={handleCheckboxChange(record?.key, "own", "edit")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -314,7 +318,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.own?.view)}
                   onChange={handleCheckboxChange(record?.key, "own", "view")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -331,7 +337,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.own?.delete)}
                   onChange={handleCheckboxChange(record?.key, "own", "delete")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
         </ColumnGroup>
@@ -354,7 +362,9 @@ const UserRoleTable = ({ data, setData }) => {
                     "create"
                   )}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -371,7 +381,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.other?.edit)}
                   onChange={handleCheckboxChange(record?.key, "other", "edit")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -388,7 +400,9 @@ const UserRoleTable = ({ data, setData }) => {
                   checked={Boolean(record?.other?.view)}
                   onChange={handleCheckboxChange(record?.key, "other", "view")}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
           <Column
@@ -409,7 +423,9 @@ const UserRoleTable = ({ data, setData }) => {
                     "delete"
                   )}
                 />
-              ) : "-";
+              ) : (
+                "-"
+              );
             }}
           />
         </ColumnGroup>

@@ -10,7 +10,7 @@ const UserAuthorizationTable = ({ data, setData }) => {
     {
       key: "purchase-requisition",
       module: "Purchase Requisition",
-      own: { check: false, confirm: false, approve: false, hold: false },
+      own: { confirm: false, approve: false, hold: false },
       other: { check: false, confirm: false, approve: false, hold: false },
     },
     {
@@ -79,7 +79,6 @@ const UserAuthorizationTable = ({ data, setData }) => {
         },
       };
     });
-
     setData(newData);
   };
 
@@ -92,30 +91,32 @@ const UserAuthorizationTable = ({ data, setData }) => {
       const isSelected = newSelectedRowKeys.includes(row.key);
 
       if (!wasSelected && isSelected) {
-        // Newly selected: grant full permissions
+        // Newly selected: grant permissions only for existing keys
+        const grantPermissions = (group) =>
+          group
+            ? Object.fromEntries(Object.keys(group).map((k) => [k, true]))
+            : null;
+
         return {
           ...row,
-          // Only set own/other if those groups exist for this module; otherwise keep null
-          own: row.own
-            ? { check: true, confirm: true, approve: true, hold: true }
-            : null,
-          other: row.other
-            ? { check: true, confirm: true, approve: true, hold: true }
-            : null,
+          pageAccess: { view: true },
+          own: grantPermissions(row.own),
+          other: grantPermissions(row.other),
         };
       }
 
       if (wasSelected && !isSelected) {
-        // Newly deselected: reset permissions
+        // Newly deselected: reset permissions only for existing keys
+        const revokePermissions = (group) =>
+          group
+            ? Object.fromEntries(Object.keys(group).map((k) => [k, false]))
+            : null;
+
         return {
           ...row,
-
-          own: row.own
-            ? { check: false, confirm: false, approve: false, hold: false }
-            : null,
-          other: row.other
-            ? { check: false, confirm: false, approve: false, hold: false }
-            : null,
+          pageAccess: { view: false },
+          own: revokePermissions(row.own),
+          other: revokePermissions(row.other),
         };
       }
 
@@ -140,8 +141,7 @@ const UserAuthorizationTable = ({ data, setData }) => {
         dataSource={mergedValue}
         rowSelection={rowSelection}
         sticky
-        scroll={{ x: 1200 }}
-      >
+        scroll={{ x: 1200 }}>
         <ColumnGroup title="Authorization Point">
           <Column title="Module" dataIndex="module" key="module" fixed="left" />
         </ColumnGroup>
@@ -151,20 +151,33 @@ const UserAuthorizationTable = ({ data, setData }) => {
             title="Check"
             dataIndex="own-check"
             key="own-check"
+            // render={(_, record) => {
+            //   return (
+            //     <>
+            //       {record?.own ? (
+            //         <Checkbox
+            //           checked={record?.own?.check}
+            //           onChange={handleCheckboxChange(
+            //             record?.key,
+            //             "own",
+            //             "check"
+            //           )}
+            //         />
+            //       ) : null}
+            //     </>
+            //   );
+            // }}
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.check}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "check"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "check");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.check)}
+                  onChange={handleCheckboxChange(record?.key, "own", "check")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -174,19 +187,16 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="own-confirm"
             key="own-confirm"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.confirm}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "confirm"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "confirm");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.confirm)}
+                  onChange={handleCheckboxChange(record?.key, "own", "confirm")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -196,19 +206,16 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="own-approve"
             key="own-approve"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.approve}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "approve"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "approve");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.approve)}
+                  onChange={handleCheckboxChange(record?.key, "own", "approve")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -218,19 +225,16 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="own-hold"
             key="own-hold"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.own ? (
-                    <Checkbox
-                      checked={record?.own?.hold}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "own",
-                        "hold"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.own &&
+                Object.prototype.hasOwnProperty.call(record.own, "hold");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.own?.hold)}
+                  onChange={handleCheckboxChange(record?.key, "own", "hold")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -242,19 +246,16 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="other-check"
             key="other-check"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.check}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "check"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "check");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.check)}
+                  onChange={handleCheckboxChange(record?.key, "other", "check")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -264,19 +265,20 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="other-confirm"
             key="other-confirm"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.confirm}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "confirm"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "confirm");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.confirm)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "other",
+                    "confirm"
+                  )}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -286,19 +288,20 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="other-approve"
             key="other-approve"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.approve}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "approve"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "approve");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.approve)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "other",
+                    "approve"
+                  )}
+                />
+              ) : (
+                "-"
               );
             }}
           />
@@ -308,19 +311,16 @@ const UserAuthorizationTable = ({ data, setData }) => {
             dataIndex="other-hold"
             key="other-hold"
             render={(_, record) => {
-              return (
-                <>
-                  {record?.other ? (
-                    <Checkbox
-                      checked={record?.other?.hold}
-                      onChange={handleCheckboxChange(
-                        record?.key,
-                        "other",
-                        "hold"
-                      )}
-                    />
-                  ) : null}
-                </>
+              const hasField =
+                record?.other &&
+                Object.prototype.hasOwnProperty.call(record.other, "hold");
+              return hasField ? (
+                <Checkbox
+                  checked={Boolean(record?.other?.hold)}
+                  onChange={handleCheckboxChange(record?.key, "other", "hold")}
+                />
+              ) : (
+                "-"
               );
             }}
           />
