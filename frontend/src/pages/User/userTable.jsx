@@ -14,12 +14,13 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
 import useLogout from "../../hooks/useLogout";
-import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import { DeleteTwoTone, EditTwoTone, LockTwoTone } from "@ant-design/icons";
 import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
 import UserRoleViewTable from "./userRoleViewTable";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import UserAuthorizationViewTable from "./userAuthorizationViewTable";
+import PasswordUpdateModal from "../../components/passwordUpdateModal";
 
 const UserTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -123,6 +124,7 @@ const UserTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
+            {user.isAdmin && <PasswordUpdateModal data={record.action} />}
             {(canDoOther("user", "edit") ||
               (canDoOwn("user", "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">

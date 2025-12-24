@@ -8,20 +8,8 @@ const UserAuthorizationTable = ({ data, setData }) => {
   // Row Data
   const initialData = [
     {
-      key: "purchase-requisition",
-      module: "Purchase Requisition",
-      own: { confirm: false, approve: false, hold: false },
-      other: { check: false, confirm: false, approve: false, hold: false },
-    },
-    {
       key: "purchase-order",
       module: "Purchase Order",
-      own: { check: false, confirm: false, approve: false, hold: false },
-      other: { check: false, confirm: false, approve: false, hold: false },
-    },
-    {
-      key: "move-order",
-      module: "Move Order",
       own: { check: false, confirm: false, approve: false, hold: false },
       other: { check: false, confirm: false, approve: false, hold: false },
     },
