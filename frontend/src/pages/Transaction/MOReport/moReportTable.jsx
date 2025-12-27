@@ -141,7 +141,10 @@ const MoReportTable = () => {
       onFilter: (value, record) => record?.docRef === value,
       filterSearch: true,
       render: (text, record) => (
-        <MoveOrderDrawer title={text} MOid={record?.action?._id} />
+        // <MoveOrderDrawer title={text} MOid={record?.action?._id} />
+        <Link to={`view?mo=${text}`} target="_blank">
+          {text}
+        </Link>
       ),
     },
     {

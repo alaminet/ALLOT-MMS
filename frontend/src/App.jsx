@@ -61,6 +61,7 @@ import PurchaseReportView from "./pages/Purchase/Report/purchaseReportView.jsx";
 import MOReport from "./pages/Transaction/MOReport/index.jsx";
 import MoReportTable from "./pages/Transaction/MOReport/moReportTable.jsx";
 import Profile from "./pages/Profile/index.jsx";
+import MOReportPrintView from "./pages/Transaction/MOReport/MOReportPrintView.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -109,7 +110,7 @@ function App() {
               <Route path="mo-report" element={<MOReport />}>
                 <Route path="" element={<MoReportTable />} />
                 <Route path="logs" element={<LogActivites />} />
-                {/* <Route path="view" element={<TnxReportView />} /> */}
+                <Route path="view" element={<MOReportPrintView />} />
               </Route>
             </Route>
             <Route path="" element={<Purchase />}>

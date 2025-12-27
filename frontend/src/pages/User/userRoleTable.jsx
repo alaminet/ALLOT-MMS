@@ -141,7 +141,9 @@ const UserRoleTable = ({ data, setData }) => {
       return {
         key: template.key,
         module: template.module,
-        pageAccess: { ...template.pageAccess, ...override?.pageAccess },
+        pageAccess: template.pageAccess
+          ? { ...template.pageAccess, ...override?.pageAccess }
+          : override?.pageAccess ?? null,
         // Preserve null/undefined for modules that don't have 'own' or 'other'
         own: template.own
           ? { ...template.own, ...override?.own }

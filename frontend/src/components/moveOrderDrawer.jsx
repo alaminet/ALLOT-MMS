@@ -239,6 +239,29 @@ const MoveOrderDrawer = ({ title, MOid }) => {
                 Approved
               </Button>
             ) : null}
+            {((ownHold && user?.id === queryData?.createdBy?._id) ||
+              (othersHold && user?.id !== queryData?.createdBy?._id)) &&
+            queryData?.status !== "Hold" &&
+            queryData?.status !== "Closed" &&
+            queryData?.status !== "Approved" ? (
+              <Button
+                className="no-print"
+                color="danger"
+                variant="outlined"
+                onClick={() => handleStatusUpdate("Hold")}>
+                Hold
+              </Button>
+            ) : null}
+            {queryData?.createdBy?._id === user?.id &&
+            queryData?.status !== "Closed" ? (
+              <Button
+                className="no-print"
+                color="danger"
+                variant="outlined"
+                onClick={() => handleStatusUpdate("Closed")}>
+                Closed
+              </Button>
+            ) : null}
           </>
         )}>
         <Table

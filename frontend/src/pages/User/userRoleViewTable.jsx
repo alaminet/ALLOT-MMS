@@ -162,8 +162,25 @@ const UserRoleViewTable = ({ data }) => {
             title="Page Access"
             dataIndex="pageAccess"
             key="pageAccess"
-            render={(_, record) =>
-              record?.pageAccess ? (
+            // render={(_, record) =>
+            //   record?.pageAccess ? (
+            //     record.pageAccess?.view ? (
+            //       <CheckSquareTwoTone />
+            //     ) : (
+            //       <CloseSquareTwoTone twoToneColor="#eb2f96" />
+            //     )
+            //   ) : (
+            //     "-"
+            //   )
+            // }
+            render={(_, record) => {
+              const hasField =
+                record?.pageAccess &&
+                Object.prototype.hasOwnProperty.call(
+                  record?.pageAccess,
+                  "view"
+                );
+              return hasField ? (
                 record.pageAccess?.view ? (
                   <CheckSquareTwoTone />
                 ) : (
@@ -171,8 +188,8 @@ const UserRoleViewTable = ({ data }) => {
                 )
               ) : (
                 "-"
-              )
-            }
+              );
+            }}
           />
         </ColumnGroup>
         <ColumnGroup title="Own Data">
