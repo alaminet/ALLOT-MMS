@@ -20,6 +20,7 @@ import NotAuth from "../notAuth";
 import UserRoleViewTable from "./userRoleViewTable";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import UserAuthorizationViewTable from "./userAuthorizationViewTable";
+import PasswordUpdateModal from "../../components/passwordUpdateModal";
 
 const UserTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -129,6 +130,10 @@ const UserTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
+            {((canDoOther("pwdr", "edit") && user.id !== record.action) ||
+              (canDoOwn("pwdr", "edit") && user.id == record.action)) && (
+              <PasswordUpdateModal data={record.action} />
+            )}
             {(canDoOther("user", "edit") ||
               (canDoOwn("user", "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">
@@ -187,7 +192,7 @@ const UserTable = () => {
         )
         .then((res) => {
           console.log(res?.data?.members);
-          
+
           message.success(res.data.message);
           const tableArr = res?.data?.members?.map((item, index) => ({
             key: index,

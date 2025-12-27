@@ -21,6 +21,13 @@ const UserRoleTable = ({ data, setData }) => {
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
+    {
+      key: "pwdr",
+      module: "Password Reset",
+      // pageAccess: { view: false },
+      own: { edit: false },
+      other: { edit: false },
+    },
 
     // {
     //   key: "settings",
@@ -156,16 +163,33 @@ const UserRoleTable = ({ data, setData }) => {
             title="Page Access"
             dataIndex="pageAccess"
             key="pageAccess"
-            render={(_, record) => (
-              <Checkbox
-                checked={record.pageAccess.view}
-                onChange={handleCheckboxChange(
-                  record.key,
-                  "pageAccess",
-                  "view"
-                )}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.pageAccess?.view}
+            //     onChange={handleCheckboxChange(
+            //       record.key,
+            //       "pageAccess",
+            //       "view"
+            //     )}
+            //   />
+            // )}
+            render={(_, record) => {
+              const hasCreate =
+                record?.pageAccess &&
+                Object.prototype.hasOwnProperty.call(record.pageAccess, "view");
+              return hasCreate ? (
+                <Checkbox
+                  checked={Boolean(record?.pageAccess?.view)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "pageAccess",
+                    "view"
+                  )}
+                />
+              ) : (
+                "-"
+              );
+            }}
           />
         </ColumnGroup>
         <ColumnGroup title="Own Data">

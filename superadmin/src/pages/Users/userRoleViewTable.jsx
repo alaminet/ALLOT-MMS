@@ -20,6 +20,13 @@ const UserRoleViewTable = ({ data }) => {
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
     },
+    {
+      key: "pwdr",
+      module: "Password Reset",
+      // pageAccess: { view: false },
+      own: { edit: false },
+      other: { edit: false },
+    },
 
     // {
     //   key: "settings",
@@ -59,13 +66,15 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="pageAccess"
             key="pageAccess"
             render={(_, record) =>
-              record.pageAccess ? (
+              record?.pageAccess ? (
                 record.pageAccess?.view ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
+              ) : (
+                "-"
+              )
             }
           />
         </ColumnGroup>

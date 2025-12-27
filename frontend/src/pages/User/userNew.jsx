@@ -12,9 +12,11 @@ import {
 import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import UserAuthorizationTable from "./userAuthorizationTable";
 
 const UserNew = () => {
+  const navigate = useNavigate();
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [roleData, setRoleData] = useState([]);
@@ -37,6 +39,7 @@ const UserNew = () => {
       );
       message.success(res.data.message);
       setLoading(false);
+      navigate("/user");
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);

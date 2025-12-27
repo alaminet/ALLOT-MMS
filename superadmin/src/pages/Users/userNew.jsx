@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Divider, Flex, Form, Input, message, Select } from "antd";
 import axios from "axios";
 import Title from "antd/es/typography/Title";
@@ -11,7 +11,6 @@ import {
 } from "@ant-design/icons";
 import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
 import UserAuthorizationTable from "./userAuthorizationTable";
 import { useNavigate } from "react-router-dom";
 

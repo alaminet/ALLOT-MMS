@@ -10,12 +10,13 @@ import {
 } from "@ant-design/icons";
 import UserRoleTable from "./userRoleTable";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import UserAuthorizationTable from "./userAuthorizationTable";
 
 const UserUpdate = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { userInfo } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,7 @@ const UserUpdate = () => {
       );
       message.success(res.data.message);
       setLoading(false);
+      navigate("/user");
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);

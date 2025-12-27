@@ -123,7 +123,7 @@ const Login = () => {
                   placeholder="Password"
                 />
               </Form.Item>
-              <Form.Item>
+              {/* <Form.Item>
                 <Flex
                   justify="space-between"
                   align="center"
@@ -135,7 +135,7 @@ const Login = () => {
                     Forgot password
                   </a>
                 </Flex>
-              </Form.Item>
+              </Form.Item> */}
 
               <Form.Item>
                 <Button

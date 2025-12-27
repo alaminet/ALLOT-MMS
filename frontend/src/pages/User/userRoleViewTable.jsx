@@ -14,8 +14,22 @@ const UserRoleViewTable = ({ data }) => {
       other: { view: false },
     },
     {
-      key: "user",
-      module: "User",
+      key: "purchase",
+      module: "Purchase",
+      pageAccess: { view: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "purchase-requisition",
+      module: "Purchase-Requisition",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "purchase-order",
+      module: "Purchase-Order",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
@@ -28,11 +42,25 @@ const UserRoleViewTable = ({ data }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
+      key: "purchase-report",
+      module: "Purchase-Report",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "transaction",
       module: "Transaction",
       pageAccess: { view: false },
       // own: { create: false, edit: false, view: false, delete: false },
       // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "inventory",
+      module: "Inventory",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "receive",
@@ -63,41 +91,6 @@ const UserRoleViewTable = ({ data }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "purchase",
-      module: "Purchase",
-      pageAccess: { view: false },
-      // own: { create: false, edit: false, view: false, delete: false },
-      // other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-requisition",
-      module: "Purchase-Requisition",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-order",
-      module: "Purchase-Order",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-report",
-      module: "Purchase-Report",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "inventory",
-      module: "Inventory",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
       key: "master",
       module: "Master Access",
       pageAccess: { view: false },
@@ -117,6 +110,20 @@ const UserRoleViewTable = ({ data }) => {
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "user",
+      module: "User",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "pwdr",
+      module: "Password Reset",
+      // pageAccess: { view: false },
+      own: { edit: false },
+      other: { edit: false },
     },
     {
       key: "settings",
@@ -156,13 +163,15 @@ const UserRoleViewTable = ({ data }) => {
             dataIndex="pageAccess"
             key="pageAccess"
             render={(_, record) =>
-              record.pageAccess ? (
+              record?.pageAccess ? (
                 record.pageAccess?.view ? (
                   <CheckSquareTwoTone />
                 ) : (
                   <CloseSquareTwoTone twoToneColor="#eb2f96" />
                 )
-              ) : null
+              ) : (
+                "-"
+              )
             }
           />
         </ColumnGroup>

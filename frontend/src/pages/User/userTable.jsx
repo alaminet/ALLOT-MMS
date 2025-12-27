@@ -69,12 +69,6 @@ const UserTable = () => {
       responsive: ["lg"],
     },
     Table.EXPAND_COLUMN,
-    // {
-    //   title: "Permission",
-    //   dataIndex: "access",
-    //   key: "access",
-    //   responsive: ["lg"],
-    // },
     {
       title: "Role",
       dataIndex: "role",
@@ -112,20 +106,17 @@ const UserTable = () => {
       key: "createdAt",
       responsive: ["lg"],
     },
-    // {
-    //   title: "Updated At",
-    //   dataIndex: "updatedAt",
-    //   key: "updatedAt",
-    //   responsive: ["lg"],
-    // },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {user.isAdmin && <PasswordUpdateModal data={record.action} />}
-            {(canDoOther("user", "edit") ||
+            {((canDoOther("pwdr", "edit") && user.id !== record.action) ||
+              (canDoOwn("pwdr", "edit") && user.id == record.action)) && (
+              <PasswordUpdateModal data={record.action} />
+            )}
+            {((canDoOther("user", "edit") && user.id !== record.action) ||
               (canDoOwn("user", "edit") && user.id == record.action)) && (
               <Tooltip title="Edit">
                 <Button

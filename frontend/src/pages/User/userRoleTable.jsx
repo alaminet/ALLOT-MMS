@@ -15,8 +15,22 @@ const UserRoleTable = ({ data, setData }) => {
       other: { view: false },
     },
     {
-      key: "user",
-      module: "User",
+      key: "purchase",
+      module: "Purchase",
+      pageAccess: { view: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "purchase-requisition",
+      module: "Purchase-Requisition",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "purchase-order",
+      module: "Purchase-Order",
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
@@ -29,11 +43,25 @@ const UserRoleTable = ({ data, setData }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
+      key: "purchase-report",
+      module: "Purchase-Report",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "transaction",
       module: "Transaction",
       pageAccess: { view: false },
       // own: { create: false, edit: false, view: false, delete: false },
       // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "inventory",
+      module: "Inventory",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
     },
     {
       key: "receive",
@@ -64,41 +92,6 @@ const UserRoleTable = ({ data, setData }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
-      key: "purchase",
-      module: "Purchase",
-      pageAccess: { view: false },
-      // own: { create: false, edit: false, view: false, delete: false },
-      // other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-requisition",
-      module: "Purchase-Requisition",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-order",
-      module: "Purchase-Order",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "purchase-report",
-      module: "Purchase-Report",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
-      key: "inventory",
-      module: "Inventory",
-      pageAccess: { view: false },
-      own: { create: false, edit: false, view: false, delete: false },
-      other: { create: false, edit: false, view: false, delete: false },
-    },
-    {
       key: "master",
       module: "Master Access",
       pageAccess: { view: false },
@@ -118,6 +111,20 @@ const UserRoleTable = ({ data, setData }) => {
       pageAccess: { view: false },
       own: { create: false, edit: false, view: false, delete: false },
       other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "user",
+      module: "User",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "pwdr",
+      module: "Password Reset",
+      // pageAccess: { view: false },
+      own: { edit: false },
+      other: { edit: false },
     },
     {
       key: "settings",
@@ -147,7 +154,7 @@ const UserRoleTable = ({ data, setData }) => {
   };
 
   const mergedValue = useMemo(() => {
-    return initialData.map((item) => {
+    return initialData?.map((item) => {
       const override = data?.find((d) => d.key === item.key);
       if (!override) return item;
       return {
@@ -253,16 +260,33 @@ const UserRoleTable = ({ data, setData }) => {
             title="Page Access"
             dataIndex="pageAccess"
             key="pageAccess"
-            render={(_, record) => (
-              <Checkbox
-                checked={record.pageAccess.view}
-                onChange={handleCheckboxChange(
-                  record.key,
-                  "pageAccess",
-                  "view"
-                )}
-              />
-            )}
+            // render={(_, record) => (
+            //   <Checkbox
+            //     checked={record?.pageAccess?.view}
+            //     onChange={handleCheckboxChange(
+            //       record.key,
+            //       "pageAccess",
+            //       "view"
+            //     )}
+            //   />
+            // )}
+            render={(_, record) => {
+              const hasCreate =
+                record?.pageAccess &&
+                Object.prototype.hasOwnProperty.call(record.pageAccess, "view");
+              return hasCreate ? (
+                <Checkbox
+                  checked={Boolean(record?.pageAccess?.view)}
+                  onChange={handleCheckboxChange(
+                    record?.key,
+                    "pageAccess",
+                    "view"
+                  )}
+                />
+              ) : (
+                "-"
+              );
+            }}
           />
         </ColumnGroup>
         <ColumnGroup title="Own Data">
