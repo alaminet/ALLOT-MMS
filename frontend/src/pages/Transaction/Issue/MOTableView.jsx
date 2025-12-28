@@ -6,6 +6,7 @@ import { Button, Flex, message, Table, Input } from "antd";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import MOIssueForm from "./MOIssueForm";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 const { Search } = Input;
 
 const MOTableView = () => {
@@ -41,6 +42,12 @@ const MOTableView = () => {
       })),
       onFilter: (value, record) => record?.MO === value,
       filterSearch: true,
+      render: (text, record) => (
+        // <MoveOrderDrawer title={text} MOid={record?.action?._id} />
+        <Link to={`/mo-report/view?mo=${text}`} target="_blank">
+          {text}
+        </Link>
+      ),
     },
     {
       title: "Ref.No",

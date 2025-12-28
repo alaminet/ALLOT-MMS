@@ -108,8 +108,7 @@ const Login = () => {
                 name="password"
                 rules={[
                   { required: true, message: "Please input your Password!" },
-                ]}
-                style={{ margin: "0px" }}>
+                ]}>
                 <Input.Password
                   size="large"
                   style={{
