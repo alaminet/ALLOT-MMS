@@ -2,6 +2,7 @@ const TrnxIssue = require("../../../model/transaction/trnxIssue");
 const TrnxDetails = require("../../../model/transaction/trnxDetails");
 const TrnxMoveOrder = require("../../../model/transaction/trnxMoveOrder");
 const ItemInfo = require("../../../model/master/itemInfo");
+const { computeAvgPrice } = require("../../../utils/priceUtils");
 
 async function moveOrderIssueCTR(req, res, next) {
   const data = req.body;
@@ -205,36 +206,17 @@ async function moveOrderIssueCTR(req, res, next) {
             (s) => s.location === element.location
           );
 
-          let existingQty = 0;
-          let existingPrice = item.avgPrice || 0;
+          // Compute new avg price and update stock using helper
+          const { avgPrice, updatedStock } = computeAvgPrice(
+            item.stock,
+            element.location,
+            newQty,
+            newPrice,
+            item.avgPrice
+          );
 
-          if (index !== -1) {
-            // Overwrite existing stock entry
-            const existingLoc = item.stock[index];
-            existingQty = existingLoc.issueQty || 0;
-
-            item.stock[index] = {
-              location: element.location,
-              recQty: existingLoc.recQty || 0,
-              issueQty: existingQty + newQty,
-              onHandQty: (existingLoc.onHandQty || 0) - newQty,
-            };
-          } else {
-            // Insert new stock entry
-            item.stock.push({
-              location: element.location,
-              recQty: 0,
-              issueQty: newQty,
-              onHandQty: newQty,
-            });
-          }
-
-          // Calculate avgPrice using weighted average
-          const totalQty = existingQty + newQty;
-          const existingValue = existingQty * existingPrice;
-          const newValue = element.issueQty * newPrice;
-          item.avgPrice =
-            totalQty > 0 ? (existingValue - newValue) / totalQty : newPrice;
+          item.stock = updatedStock;
+          item.avgPrice = avgPrice;
 
           await item.save();
 

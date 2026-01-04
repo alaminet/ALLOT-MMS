@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --coverage",
     "start": "nodemon index.js"
   },
   "author": "alaminet",
@@ -18,5 +18,8 @@
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.0",
     "nodemon": "^3.1.10"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
   }
 }
