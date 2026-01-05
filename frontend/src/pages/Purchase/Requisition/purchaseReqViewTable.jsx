@@ -8,12 +8,14 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   EyeTwoTone,
+  FileExcelOutlined,
   InfoCircleTwoTone,
   PrinterOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
+import useExcelExport from "../../../hooks/useExcelExport";
 
 const PurchaseReqViewTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -228,14 +230,18 @@ const PurchaseReqViewTable = () => {
               code: list?.code?.code || "NA",
               SKU: list?.code?.SKU || list?.SKU || "NA",
               name: list?.name,
+              spec: list?.spec,
+              UOM: list?.UOM,
+              PRPrice: list?.unitPrice,
               reqQty: list?.reqQty,
               POQty: list?.POQty,
               recQty: list?.recQty,
-              reqBy: item?.requestedBy?.name,
               reqDpt: item?.costCenter?.name,
-              status: item?.status,
+              reqBy: item?.requestedBy?.name,
               createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
+              updateBy: item?.updatedBy?.name,
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              status: item?.status,
               createdBy: item?.createdBy?._id,
               access: item,
               action: item?._id,
@@ -275,6 +281,31 @@ const PurchaseReqViewTable = () => {
     }
   };
 
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "purchase_requisitions",
+    sheetName: "Purchase Requisitions",
+    excludedKeys: ["key", "access", "action", "POAvl", "createdBy"], // Exclude internal fields
+    columnWidths: {
+      PR: 15,
+      code: 12,
+      SKU: 12,
+      name: 25,
+      spec: 25,
+      UOM: 8,
+      PRPrice: 12,
+      reqQty: 12,
+      POQty: 10,
+      recQty: 12,
+      reqDpt: 10,
+      reqBy: 15,
+      createdAt: 20,
+      updateBy: 20,
+      updatedAt: 20,
+      status: 12,
+    },
+  });
+
   useEffect(() => {
     getTableData();
   }, []);
@@ -283,28 +314,55 @@ const PurchaseReqViewTable = () => {
       {!ownView && !othersView ? (
         <NotAuth />
       ) : (
-        <Table
-          columns={columns}
-          dataSource={queryData?.filter((item) =>
-            item.name?.toLowerCase().includes(search?.toLowerCase())
-          )}
-          // title={() => "Header"}
-          sticky
-          pagination={{
-            showSizeChanger: true,
-            pageSizeOptions: [
-              "10",
-              "20",
-              "50",
-              queryData?.length?.toString() || "100",
-            ],
-            // showTotal: (total) => `Total ${total} items`,
-            defaultPageSize: 10,
-          }}
-          scroll={{
-            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
-          }}
-        />
+        <>
+          <Flex justify="end" gap={16}>
+            <Button
+              type="default"
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              onClick={handleExportExcel}
+            >
+              <FileExcelOutlined />
+              Excel
+            </Button>
+            <Button
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              type={lastSegment === "logs" ? "primary" : "default"}
+              onClick={() =>
+                navigate("logs", {
+                  state: {
+                    model: "Purchase-Order",
+                  },
+                })
+              }
+            >
+              Logs
+            </Button>
+          </Flex>
+          <Table
+            columns={columns}
+            dataSource={queryData?.filter((item) =>
+              item.name?.toLowerCase().includes(search?.toLowerCase())
+            )}
+            // title={() => "Header"}
+            sticky
+            pagination={{
+              showSizeChanger: true,
+              pageSizeOptions: [
+                "10",
+                "20",
+                "50",
+                queryData?.length?.toString() || "100",
+              ],
+              // showTotal: (total) => `Total ${total} items`,
+              defaultPageSize: 10,
+            }}
+            scroll={{
+              x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+            }}
+          />
+        </>
       )}
 
       <Modal
@@ -319,7 +377,8 @@ const PurchaseReqViewTable = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}>
+        }}
+      >
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
     </>

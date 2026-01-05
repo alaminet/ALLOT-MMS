@@ -40,7 +40,7 @@ const PurchaseRequisition = () => {
               </Button>
             )}
           </Flex>
-          <Flex
+          {/* <Flex
             justify="space-between"
             style={{
               marginBottom: "10px",
@@ -71,7 +71,7 @@ const PurchaseRequisition = () => {
               onChange={(e) => setSearch(e.target.value)}
               enterButton
             />
-          </Flex>
+          </Flex> */}
         </>
       )}
       <Outlet context={search} /> {/* Outlet for New and update layout */}

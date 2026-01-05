@@ -2,7 +2,11 @@ import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button, Flex, Input } from "antd";
 import { useSelector } from "react-redux";
-import { FilterOutlined, InfoCircleTwoTone } from "@ant-design/icons";
+import {
+  FileExcelOutlined,
+  FilterOutlined,
+  InfoCircleTwoTone,
+} from "@ant-design/icons";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import BreadCrumbCustom from "../../../components/breadCrumbCustom";
@@ -35,17 +39,19 @@ const PurchaseOrder = () => {
                 type="primary"
                 onClick={() => navigate("new")}
                 disabled={!canDoOwn("purchase-requisition", "create")}
-                style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                style={{ borderRadius: "0px", padding: "10px 30px" }}
+              >
                 Make Purchase Order
               </Button>
             )}
           </Flex>
-          <Flex
+          {/* <Flex
             justify="space-between"
             style={{
               marginBottom: "10px",
               display: lastSegment === "new" && "none",
-            }}>
+            }}
+          >
             <Flex gap={10}>
               <Button
                 className="borderBrand"
@@ -57,7 +63,8 @@ const PurchaseOrder = () => {
                       model: "Purchase-Order",
                     },
                   })
-                }>
+                }
+              >
                 Logs
               </Button>
             </Flex>
@@ -71,7 +78,7 @@ const PurchaseOrder = () => {
               onChange={(e) => setSearch(e.target.value)}
               enterButton
             />
-          </Flex>
+          </Flex> */}
         </>
       )}
       <Outlet context={search} /> {/* Outlet for New and update layout */}

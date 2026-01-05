@@ -17,13 +17,16 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   EyeTwoTone,
+  FileExcelOutlined,
   InfoCircleTwoTone,
   PrinterOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { usePermission } from "../../../hooks/usePermission";
+// import { useExcelExport } from "../../../hooks/useExcelExport";
 import NotAuth from "../../notAuth";
 import PurchaseOrderUpdate from "./purchaseOrderUpdate";
+import useExcelExport from "../../../hooks/useExcelExport";
 
 const PurchaseOrderViewTable = () => {
   const navigate = useNavigate();
@@ -130,8 +133,8 @@ const PurchaseOrderViewTable = () => {
     },
     {
       title: "Supplier",
-      dataIndex: "supplier",
-      key: "supplier",
+      dataIndex: "Supplier",
+      key: "Supplier",
       responsive: ["md"],
     },
     {
@@ -195,7 +198,8 @@ const PurchaseOrderViewTable = () => {
                   title="Sure to delete?"
                   onConfirm={() =>
                     handleChange(record.action, record.key, "isDeleted", true)
-                  }>
+                  }
+                >
                   <Button
                     icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                     disabled={record.GRNQty > 0}
@@ -209,7 +213,8 @@ const PurchaseOrderViewTable = () => {
                   title="Sure to delete?"
                   onConfirm={() =>
                     handleChange(record.action, record.key, "isDeleted", true)
-                  }>
+                  }
+                >
                   <Button
                     icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                     disabled={record.GRNQty > 0}
@@ -222,6 +227,30 @@ const PurchaseOrderViewTable = () => {
       ),
     },
   ];
+
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "purchase_orders",
+    sheetName: "Purchase Orders",
+    excludedKeys: ["key", "access", "action", "GRNAvl", "createdBy"], // Exclude internal fields
+    columnWidths: {
+      PO: 15,
+      PR: 15,
+      SKU: 12,
+      name: 25,
+      UOM: 8,
+      POPrice: 12,
+      POQty: 10,
+      POValue: 12,
+      GRNQty: 10,
+      Supplier: 20,
+      reqBy: 15,
+      createdAt: 20,
+      updatedAt: 20,
+      status: 12,
+    },
+  });
+
   const getTableData = async () => {
     const scope =
       ownView && othersView
@@ -262,13 +291,13 @@ const PurchaseOrderViewTable = () => {
               UOM: list?.UOM,
               POPrice: list?.POPrice,
               POQty: list?.POQty,
-              GRNQty: list?.GRNQty,
-              supplier: item?.supplier?.name,
               POValue: Number(list?.POQty * list?.POPrice).toFixed(2),
+              GRNQty: list?.GRNQty,
+              Supplier: item?.supplier?.name,
               reqBy: item?.requestedBy.name,
-              status: item?.status,
               createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
               updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
+              status: item?.status,
               createdBy: item?.createdBy?._id,
               access: item,
               action: item?._id,
@@ -316,28 +345,55 @@ const PurchaseOrderViewTable = () => {
       {!ownView && !othersView ? (
         <NotAuth />
       ) : (
-        <Table
-          columns={columns}
-          dataSource={queryData?.filter((item) =>
-            item.name?.toLowerCase().includes(search?.toLowerCase())
-          )}
-          // title={() => "Header"}
-          sticky
-          pagination={{
-            showSizeChanger: true,
-            pageSizeOptions: [
-              "10",
-              "20",
-              "50",
-              queryData?.length?.toString() || "100",
-            ],
-            // showTotal: (total) => `Total ${total} items`,
-            defaultPageSize: 10,
-          }}
-          scroll={{
-            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
-          }}
-        />
+        <>
+          <Flex justify="end" gap={16}>
+            <Button
+              type="default"
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              onClick={handleExportExcel}
+            >
+              <FileExcelOutlined />
+              Excel
+            </Button>
+            <Button
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              type={lastSegment === "logs" ? "primary" : "default"}
+              onClick={() =>
+                navigate("logs", {
+                  state: {
+                    model: "Purchase-Order",
+                  },
+                })
+              }
+            >
+              Logs
+            </Button>
+          </Flex>
+          <Table
+            columns={columns}
+            dataSource={queryData?.filter((item) =>
+              item.name?.toLowerCase().includes(search?.toLowerCase())
+            )}
+            // title={() => "Header"}
+            sticky
+            pagination={{
+              showSizeChanger: true,
+              pageSizeOptions: [
+                "10",
+                "20",
+                "50",
+                queryData?.length?.toString() || "100",
+              ],
+              // showTotal: (total) => `Total ${total} items`,
+              defaultPageSize: 10,
+            }}
+            scroll={{
+              x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+            }}
+          />
+        </>
       )}
 
       <Modal
@@ -352,7 +408,8 @@ const PurchaseOrderViewTable = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}>
+        }}
+      >
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
       <PurchaseOrderUpdate

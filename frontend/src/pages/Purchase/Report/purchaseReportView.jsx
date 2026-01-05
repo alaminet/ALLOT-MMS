@@ -20,6 +20,8 @@ dayjs.extend(customParseFormat);
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { FileExcelOutlined } from "@ant-design/icons";
+import useExcelExport from "../../../hooks/useExcelExport";
 
 const PurchaseReportView = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -90,9 +92,9 @@ const PurchaseReportView = () => {
               UOM: subItem?.UOM,
               qty: subItem?.POQty || subItem?.reqQty,
               unitPrice: subItem?.POPrice || subItem?.unitPrice,
-              status: item?.status,
               createdBy: item?.createdBy?.name,
               updatedBy: item?.updatedBy?.name,
+              status: item?.status,
               action: item,
             }))
           );
@@ -150,7 +152,8 @@ const PurchaseReportView = () => {
         return (
           <Link
             to={`/${type}/print?ref=${record?.action?._id}`}
-            target="_blank">
+            target="_blank"
+          >
             {text}
           </Link>
         );
@@ -203,7 +206,8 @@ const PurchaseReportView = () => {
           style={{
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
-          }}>
+          }}
+        >
           {value}
         </div>
       ),
@@ -217,7 +221,8 @@ const PurchaseReportView = () => {
           style={{
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
-          }}>
+          }}
+        >
           {record.qty * record.unitPrice}
         </div>
       ),
@@ -262,6 +267,26 @@ const PurchaseReportView = () => {
       console.log(error);
     }
   };
+
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "purchase_report",
+    sheetName: "Purchase Report",
+    excludedKeys: ["key", "action"], // Exclude internal fields
+    columnWidths: {
+      createdAt: 20,
+      tnxType: 20,
+      docRef: 20,
+      SKU: 12,
+      name: 25,
+      UOM: 8,
+      qty: 8,
+      unitPrice: 8,
+      createdBy: 20,
+      updateBy: 20,
+      status: 12,
+    },
+  });
 
   useEffect(() => {
     getItems();
@@ -311,7 +336,8 @@ const PurchaseReportView = () => {
           <Form.Item
             name="tnxType"
             initialValue="All"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+          >
             <Select
               showSearch
               style={{ minWidth: "200px" }}
@@ -336,7 +362,8 @@ const PurchaseReportView = () => {
           <Form.Item
             name="status"
             initialValue="All"
-            rules={[{ required: true }]}>
+            rules={[{ required: true }]}
+          >
             <Select
               showSearch
               style={{ minWidth: "200px" }}
@@ -377,6 +404,17 @@ const PurchaseReportView = () => {
           </Form.Item>
         </Form>
       </Flex>
+      <Flex justify="end" gap={16}>
+        <Button
+          type="default"
+          className="borderBrand"
+          style={{ borderRadius: "0px" }}
+          onClick={handleExportExcel}
+        >
+          <FileExcelOutlined />
+          Excel
+        </Button>
+      </Flex>
       <Table
         columns={columns}
         dataSource={queryData}
@@ -409,7 +447,8 @@ const PurchaseReportView = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}>
+        }}
+      >
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
     </>
