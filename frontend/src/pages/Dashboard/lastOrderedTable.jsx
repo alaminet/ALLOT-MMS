@@ -28,7 +28,7 @@ const LastOrderedTbl = ({ tableData }) => {
       width: 110,
     },
     {
-      title: "Order No",
+      title: "Tnx.No",
       dataIndex: "order",
       key: "order",
       render: (text) => (
@@ -56,7 +56,8 @@ const LastOrderedTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title">
+        className="colorLink form-title"
+      >
         Latest orders
       </Title>
       <Table

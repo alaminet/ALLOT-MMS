@@ -20,7 +20,8 @@ const LastPRTbl = ({ tableData }) => {
       .reduce(
         (sum, detail) => sum + (detail.reqQty || 0) * (detail.unitPrice || 0),
         0
-      ),
+      )
+      .toFixed(0),
   }));
   const columns = [
     {
@@ -49,7 +50,8 @@ const LastPRTbl = ({ tableData }) => {
                 refData: record.id,
               },
             })
-          }>
+          }
+        >
           {text}
         </Button>
       ),
@@ -76,7 +78,8 @@ const LastPRTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title">
+        className="colorLink form-title"
+      >
         Latest PR
       </Title>
       <Table columns={columns} dataSource={dataArr} pagination={false} />

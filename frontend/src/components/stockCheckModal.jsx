@@ -60,8 +60,6 @@ const StockCheckModal = () => {
           },
         }
       );
-      console.log(res?.data?.items);
-
       const tableArr = res?.data?.items?.map((item, index) => ({
         key: index + 1,
         SKU: item.SKU,
