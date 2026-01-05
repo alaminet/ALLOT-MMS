@@ -61,6 +61,17 @@ const PurchaseReqPrintView = () => {
   const [queryData, setQueryData] = useState(null);
 
   // Export to Excel
+  const applyBorder = (worksheet, rowNumber, startCol, endCol) => {
+    const row = worksheet.getRow(rowNumber);
+    for (let col = startCol; col <= endCol; col++) {
+      row.getCell(col).border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      };
+    }
+  };
   const handleExportExcel = async () => {
     if (!queryData) {
       message.error("No data available to export");
@@ -90,31 +101,31 @@ const PurchaseReqPrintView = () => {
     // Header section with merged cells
     // ROW 1
     worksheet.addRow(new Array(13).fill(""));
-    worksheet.mergeCells(currentRow, 3, currentRow, 11); // Merge C1:K1
-    worksheet.getCell(currentRow, 3).value = businessDetails?.orgName || "";
-    worksheet.getCell(currentRow, 3).alignment = {
+    worksheet.mergeCells(currentRow, 1, currentRow, 13); // Merge C1:K1
+    worksheet.getCell(currentRow, 1).value = businessDetails?.orgName || "";
+    worksheet.getCell(currentRow, 1).alignment = {
       horizontal: "center",
       vertical: "middle",
     };
-    worksheet.getCell(currentRow, 3).font = { bold: true, size: 16 };
+    worksheet.getCell(currentRow, 1).font = { bold: true, size: 18 };
     currentRow++;
 
     // ROW 2
     worksheet.addRow(new Array(13).fill(""));
-    worksheet.mergeCells(currentRow, 3, currentRow, 11);
-    worksheet.getCell(currentRow, 3).value =
+    worksheet.mergeCells(currentRow, 1, currentRow, 13);
+    worksheet.getCell(currentRow, 1).value =
       businessDetails?.businessAddress?.street || "";
-    worksheet.getCell(currentRow, 3).alignment = {
+    worksheet.getCell(currentRow, 1).alignment = {
       horizontal: "center",
       vertical: "middle",
     };
-    worksheet.getCell(currentRow, 3).font = { bold: false, size: 12 };
+    worksheet.getCell(currentRow, 1).font = { bold: false, size: 12 };
     currentRow++;
 
     // ROW 3
     worksheet.addRow(new Array(13).fill(""));
-    worksheet.mergeCells(currentRow, 3, currentRow, 11);
-    worksheet.getCell(currentRow, 3).value =
+    worksheet.mergeCells(currentRow, 1, currentRow, 13);
+    worksheet.getCell(currentRow, 1).value =
       (businessDetails?.businessAddress?.city || "") +
       ", " +
       (businessDetails?.businessAddress?.country || "") +
@@ -122,22 +133,22 @@ const PurchaseReqPrintView = () => {
       (businessDetails?.businessAddress?.postal || "") +
       ". #" +
       (businessDetails?.phone?.office || "");
-    worksheet.getCell(currentRow, 3).alignment = {
+    worksheet.getCell(currentRow, 1).alignment = {
       horizontal: "center",
       vertical: "middle",
     };
-    worksheet.getCell(currentRow, 3).font = { bold: false, size: 12 };
+    worksheet.getCell(currentRow, 1).font = { bold: false, size: 12 };
     currentRow++;
 
     // ROW 4
     worksheet.addRow(new Array(13).fill(""));
-    worksheet.mergeCells(currentRow, 3, currentRow, 11);
-    worksheet.getCell(currentRow, 3).value = "PURCHASE REQUISITION FORM";
-    worksheet.getCell(currentRow, 3).alignment = {
+    worksheet.mergeCells(currentRow, 1, currentRow, 13);
+    worksheet.getCell(currentRow, 1).value = "PURCHASE REQUISITION FORM";
+    worksheet.getCell(currentRow, 1).alignment = {
       horizontal: "center",
       vertical: "middle",
     };
-    worksheet.getCell(currentRow, 3).font = { bold: true, size: 12 };
+    worksheet.getCell(currentRow, 1).font = { bold: true, size: 13 };
     currentRow++;
 
     // ROW 5
@@ -157,7 +168,7 @@ const PurchaseReqPrintView = () => {
         });
 
         worksheet.addImage(qrImageId, {
-          tl: { col: 11, row: 0 }, // Column L (12th column, 0-indexed), Row 1
+          tl: { col: 12, row: 0 }, // Column L (12th column, 0-indexed), Row 1
           ext: { width: 100, height: 100 },
         });
       } catch (error) {
@@ -181,7 +192,7 @@ const PurchaseReqPrintView = () => {
     worksheet.addRow(new Array(13));
     worksheet.getCell(currentRow, 1).value = `PR No.: ${queryData?.code || ""}`;
     worksheet.getCell(currentRow, 5).value = `Department: ${
-      queryData?.code || ""
+      queryData?.costCenter?.name || ""
     }`;
     worksheet.getCell(currentRow, 11).value = `Req. Date: ${
       moment(queryData?.createdAt).format("DD-MMM-YYYY") || ""
@@ -241,6 +252,7 @@ const PurchaseReqPrintView = () => {
       horizontal: "center",
       vertical: "middle",
     };
+    applyBorder(worksheet, currentRow, 1, 13);
     currentRow++;
 
     // Table data
@@ -263,6 +275,7 @@ const PurchaseReqPrintView = () => {
         ]);
         worksheet.mergeCells(currentRow, 3, currentRow, 4);
         worksheet.mergeCells(currentRow, 5, currentRow, 6);
+        applyBorder(worksheet, currentRow, 1, 13);
         currentRow++;
       });
 
@@ -290,7 +303,10 @@ const PurchaseReqPrintView = () => {
         "",
         "",
       ]);
+      worksheet.mergeCells(currentRow, 1, currentRow, 8);
+      worksheet.mergeCells(currentRow, 12, currentRow, 13);
       worksheet.getRow(currentRow).font = { bold: true, size: 11 };
+      applyBorder(worksheet, currentRow, 1, 13);
       currentRow++;
     }
 
@@ -348,7 +364,7 @@ const PurchaseReqPrintView = () => {
 
     // ROW Justification
     worksheet.addRow(new Array(13).fill(""));
-    worksheet.mergeCells(currentRow, 3, currentRow, 11);
+    worksheet.mergeCells(currentRow, 1, currentRow, 13);
     worksheet.getCell(currentRow, 3).value =
       "Justification of Purchage Requisition";
     worksheet.getCell(currentRow, 3).alignment = {
@@ -356,6 +372,7 @@ const PurchaseReqPrintView = () => {
       vertical: "middle",
     };
     worksheet.getCell(currentRow, 3).font = { bold: true, size: 11 };
+    applyBorder(worksheet, currentRow, 1, 13);
     currentRow++;
 
     // Table headers
@@ -374,8 +391,7 @@ const PurchaseReqPrintView = () => {
       "Approved Design [Y/N]",
       "",
     ]);
-    worksheet.mergeCells(currentRow, 1, currentRow, 2);
-    worksheet.mergeCells(currentRow, 4, currentRow, 5);
+    worksheet.mergeCells(currentRow, 1, currentRow, 3);
     worksheet.mergeCells(currentRow, 10, currentRow, 11);
     worksheet.mergeCells(currentRow, 12, currentRow, 13);
     worksheet.getRow(currentRow).font = { bold: true, size: 11 };
@@ -384,6 +400,7 @@ const PurchaseReqPrintView = () => {
       vertical: "middle",
       wrapText: true,
     };
+    applyBorder(worksheet, currentRow, 1, 13);
     currentRow++;
 
     // Table data
@@ -410,6 +427,7 @@ const PurchaseReqPrintView = () => {
         worksheet.getCell(currentRow, 9).value = {
           formula: `SUM(F${currentRow}:H${currentRow})`,
         };
+        applyBorder(worksheet, currentRow, 1, 13);
         currentRow++;
       });
     }
