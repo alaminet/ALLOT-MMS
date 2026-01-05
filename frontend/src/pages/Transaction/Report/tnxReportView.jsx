@@ -45,9 +45,6 @@ const TnxReportView = () => {
 
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage("tnx-report")) {
-    return <NotAuth />;
-  }
   const own = canDoOwn("tnx-report", "view");
   const others = canDoOther("tnx-report", "view");
 
@@ -123,7 +120,8 @@ const TnxReportView = () => {
       ) : (
         <div
           className="print-page"
-          style={{ backgroundColor: "#fff", padding: "20px" }}>
+          style={{ backgroundColor: "#fff", padding: "20px" }}
+        >
           <Row justify="center">
             <Col span={4}></Col>
             <Col span={16}>
@@ -251,7 +249,8 @@ const TnxReportView = () => {
                       <Table.Summary.Cell colSpan={4}></Table.Summary.Cell>
                     </Table.Summary.Row>
                   );
-                }}>
+                }}
+              >
                 <ColumnGroup>
                   <Column
                     title="SL"
@@ -377,7 +376,8 @@ const TnxReportView = () => {
             style={{ marginTop: "10px" }}
             className="no-print"
             type="primary"
-            onClick={() => handlePrint("A4 portrait")}>
+            onClick={() => handlePrint("A4 portrait")}
+          >
             <PrinterOutlined />
           </Button>
         </div>
