@@ -332,7 +332,7 @@ const PurchaseReqViewTable = () => {
               onClick={() =>
                 navigate("logs", {
                   state: {
-                    model: "Purchase-Order",
+                    model: "Purchase-Requisition",
                   },
                 })
               }
