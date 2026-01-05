@@ -488,24 +488,26 @@ const PurchaseReqPrintView = () => {
       const pdf = new jsPDF("l", "mm", "a4"); // landscape A4
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
+      const topMargin = 10;
+      const bottomMargin = 10;
 
       // Scale image to fit page width
       const imgWidth = pdfWidth;
       const imgHeight = (canvas.height * pdfWidth) / canvas.width;
 
       let heightLeft = imgHeight;
-      let position = 0;
+      let position = topMargin;
 
       // First page
       pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight;
+      heightLeft -= pdfHeight - topMargin - bottomMargin;
 
       // Extra pages if needed
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight; // move up by remaining height
+        position = heightLeft - imgHeight + topMargin;
         pdf.addPage();
         pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pdfHeight;
+        heightLeft -= pdfHeight - topMargin - bottomMargin;
       }
       // Add page numbers
       const pageCount = pdf.internal.getNumberOfPages();
