@@ -447,6 +447,35 @@ const PurchaseReqPrintView = () => {
   };
 
   // Export to PDF
+  // const handleExportPDF = () => {
+  //   const input = document.getElementById("print-content");
+  //   if (!input) {
+  //     message.error("Content not available for PDF export");
+  //     return;
+  //   }
+
+  //   html2canvas(input, { scale: 2 }).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("l", "mm", "a4");
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+  //     const imgWidth = canvas.width;
+  //     const imgHeight = canvas.height;
+  //     const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+  //     const imgX = (pdfWidth - imgWidth * ratio) / 2;
+  //     const imgY = 30;
+
+  //     pdf.addImage(
+  //       imgData,
+  //       "PNG",
+  //       imgX,
+  //       imgY,
+  //       imgWidth * ratio,
+  //       imgHeight * ratio
+  //     );
+  //     pdf.save(`Purchase_Requisition_${queryData?.code || "Export"}.pdf`);
+  //   });
+  // };
   const handleExportPDF = () => {
     const input = document.getElementById("print-content");
     if (!input) {
@@ -456,23 +485,38 @@ const PurchaseReqPrintView = () => {
 
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("l", "mm", "a4");
+      const pdf = new jsPDF("l", "mm", "a4"); // landscape A4
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = canvas.width;
-      const imgHeight = canvas.height;
-      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
-      const imgX = (pdfWidth - imgWidth * ratio) / 2;
-      const imgY = 30;
 
-      pdf.addImage(
-        imgData,
-        "PNG",
-        imgX,
-        imgY,
-        imgWidth * ratio,
-        imgHeight * ratio
-      );
+      // Scale image to fit page width
+      const imgWidth = pdfWidth;
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      // First page
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      // Extra pages if needed
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight; // move up by remaining height
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+      // Add page numbers
+      const pageCount = pdf.internal.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(10);
+        pdf.text(`Page ${i} of ${pageCount}`, pdfWidth / 2, pdfHeight - 10, {
+          align: "center",
+        });
+      }
+
       pdf.save(`Purchase_Requisition_${queryData?.code || "Export"}.pdf`);
     });
   };
