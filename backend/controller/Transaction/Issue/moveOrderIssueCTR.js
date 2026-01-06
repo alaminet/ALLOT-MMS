@@ -231,7 +231,7 @@ async function moveOrderIssueCTR(req, res, next) {
             controller: "moveOrderIssueCTR",
             step: "updateItem",
             status: "success",
-            message: `Item ${element.code} updated (location: ${element.location}, issue Qty: ${newQty})`,
+            message: `Item ${element?.SKU} updated (location: ${element.location}, issue Qty: ${newQty})`,
             code: "ITEM_UPDATED",
             item: { code: element.code, location: element.location },
           });

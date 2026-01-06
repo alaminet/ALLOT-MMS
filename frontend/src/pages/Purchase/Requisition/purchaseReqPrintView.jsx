@@ -559,8 +559,7 @@ const PurchaseReqPrintView = () => {
     <button
       className="no-print"
       style={{ border: 0, background: "none" }}
-      type="button"
-    >
+      type="button">
       <PlusOutlined />
       <div style={{ marginTop: 8 }}>Upload</div>
     </button>
@@ -791,8 +790,7 @@ const PurchaseReqPrintView = () => {
           <div
             id="print-content"
             className="print-page"
-            style={{ backgroundColor: "#fff", padding: "20px" }}
-          >
+            style={{ backgroundColor: "#fff", padding: "20px" }}>
             <Row justify="space-between">
               <Col span={6}></Col>
               <Col span={12}>
@@ -926,8 +924,7 @@ const PurchaseReqPrintView = () => {
                     listType="picture-card"
                     fileList={fileList}
                     onPreview={handlePreview}
-                    onChange={handleChange}
-                  >
+                    onChange={handleChange}>
                     {fileList.length >= 8 ? null : uploadButton}
                   </Upload>
                   {previewImage && (
@@ -952,8 +949,7 @@ const PurchaseReqPrintView = () => {
                   textAlign: "center",
                   borderTop: "1px solid black",
                   fontSize: "12px",
-                }}
-              >
+                }}>
                 Prepared By
                 <span style={{ display: "block" }}>
                   {queryData?.createdBy?.name}
@@ -965,22 +961,8 @@ const PurchaseReqPrintView = () => {
                   textAlign: "center",
                   borderTop: "1px solid black",
                   fontSize: "12px",
-                }}
-              >
+                }}>
                 Checked By
-                <span style={{ display: "block" }}>
-                  {queryData?.confirmedBy?.name}
-                </span>
-              </Col>
-              <Col
-                span={5}
-                style={{
-                  textAlign: "center",
-                  borderTop: "1px solid black",
-                  fontSize: "12px",
-                }}
-              >
-                Confirmed By
                 <span style={{ display: "block" }}>
                   {queryData?.checkedBy?.name}
                 </span>
@@ -991,8 +973,19 @@ const PurchaseReqPrintView = () => {
                   textAlign: "center",
                   borderTop: "1px solid black",
                   fontSize: "12px",
-                }}
-              >
+                }}>
+                Confirmed By
+                <span style={{ display: "block" }}>
+                  {queryData?.confirmedBy?.name}
+                </span>
+              </Col>
+              <Col
+                span={5}
+                style={{
+                  textAlign: "center",
+                  borderTop: "1px solid black",
+                  fontSize: "12px",
+                }}>
                 Approved By
                 <span style={{ display: "block" }}>
                   {queryData?.approvedBy?.name}
@@ -1004,8 +997,7 @@ const PurchaseReqPrintView = () => {
               className="justification-table"
               pagination={false}
               // dataSource={data}
-              dataSource={queryData?.itemDetails}
-            >
+              dataSource={queryData?.itemDetails}>
               <ColumnGroup title="Justification of Purchage Requisition">
                 <Column
                   title="Item Name"
@@ -1160,8 +1152,7 @@ const PurchaseReqPrintView = () => {
                       refData: queryData,
                     },
                   })
-                }
-              >
+                }>
                 <EditOutlined />
               </Button>
             ) : queryData?.status === "In-Process" &&
@@ -1176,8 +1167,7 @@ const PurchaseReqPrintView = () => {
                       refData: queryData,
                     },
                   })
-                }
-              >
+                }>
                 <EditOutlined />
               </Button>
             ) : null}
@@ -1185,16 +1175,14 @@ const PurchaseReqPrintView = () => {
             <Button
               type="dashed"
               className="no-print"
-              onClick={() => handlePrint("A4 landscape")}
-            >
+              onClick={() => handlePrint("A4 landscape")}>
               <PrinterOutlined />
             </Button>
 
             <Button
               type="dashed"
               className="no-print"
-              onClick={handleExportExcel}
-            >
+              onClick={handleExportExcel}>
               <FileExcelOutlined />
               Excel
             </Button>
@@ -1202,8 +1190,7 @@ const PurchaseReqPrintView = () => {
             <Button
               type="dashed"
               className="no-print"
-              onClick={handleExportPDF}
-            >
+              onClick={handleExportPDF}>
               <FilePdfOutlined />
               PDF
             </Button>
@@ -1215,8 +1202,7 @@ const PurchaseReqPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Checked")}
-              >
+                onClick={() => handleStatusUpdate("Checked")}>
                 Checked
               </Button>
             ) : ((ownConfirm &&
@@ -1227,8 +1213,7 @@ const PurchaseReqPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Confirmed")}
-              >
+                onClick={() => handleStatusUpdate("Confirmed")}>
                 Confirmed
               </Button>
             ) : ((ownApprove &&
@@ -1239,8 +1224,7 @@ const PurchaseReqPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
-                onClick={() => handleStatusUpdate("Approved")}
-              >
+                onClick={() => handleStatusUpdate("Approved")}>
                 Approved
               </Button>
             ) : null}
@@ -1255,8 +1239,7 @@ const PurchaseReqPrintView = () => {
                 className="no-print"
                 color="danger"
                 variant="outlined"
-                onClick={() => handleStatusUpdate("Hold")}
-              >
+                onClick={() => handleStatusUpdate("Hold")}>
                 Hold
               </Button>
             ) : null}
@@ -1266,8 +1249,7 @@ const PurchaseReqPrintView = () => {
                 className="no-print"
                 color="danger"
                 variant="outlined"
-                onClick={() => handleStatusUpdate("Closed")}
-              >
+                onClick={() => handleStatusUpdate("Closed")}>
                 Closed
               </Button>
             ) : null}
