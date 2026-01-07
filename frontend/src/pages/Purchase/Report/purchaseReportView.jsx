@@ -75,6 +75,8 @@ const PurchaseReportView = () => {
           }
         )
         .then((res) => {
+          console.log(res?.data?.items);
+
           message.success(res?.data.message);
           const tableArr = res?.data?.items?.flatMap((item, index) =>
             item?.itemDetails.map((subItem, subIndex) => ({
@@ -92,6 +94,7 @@ const PurchaseReportView = () => {
               UOM: subItem?.UOM,
               qty: subItem?.POQty || subItem?.reqQty,
               unitPrice: subItem?.POPrice || subItem?.unitPrice,
+              costCenter: item?.costCenter?.name,
               createdBy: item?.createdBy?.name,
               updatedBy: item?.updatedBy?.name,
               status: item?.status,
@@ -152,8 +155,7 @@ const PurchaseReportView = () => {
         return (
           <Link
             to={`/${type}/print?ref=${record?.action?._id}`}
-            target="_blank"
-          >
+            target="_blank">
             {text}
           </Link>
         );
@@ -206,8 +208,7 @@ const PurchaseReportView = () => {
           style={{
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
-          }}
-        >
+          }}>
           {value}
         </div>
       ),
@@ -221,8 +222,7 @@ const PurchaseReportView = () => {
           style={{
             backgroundColor: value < 0 ? "#ffe6e6" : "transparent", // light red background
             padding: "4px 8px", // optional for spacing
-          }}
-        >
+          }}>
           {record.qty * record.unitPrice}
         </div>
       ),
@@ -282,6 +282,7 @@ const PurchaseReportView = () => {
       UOM: 8,
       qty: 8,
       unitPrice: 8,
+      costCenter: 20,
       createdBy: 20,
       updateBy: 20,
       status: 12,
@@ -336,8 +337,7 @@ const PurchaseReportView = () => {
           <Form.Item
             name="tnxType"
             initialValue="All"
-            rules={[{ required: true }]}
-          >
+            rules={[{ required: true }]}>
             <Select
               showSearch
               style={{ minWidth: "200px" }}
@@ -362,8 +362,7 @@ const PurchaseReportView = () => {
           <Form.Item
             name="status"
             initialValue="All"
-            rules={[{ required: true }]}
-          >
+            rules={[{ required: true }]}>
             <Select
               showSearch
               style={{ minWidth: "200px" }}
@@ -409,8 +408,7 @@ const PurchaseReportView = () => {
           type="default"
           className="borderBrand"
           style={{ borderRadius: "0px" }}
-          onClick={handleExportExcel}
-        >
+          onClick={handleExportExcel}>
           <FileExcelOutlined />
           Excel
         </Button>
@@ -447,8 +445,7 @@ const PurchaseReportView = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}
-      >
+        }}>
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
     </>

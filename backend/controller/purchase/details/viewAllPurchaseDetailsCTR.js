@@ -53,7 +53,7 @@ async function viewAllPurchaseDetailsCTR(req, res) {
       for (const [key, Model] of entries) {
         const docs = await Model.find(query)
           .populate({
-            path: ["createdBy", "updatedBy", "itemDetails.code"],
+            path: ["createdBy", "updatedBy", "itemDetails.code", "costCenter"],
             select: ["name", "SKU"],
           })
           .lean();
@@ -71,7 +71,7 @@ async function viewAllPurchaseDetailsCTR(req, res) {
 
       const docs = await Model.find(query)
         .populate({
-          path: ["createdBy", "updatedBy", "itemDetails.code"],
+          path: ["createdBy", "updatedBy", "itemDetails.code", "costCenter"],
           select: ["name", "SKU"],
         })
         .lean();
@@ -107,7 +107,9 @@ async function viewAllPurchaseDetailsCTR(req, res) {
     });
 
     // Remove items with no remaining itemDetails after filtering
-    items = items.filter((item) => item.itemDetails && item.itemDetails.length > 0);
+    items = items.filter(
+      (item) => item.itemDetails && item.itemDetails.length > 0
+    );
 
     if (!items || items.length === 0) {
       return res.status(404).send({ error: "No data found" });

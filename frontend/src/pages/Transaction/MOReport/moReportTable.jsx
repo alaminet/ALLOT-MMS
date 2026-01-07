@@ -75,8 +75,6 @@ const MoReportTable = () => {
           }
         )
         .then((res) => {
-          console.log(res);
-
           message.success(res?.data.message);
           const tableArr = res?.data?.items?.flatMap((item, index) =>
             item?.itemDetails.map((subItem, subIndex) => ({
