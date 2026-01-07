@@ -75,8 +75,6 @@ const TnxReportLayout = () => {
           }
         )
         .then((res) => {
-          console.log(res?.data?.transactions);
-
           message.success(res?.data.message);
           const tableArr = res?.data?.transactions?.map((item, index) => ({
             key: index,

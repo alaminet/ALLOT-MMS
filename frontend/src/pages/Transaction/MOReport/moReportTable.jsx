@@ -21,6 +21,8 @@ import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import MoveOrderDrawer from "../../../components/moveOrderDrawer";
+import { FileExcelOutlined } from "@ant-design/icons";
+import useExcelExport from "../../../hooks/useExcelExport";
 
 const MoReportTable = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -80,17 +82,43 @@ const MoReportTable = () => {
             item?.itemDetails.map((subItem, subIndex) => ({
               key: subItem._id,
               createdAt: moment(item?.createdAt).format("DD-MMM-YY h:mm A"),
-              referance: item?.reference,
-              docRef: item?.code,
+              moveOrder: item?.code,
+              code: subItem?.code?.code,
               SKU: subItem?.SKU || subItem?.code?.SKU,
               name: subItem?.name,
               UOM: subItem?.UOM,
+              unitPrice: Number(subItem?.code?.avgPrice || 0).toFixed(2),
               qty: subItem?.reqQty,
               issueQty: subItem?.issueQty,
-              unitPrice: Number(subItem?.code?.avgPrice || 0).toFixed(2),
+              costCenter: item?.costCenter?.name,
+              referance: item?.reference,
+              headerText: item?.headerText,
               status: item?.status,
               createdBy: item?.createdBy?.name,
+              requestedBy: item?.requestedBy?.name,
+              requestedAt: moment(item?.requestedBy?.timeAt).format(
+                "DD-MMM-YY h:mm A"
+              ),
+              checkedBy: item?.checkedBy?.name,
+              checkedAt: moment(item?.checkedBy?.timeAt).format(
+                "DD-MMM-YY h:mm A"
+              ),
+              confirmedBy: item?.confirmedBy?.name,
+              confirmedAt: moment(item?.confirmedBy?.timeAt).format(
+                "DD-MMM-YY h:mm A"
+              ),
+              approvedBy: item?.approvedBy?.name,
+              approvedAt: moment(item?.approvedBy?.timeAt).format(
+                "DD-MMM-YY h:mm A"
+              ),
+              holdBy: item?.holdBy?.name,
+              holdAt: moment(item?.holdBy?.timeAt).format("DD-MMM-YY h:mm A"),
+              closedBy: item?.closedBy?.name,
+              closedAt: moment(item?.closedBy?.timeAt).format(
+                "DD-MMM-YY h:mm A"
+              ),
               updatedBy: item?.updatedBy?.name,
+              updatedAt: moment(item?.updatedAt).format("DD-MMM-YY h:mm A"),
               action: item,
             }))
           );
@@ -130,15 +158,15 @@ const MoReportTable = () => {
     },
     {
       title: "MO No",
-      dataIndex: "docRef",
-      key: "docRef",
-      filters: [...new Set(queryData?.map((item) => item?.docRef))].map(
+      dataIndex: "moveOrder",
+      key: "moveOrder",
+      filters: [...new Set(queryData?.map((item) => item?.moveOrder))].map(
         (item) => ({
           text: item,
           value: item,
         })
       ),
-      onFilter: (value, record) => record?.docRef === value,
+      onFilter: (value, record) => record?.moveOrder === value,
       filterSearch: true,
       render: (text, record) => (
         // <MoveOrderDrawer title={text} MOid={record?.action?._id} />
@@ -272,6 +300,43 @@ const MoReportTable = () => {
     }
   };
 
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "move_Order_report",
+    sheetName: "Move Order Report",
+    excludedKeys: ["key", "action"], // Exclude internal fields
+    columnWidths: {
+      createdAt: 20,
+      moveOrder: 10,
+      code: 15,
+      SKU: 15,
+      name: 30,
+      UOM: 10,
+      unitPrice: 10,
+      qty: 10,
+      issueQty: 10,
+      costCenter: 15,
+      referance: 15,
+      headerText: 15,
+      status: 10,
+      createdBy: 15,
+      requestedBy: 15,
+      requestedAt: 15,
+      checkedBy: 15,
+      checkedAt: 15,
+      confirmedBy: 15,
+      confirmedAt: 15,
+      approvedBy: 15,
+      approvedAt: 15,
+      holdBy: 15,
+      holdAt: 15,
+      closedBy: 15,
+      closedAt: 15,
+      updatedBy: 15,
+      updatedAt: 15,
+    },
+  });
+
   useEffect(() => {
     getItems();
   }, []);
@@ -361,6 +426,16 @@ const MoReportTable = () => {
             </Button>
           </Form.Item>
         </Form>
+      </Flex>
+      <Flex justify="end" gap={16}>
+        <Button
+          type="default"
+          className="borderBrand"
+          style={{ borderRadius: "0px" }}
+          onClick={handleExportExcel}>
+          <FileExcelOutlined />
+          Excel
+        </Button>
       </Flex>
       <Table
         columns={columns}
