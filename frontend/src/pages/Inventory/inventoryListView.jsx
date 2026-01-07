@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, message, Table, Tooltip } from "antd";
+import { Button, Flex, message, Table, Grid, Input } from "antd";
+const { Search } = Input;
+const { useBreakpoint } = Grid;
 import { useSelector } from "react-redux";
 import axios from "axios";
 import moment from "moment";
@@ -8,15 +10,21 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   EyeTwoTone,
+  FileExcelOutlined,
   InfoCircleTwoTone,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import NotAuth from "../notAuth";
-import { useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import useExcelExport from "../../hooks/useExcelExport";
 
 const InventoryListView = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const screens = useBreakpoint();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [search, setSearch] = useState("");
   const [queryData, setQueryData] = useState([]);
-  const search = useOutletContext();
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("inventory")) {
@@ -137,10 +145,12 @@ const InventoryListView = () => {
               (stock) =>
                 stock?.onHandQty > 0 && {
                   key: stock?._id,
-                  name: item?.name,
                   code: item?.code,
                   SKU: item?.SKU,
+                  name: item?.name,
                   UOM: item?.UOM?.code,
+                  lastPrice: item?.lastPrice,
+                  avgPrice: item?.avgPrice,
                   location: stock?.location,
                   locQty: stock?.onHandQty || 0,
                   onHandQty:
@@ -149,6 +159,7 @@ const InventoryListView = () => {
                       0
                     ) || 0,
                   safetyStock: item?.safetyStock || 0,
+                  group: item?.group?.name,
                   type: item?.type?.name,
                   access: item,
                   action: item?._id,
@@ -162,12 +173,83 @@ const InventoryListView = () => {
     }
   };
 
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(
+    queryData?.filter((item) => item && item !== false),
+    {
+      filename: "Location_stock_report",
+      sheetName: "Location Stock Report",
+      excludedKeys: ["key", "onHandQty", "access", "action"], // Exclude internal fields
+      columnWidths: {
+        code: 15,
+        SKU: 15,
+        name: 30,
+        UOM: 10,
+        avgPrice: 10,
+        lastPrice: 10,
+        location: 20,
+        locQty: 10,
+        safetyStock: 10,
+        group: 20,
+        type: 20,
+      },
+    }
+  );
+
   useEffect(() => {
     getTableData();
   }, []);
 
   return (
     <>
+      <div
+        style={{
+          marginBottom: "10px",
+          display: lastSegment === "new" && "none",
+        }}>
+        <Flex
+          justify="space-between"
+          gap={10}
+          style={{ flexDirection: screens.md ? "row" : "column" }}>
+          <Flex gap={10}>
+            <Button
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              type={lastSegment === "inventory" ? "primary" : "default"}
+              onClick={() => navigate("/inventory")}>
+              Stock
+            </Button>
+            <Button
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              type={lastSegment === "list" ? "primary" : "default"}
+              onClick={() => navigate(lastSegment === "list" ? "" : "list")}
+              icon={<UnorderedListOutlined />}>
+              Listview
+            </Button>
+            <Button
+              type="default"
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}
+              onClick={handleExportExcel}>
+              <FileExcelOutlined />
+              Excel
+            </Button>
+          </Flex>
+          <Flex>
+            <Search
+              className="search-field"
+              style={{
+                width: "350px",
+                display: !["inventory", "list"].includes(lastSegment) && "none",
+              }}
+              placeholder="Search by Name"
+              onChange={(e) => setSearch(e.target.value)}
+              enterButton
+            />
+          </Flex>
+        </Flex>
+      </div>
       <Table
         bordered
         columns={columns}

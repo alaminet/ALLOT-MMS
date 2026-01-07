@@ -198,11 +198,6 @@ async function creatTrnxIssueCTR(req, res, next) {
           const newQty = element.issueQty * -1;
           const newPrice = element.issuePrice;
 
-          // Find existing stock entry by location
-          const index = item.stock.findIndex(
-            (s) => s.location === element.location
-          );
-
           // let existingQty = 0;
           // let existingPrice = item.avgPrice || 0;
 
