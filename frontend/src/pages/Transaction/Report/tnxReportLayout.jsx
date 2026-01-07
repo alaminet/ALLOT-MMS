@@ -20,6 +20,8 @@ dayjs.extend(customParseFormat);
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import { FileExcelOutlined } from "@ant-design/icons";
+import useExcelExport from "../../../hooks/useExcelExport";
 
 const TnxReportLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -73,24 +75,26 @@ const TnxReportLayout = () => {
           }
         )
         .then((res) => {
+          console.log(res?.data?.transactions);
+
           message.success(res?.data.message);
           const tableArr = res?.data?.transactions?.map((item, index) => ({
             key: index,
-            tnxType: item?.tnxType,
+            createdAt: moment(item?.createdAt).format("DD-MMM-YY h:mm A"),
+            documentAt: moment(item?.documentAt).format("DD-MMM-YY"),
             docRef: item?.reference,
+            tnxType: item?.tnxType,
             tnxRef: item?.tnxRef,
             code: item?.itemCode,
             SKU: item?.itemSKU,
             name: item?.itemName,
             UOM: item?.itemUOM,
-            location: item?.location,
-            remarks: item?.remarks,
-            costCenter: item?.costCenter,
             unitPrice: Number(item?.itemPrice).toFixed(2),
             tnxQty: Number(item?.tnxQty).toFixed(2),
             tnxPrice: Number(item?.tnxQty * item?.itemPrice).toFixed(2),
-            createdAt: moment(item?.createdAt).format("DD-MMM-YY h:mm A"),
-            documentAt: moment(item?.documentAt).format("DD-MMM-YY"),
+            location: item?.location,
+            remarks: item?.remarks,
+            costCenter: item?.costCenter,
             createdBy: item?.createdBy?.name,
             status: item?.status,
             action: item,
@@ -301,6 +305,31 @@ const TnxReportLayout = () => {
     }
   };
 
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "transaction_report",
+    sheetName: "Transaction Report",
+    excludedKeys: ["key", "action", "status"], // Exclude internal fields
+    columnWidths: {
+      createdAt: 20,
+      documentAt: 20,
+      docRef: 15,
+      tnxType: 15,
+      tnxRef: 15,
+      code: 15,
+      SKU: 15,
+      name: 30,
+      UOM: 10,
+      unitPrice: 10,
+      tnxQty: 10,
+      tnxPrice: 10,
+      location: 15,
+      remarks: 10,
+      costCenter: 15,
+      createdBy: 15,
+    },
+  });
+
   useEffect(() => {
     getItems();
   }, []);
@@ -436,6 +465,16 @@ const TnxReportLayout = () => {
             </Button>
           </Form.Item>
         </Form>
+      </Flex>
+      <Flex justify="end" gap={16}>
+        <Button
+          type="default"
+          className="borderBrand"
+          style={{ borderRadius: "0px" }}
+          onClick={handleExportExcel}>
+          <FileExcelOutlined />
+          Excel
+        </Button>
       </Flex>
       <Table
         columns={columns}
