@@ -373,8 +373,8 @@ const POReceiveFormView = ({
       // Add this item to the PO's itemDetails array
       acc[poNumber].itemDetails.push({
         POLineID: item?.key, // Original line ID from PO
-        PRLineId: item?.PRLineId, // Original line ID from PO
-        PRRef: item?.PRRef, // Original line ID from PO
+        PRLineId: item?.PRLineId, // Original line ID from PR
+        PRRef: item?.PRRef, // Original line ID from PR
         code: item?.code?.code || null,
         SKU: item?.SKU || null,
         name: item?.name,

@@ -143,7 +143,10 @@ const POReceiveLayout = () => {
                   POQty: list?.POQty,
                   reqGRNQty: list?.POQty - list?.GRNQty,
                   POPrice: list?.POPrice,
-                  reqPOPrice: list?.POPrice,
+                  reqPOPrice:
+                    Number(list?.POPrice || 0) +
+                    Number(list?.POPrice || 0) *
+                      (Number(list?.reqPOVAT || 0) / 100),
                   PORemarks: list?.remarks,
                   GRNRemarks: null,
                   GRNQty: list?.GRNQty,
@@ -164,6 +167,8 @@ const POReceiveLayout = () => {
                 }
             )
           );
+          console.log(tableArr);
+
           setQueryData(tableArr);
         });
     } catch (error) {

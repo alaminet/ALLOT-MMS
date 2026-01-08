@@ -194,9 +194,13 @@ const PurchaseOrderReviewForm = ({
       title: "% of VAT",
       dataIndex: "reqPOVAT",
       editable: true,
-      width: 100,
+      width: 150,
       render: (text) => (
-        <Input style={{ padding: 0 }} variant="borderless" value={text} />
+        <Input
+          style={{ padding: 0, width: "100%" }}
+          variant="borderless"
+          value={text}
+        />
       ),
     },
     {
