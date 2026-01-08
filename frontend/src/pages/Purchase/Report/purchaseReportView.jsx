@@ -61,6 +61,7 @@ const PurchaseReportView = () => {
       endDate: moment(endDate).format(),
       scope: scope,
       code: values.item || null,
+      docRef: values.code || null,
     };
     try {
       await axios
@@ -301,7 +302,7 @@ const PurchaseReportView = () => {
             <Select
               showSearch
               allowClear
-              style={{ minWidth: "350px" }}
+              style={{ minWidth: "300px" }}
               placeholder="Items"
               optionFilterProp="label"
               options={itemList}
@@ -309,6 +310,7 @@ const PurchaseReportView = () => {
           </Form.Item>
           <Form.Item name="startDate" initialValue={dayjs()}>
             <DatePicker
+              style={{ width: "130px" }}
               placeholder="Start Date"
               disabledDate={(current) => {
                 const endDate = form.getFieldValue("endDate");
@@ -322,6 +324,7 @@ const PurchaseReportView = () => {
           </Form.Item>
           <Form.Item name="endDate" initialValue={dayjs()}>
             <DatePicker
+               style={{ width: "130px" }}
               placeholder="End Date"
               disabledDate={(current) => {
                 const startDate = form.getFieldValue("startDate");
@@ -340,7 +343,7 @@ const PurchaseReportView = () => {
             rules={[{ required: true }]}>
             <Select
               showSearch
-              style={{ minWidth: "200px" }}
+              style={{ minWidth: "180px" }}
               placeholder="Transaction Type"
               optionFilterProp="label"
               options={[
@@ -365,7 +368,7 @@ const PurchaseReportView = () => {
             rules={[{ required: true }]}>
             <Select
               showSearch
-              style={{ minWidth: "200px" }}
+              style={{ minWidth: "120px" }}
               placeholder="Status"
               optionFilterProp="label"
               options={[
@@ -395,6 +398,9 @@ const PurchaseReportView = () => {
                 },
               ]}
             />
+          </Form.Item>
+          <Form.Item name="code">
+            <Input placeholder="PR/PO No." />
           </Form.Item>
           <Form.Item shouldUpdate>
             <Button type="primary" htmlType="submit">

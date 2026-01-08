@@ -50,7 +50,6 @@ async function creatPOGRNRecCTR(req, res, next) {
           code: "RECORD_CREATED",
         });
       } catch (err) {
-        
         responseSteps.push({
           orgId: req.orgId,
           actionBy: req.actionBy,
@@ -190,7 +189,7 @@ async function creatPOGRNRecCTR(req, res, next) {
             controller: "createTrnxRecCTR",
             step: "updateItem",
             status: "success",
-            message: `Item ${element.code} updated (location: ${element.location}, receive Qty: ${newQty})`,
+            message: `Item ${element?.SKU} updated (location: ${element.location}, receive Qty: ${newQty})`,
             code: "ITEM_UPDATED",
             item: { code: element.code, location: element.location },
           });

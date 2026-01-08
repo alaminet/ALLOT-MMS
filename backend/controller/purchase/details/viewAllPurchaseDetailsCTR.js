@@ -30,6 +30,10 @@ async function viewAllPurchaseDetailsCTR(req, res) {
       query["itemDetails.code"] = data.code;
     }
 
+    if (data.docRef) {
+      query["code"] = data.docRef;
+    }
+
     // Dynamically add createdAt filter
     if (
       data?.startDate !== "Invalid date" ||
@@ -46,14 +50,17 @@ async function viewAllPurchaseDetailsCTR(req, res) {
 
     // Build items array depending on tnxType
     let items = [];
-
+    let pathList = ["createdBy", "updatedBy", "itemDetails.code"];
+    if (modelName === "purchaseRequisition" || modelName === "all") {
+      pathList.push("costCenter");
+    }
     if (modelName && String(modelName).toLowerCase() === "all") {
       // Query all models in the modelMap and tag each result with its source
       const entries = Object.entries(modelMap);
       for (const [key, Model] of entries) {
         const docs = await Model.find(query)
           .populate({
-            path: ["createdBy", "updatedBy", "itemDetails.code", "costCenter"],
+            path: pathList,
             select: ["name", "SKU"],
           })
           .lean();
@@ -71,7 +78,7 @@ async function viewAllPurchaseDetailsCTR(req, res) {
 
       const docs = await Model.find(query)
         .populate({
-          path: ["createdBy", "updatedBy", "itemDetails.code", "costCenter"],
+          path: pathList,
           select: ["name", "SKU"],
         })
         .lean();
