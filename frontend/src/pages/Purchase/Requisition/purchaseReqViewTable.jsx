@@ -142,7 +142,12 @@ const PurchaseReqViewTable = () => {
             {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
-                  disabled={record?.POAvl || record?.status !== "In-Process"}
+                  disabled={
+                    record?.POAvl ||
+                    (record?.status !== "In-Process" &&
+                      record?.status !== "Checked" &&
+                      record?.status !== "Confirmed")
+                  }
                   onClick={() =>
                     navigate("update", {
                       state: {
@@ -156,7 +161,12 @@ const PurchaseReqViewTable = () => {
             ) : othersEdit && user.id !== record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
-                  disabled={record?.POAvl || record?.status !== "In-Process"}
+                  disabled={
+                    record?.POAvl ||
+                    (record?.status !== "In-Process" &&
+                      record?.status !== "Checked" &&
+                      record?.status !== "Confirmed")
+                  }
                   onClick={() =>
                     navigate("update", {
                       state: {
@@ -320,8 +330,7 @@ const PurchaseReqViewTable = () => {
               type="default"
               className="borderBrand"
               style={{ borderRadius: "0px" }}
-              onClick={handleExportExcel}
-            >
+              onClick={handleExportExcel}>
               <FileExcelOutlined />
               Excel
             </Button>
@@ -335,8 +344,7 @@ const PurchaseReqViewTable = () => {
                     model: "Purchase-Requisition",
                   },
                 })
-              }
-            >
+              }>
               Logs
             </Button>
           </Flex>
@@ -377,8 +385,7 @@ const PurchaseReqViewTable = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}
-      >
+        }}>
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
     </>

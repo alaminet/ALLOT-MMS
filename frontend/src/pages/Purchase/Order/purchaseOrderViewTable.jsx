@@ -171,7 +171,12 @@ const PurchaseOrderViewTable = () => {
             {ownEdit && user.id === record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
-                  disabled={record.GRNAvl || record?.status !== "In-Process"}
+                  disabled={
+                    record.GRNAvl ||
+                    (record?.status !== "In-Process" &&
+                      record?.status !== "Checked" &&
+                      record?.status !== "Confirmed")
+                  }
                   onClick={() => {
                     setEditPOId(record.action);
                     setDrawerOpen(true);
@@ -182,7 +187,12 @@ const PurchaseOrderViewTable = () => {
             ) : othersEdit && user.id !== record?.createdBy ? (
               <Tooltip title="Edit">
                 <Button
-                  disabled={record.GRNAvl || record?.status !== "In-Process"}
+                  disabled={
+                    record.GRNAvl ||
+                    (record?.status !== "In-Process" &&
+                      record?.status !== "Checked" &&
+                      record?.status !== "Confirmed")
+                  }
                   onClick={() => {
                     setEditPOId(record.action);
                     setDrawerOpen(true);
@@ -198,8 +208,7 @@ const PurchaseOrderViewTable = () => {
                   title="Sure to delete?"
                   onConfirm={() =>
                     handleChange(record.action, record.key, "isDeleted", true)
-                  }
-                >
+                  }>
                   <Button
                     icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                     disabled={record.GRNQty > 0}
@@ -213,8 +222,7 @@ const PurchaseOrderViewTable = () => {
                   title="Sure to delete?"
                   onConfirm={() =>
                     handleChange(record.action, record.key, "isDeleted", true)
-                  }
-                >
+                  }>
                   <Button
                     icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
                     disabled={record.GRNQty > 0}
@@ -351,8 +359,7 @@ const PurchaseOrderViewTable = () => {
               type="default"
               className="borderBrand"
               style={{ borderRadius: "0px" }}
-              onClick={handleExportExcel}
-            >
+              onClick={handleExportExcel}>
               <FileExcelOutlined />
               Excel
             </Button>
@@ -366,8 +373,7 @@ const PurchaseOrderViewTable = () => {
                     model: "Purchase-Order",
                   },
                 })
-              }
-            >
+              }>
               Logs
             </Button>
           </Flex>
@@ -408,8 +414,7 @@ const PurchaseOrderViewTable = () => {
           lg: "60%",
           xl: "50%",
           xxl: "40%",
-        }}
-      >
+        }}>
         <pre>{JSON.stringify(selectedRecord, null, 2)}</pre>
       </Modal>
       <PurchaseOrderUpdate

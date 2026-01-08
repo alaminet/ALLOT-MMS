@@ -1140,7 +1140,9 @@ const PurchaseReqPrintView = () => {
           </div>
           <Flex gap={16} style={{ marginTop: "16px" }}>
             {/* ownEdit othersEdit */}
-            {queryData?.status === "In-Process" &&
+            {(queryData?.status === "In-Process" ||
+              queryData?.status === "Checked" ||
+              queryData?.status === "Confirmed") &&
             ownEdit &&
             user.id === queryData?.createdBy?._id ? (
               <Button
@@ -1155,7 +1157,9 @@ const PurchaseReqPrintView = () => {
                 }>
                 <EditOutlined />
               </Button>
-            ) : queryData?.status === "In-Process" &&
+            ) : (queryData?.status === "In-Process" ||
+                queryData?.status === "Checked" ||
+                queryData?.status === "Confirmed") &&
               othersEdit &&
               user.id !== queryData?.createdBy?._id ? (
               <Button

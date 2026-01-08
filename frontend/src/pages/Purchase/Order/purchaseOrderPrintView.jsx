@@ -13,7 +13,7 @@ import {
   QRCode,
   Flex,
 } from "antd";
-import { PlusOutlined, PrinterOutlined } from "@ant-design/icons";
+import { EditOutlined, PlusOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
 import { useEffect } from "react";
@@ -23,6 +23,7 @@ import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import NotFound from "../../notFound";
 import numberToWords from "../../../hooks/useNumberToWords";
+import PurchaseOrderUpdate from "./purchaseOrderUpdate";
 const { Title, Text } = Typography;
 const { Column, ColumnGroup } = Table;
 
@@ -50,11 +51,15 @@ const PurchaseOrderPrintView = () => {
   const [inputValues, setInputValues] = useState({});
   const [businessDetails, setBusinessDetails] = useState();
   const [queryData, setQueryData] = useState([]);
+  const [editPOId, setEditPOId] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // User Permission Check
   const { canDoOwn, canDoOther, canAuthOther, canAuthOwn } = usePermission();
   const own = canDoOwn("purchase-order", "view");
   const others = canDoOther("purchase-order", "view");
+  const ownEdit = canDoOwn("purchase-order", "edit");
+  const othersEdit = canDoOther("purchase-order", "edit");
   const ownCheck = canAuthOwn("purchase-order", "check");
   const othersCheck = canAuthOther("purchase-order", "check");
   const ownConfirm = canAuthOwn("purchase-order", "confirm");
@@ -673,6 +678,38 @@ const PurchaseOrderPrintView = () => {
               </Col>
             </Row>
             <Flex gap={16} style={{ marginTop: "16px" }}>
+              {/* ownEdit othersEdit */}
+
+              {(queryData?.status === "In-Process" ||
+                queryData?.status === "Checked" ||
+                queryData?.status === "Confirmed") &&
+              ownEdit &&
+              user?.id === queryData?.createdBy?._id ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => {
+                    setEditPOId(queryData?._id);
+                    setDrawerOpen(true);
+                  }}>
+                  <EditOutlined />
+                </Button>
+              ) : (queryData?.status === "In-Process" ||
+                  queryData?.status === "Checked" ||
+                  queryData?.status === "Confirmed") &&
+                othersEdit &&
+                user?.id !== queryData?.createdBy?._id ? (
+                <Button
+                  type="primary"
+                  className="no-print"
+                  onClick={() => {
+                    setEditPOId(queryData?._id);
+                    setDrawerOpen(true);
+                  }}>
+                  <EditOutlined />
+                </Button>
+              ) : null}
+
               <Button
                 type="dashed"
                 className="no-print"
@@ -734,6 +771,11 @@ const PurchaseOrderPrintView = () => {
           </div>
         </>
       )}
+      <PurchaseOrderUpdate
+        drawerOpen={drawerOpen}
+        setDrawerOpen={setDrawerOpen}
+        data={editPOId}
+      />
     </>
   );
 };
