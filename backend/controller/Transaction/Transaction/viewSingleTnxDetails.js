@@ -44,6 +44,7 @@ async function viewSingleTnxDetails(req, res) {
     // requester cost center
     const userCostCenter = await Member.findOne({ _id: req.actionBy })
       .select("costCenter")
+      .populate("costCenter", "name")
       .lean();
     const userDept = userCostCenter?.costCenter?.name || null;
 
