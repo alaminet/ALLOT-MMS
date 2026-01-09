@@ -5,7 +5,10 @@ async function createMemberSUCTR(req, res, next) {
   const data = req.body;
 
   try {
-    if (!data.email || !data.password) {
+    if (/\s/.test(data.username)) {
+      return res.status(400).send({ error: "Username cannot contain spaces" });
+    }
+    if (!data.email || !data.password || !data.username) {
       return res
         .status(400)
         .send({ error: "Email, and password are required" });

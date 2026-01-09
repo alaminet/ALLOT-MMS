@@ -5,6 +5,9 @@ async function updateMemberSUCTR(req, res, next) {
   const updatedData = req.body;
 
   try {
+    if (/\s/.test(updatedData?.username)) {
+      return res.status(400).send({ error: "Username cannot contain spaces" });
+    }
     if (!id) {
       return res.status(400).send({ error: "ID is required" });
     }
