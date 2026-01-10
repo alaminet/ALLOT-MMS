@@ -12,7 +12,7 @@ function secureSUJWT(req, res, next) {
       return res.status(403).send({ error: "Invalid Token" });
     } else {
       req.actionBy = existingMember._id;
-      req.orgId = existingMember.orgId;
+      // req.orgId = existingMember.orgId;
       next();
     }
   });

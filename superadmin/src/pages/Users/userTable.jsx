@@ -191,8 +191,6 @@ const UserTable = () => {
           }
         )
         .then((res) => {
-          console.log(res?.data?.members);
-
           message.success(res.data.message);
           const tableArr = res?.data?.members?.map((item, index) => ({
             key: index,

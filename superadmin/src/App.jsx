@@ -15,6 +15,9 @@ import LogActivites from "./components/logActivites";
 import UserTable from "./pages/Users/userTable";
 import UserUpdate from "./pages/Users/userUpdate";
 import UserNew from "./pages/Users/userNew";
+import Organization from "./pages/Organization";
+import OrgListTable from "./pages/Organization/OrgListTable";
+import OrgAdd from "./pages/Organization/OrgAdd";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -30,6 +33,10 @@ function App() {
               <Route path="new" element={<UserNew />} />
               <Route path="update" element={<UserUpdate />} />
               <Route path="logs" element={<LogActivites />} />
+            </Route>
+            <Route path="/organization" element={<Organization />}>
+              <Route path="" element={<OrgListTable />} />
+              <Route path="new" element={<OrgAdd />} />
             </Route>
             {/* <Route path="/inventory" element={<Inventory />}>
               <Route path="" element={<InventoryViewTable />} />

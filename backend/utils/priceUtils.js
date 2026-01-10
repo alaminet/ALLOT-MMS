@@ -1,4 +1,10 @@
-function computeAvgPrice(stock = [], location, newQty, newPrice, existingAvgPrice = 0) {
+function computeAvgPrice(
+  stock = [],
+  location,
+  newQty,
+  newPrice,
+  existingAvgPrice = 0
+) {
   const existingPrice = Number(existingAvgPrice || 0);
   const parsedNewQty = Number(newQty || 0);
   const parsedNewPrice = Number(newPrice || 0);
@@ -15,22 +21,20 @@ function computeAvgPrice(stock = [], location, newQty, newPrice, existingAvgPric
   const remainingQty = totalOnHandBefore - parsedNewQty;
   const remainingValue = existingValue - newValue;
 
-  // Clone stock so caller can use it
-  const updatedStock = (stock || []).map((s) => ({ ...s }));
-
-  const index = updatedStock.findIndex((s) => s.location === location);
+  // Update stock for the specified location
+  const index = stock.findIndex((s) => s.location === location);
   if (index !== -1) {
-    const existingLoc = updatedStock[index];
+    const existingLoc = stock[index];
     const existingIssueQty = Number(existingLoc.issueQty || 0);
 
-    updatedStock[index] = {
+    stock[index] = {
       location,
       recQty: existingLoc.recQty || 0,
       issueQty: existingIssueQty + parsedNewQty,
       onHandQty: Number(existingLoc.onHandQty || 0) - parsedNewQty,
     };
   } else {
-    updatedStock.push({
+    stock.push({
       location,
       recQty: 0,
       issueQty: parsedNewQty,
@@ -46,7 +50,7 @@ function computeAvgPrice(stock = [], location, newQty, newPrice, existingAvgPric
     avgPrice = parsedNewPrice;
   }
 
-  return { avgPrice, updatedStock };
+  return { avgPrice, updatedStock: stock };
 }
 
 module.exports = { computeAvgPrice };

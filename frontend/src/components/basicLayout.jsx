@@ -62,8 +62,8 @@ const items = [
     getItem("Item List", "item-list", <FileDoneOutlined />),
     getItem("Item Details", "item-details", <FileDoneOutlined />),
   ]),
-  getItem("User", "user", <TeamOutlined />),
   getItem("Settings", "settings", <SettingOutlined />),
+  getItem("User", "user", <TeamOutlined />),
 ];
 
 // Theme configure

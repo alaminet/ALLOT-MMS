@@ -14,6 +14,13 @@ const UserRoleViewTable = ({ data }) => {
       other: { view: false },
     },
     {
+      key: "organization",
+      module: "Organization",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "user",
       module: "User",
       pageAccess: { view: false },

@@ -44,6 +44,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
 
+  getItem("Organization", "organization", <ShoppingCartOutlined />),
   // getItem("Purchase", "purchase", <ShoppingCartOutlined />, [
   //   getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
   //   getItem("Order", "purchase-order", <FileProtectOutlined />),
