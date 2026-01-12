@@ -41,17 +41,19 @@ const StockCheckModal = () => {
       key: "UOM",
     },
     {
-      title: "Location",
+      title: "Location (Unit)",
       dataIndex: "location",
       key: "location",
       render: (text, record, index) =>
         Array.isArray(text)
-          ? text.map((st, i) => (
-              <p key={i} style={{ display: "block" }}>
-                {" "}
-                {`${st?.location} (${st?.onHandQty})`}{" "}
-              </p>
-            ))
+          ? text?.map(
+              (st, i) =>
+                st?.onHandQty > 0 && (
+                  <p key={i} style={{ display: "block" }}>
+                    {`${st?.location} (${st?.onHandQty})`}
+                  </p>
+                )
+            )
           : null,
     },
     {
@@ -109,6 +111,7 @@ const StockCheckModal = () => {
         <Input
           placeholder="Name / SKU"
           variant="filled"
+          style={{ marginBottom: "10px", borderRadius: "0px" }}
           onChange={(e) => setSearch(e.target.value)}
         />
         <Table
