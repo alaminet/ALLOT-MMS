@@ -31,6 +31,7 @@ const MOReportPrintView = () => {
   const query = new URLSearchParams(search);
   const code = query.get("mo");
   const [queryData, setQueryData] = useState();
+  const [loading, setLoading] = useState(false);
   const [businessDetails, setBusinessDetails] = useState();
 
   // User Permission Check
@@ -97,6 +98,7 @@ const MOReportPrintView = () => {
 
   // Handle Status Update
   const handleStatusUpdate = async (values) => {
+    setLoading(true);
     const timeNow = moment(new Date());
     const payload = {
       status: values,
@@ -158,10 +160,12 @@ const MOReportPrintView = () => {
         )
         .then((res) => {
           message.success(res.data.message);
-          setOpen(false);
+          getDetails();
+          setLoading(false);
         });
     } catch (error) {
       message.error(error.response.data.error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -477,6 +481,7 @@ const MOReportPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
+                loading={loading}
                 onClick={() => handleStatusUpdate("Checked")}>
                 Checked
               </Button>
@@ -486,6 +491,7 @@ const MOReportPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
+                loading={loading}
                 onClick={() => handleStatusUpdate("Confirmed")}>
                 Confirmed
               </Button>
@@ -495,6 +501,7 @@ const MOReportPrintView = () => {
               <Button
                 type="primary"
                 className="no-print"
+                loading={loading}
                 onClick={() => handleStatusUpdate("Approved")}>
                 Approved
               </Button>
@@ -508,6 +515,7 @@ const MOReportPrintView = () => {
                 className="no-print"
                 color="danger"
                 variant="outlined"
+                loading={loading}
                 onClick={() => handleStatusUpdate("Hold")}>
                 Hold
               </Button>
@@ -524,6 +532,7 @@ const MOReportPrintView = () => {
                 className="no-print"
                 color="danger"
                 variant="outlined"
+                loading={loading}
                 onClick={() => handleStatusUpdate("Closed")}>
                 Closed
               </Button>
