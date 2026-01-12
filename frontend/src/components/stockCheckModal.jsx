@@ -41,6 +41,20 @@ const StockCheckModal = () => {
       key: "UOM",
     },
     {
+      title: "Location",
+      dataIndex: "location",
+      key: "location",
+      render: (text, record, index) =>
+        Array.isArray(text)
+          ? text.map((st, i) => (
+              <p key={i} style={{ display: "block" }}>
+                {" "}
+                {`${st?.location} (${st?.onHandQty})`}{" "}
+              </p>
+            ))
+          : null,
+    },
+    {
       title: "Stock",
       dataIndex: "stock",
       key: "stock",
@@ -65,6 +79,7 @@ const StockCheckModal = () => {
         SKU: item.SKU,
         name: item.name,
         UOM: item.UOM?.code,
+        location: item.stock,
         stock: item.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0),
         search: `${item.SKU} ${item.name}`,
       }));
@@ -81,8 +96,7 @@ const StockCheckModal = () => {
         icon={<ProductOutlined />}
         type="primary"
         className="borderBrand"
-        style={{ borderRadius: "0px" }}
-      >
+        style={{ borderRadius: "0px" }}>
         Check Stock
       </Button>
       <Modal
@@ -90,8 +104,8 @@ const StockCheckModal = () => {
         footer={false}
         loading={loading}
         open={open}
-        onCancel={() => setOpen(false)}
-      >
+        width={900}
+        onCancel={() => setOpen(false)}>
         <Input
           placeholder="Name / SKU"
           variant="filled"
@@ -99,6 +113,7 @@ const StockCheckModal = () => {
         />
         <Table
           columns={columns}
+          bordered
           dataSource={
             search !== "" &&
             itemList.filter((item) =>
