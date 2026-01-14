@@ -44,7 +44,12 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
 
-  getItem("Organization", "organization", <ShoppingCartOutlined />),
+  getItem("Organization", "organization", <ShoppingCartOutlined />, [
+    getItem("ORG-List", "organization", <FileDoneOutlined />),
+    getItem("ORG-User", "organization/org-user", <FileProtectOutlined />),
+    getItem("Supplier", "supplier", <FileSyncOutlined />),
+    getItem("Report", "purchase-report", <FileDoneOutlined />),
+  ]),
   // getItem("Purchase", "purchase", <ShoppingCartOutlined />, [
   //   getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
   //   getItem("Order", "purchase-order", <FileProtectOutlined />),
