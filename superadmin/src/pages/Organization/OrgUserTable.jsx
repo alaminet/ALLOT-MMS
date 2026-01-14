@@ -6,10 +6,12 @@ import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
 import { useEffect } from "react";
 import axios from "axios";
-import { Button, Flex, message, Switch, Table, Tooltip } from "antd";
+import { Button, Divider, Flex, message, Switch, Table, Tooltip } from "antd";
 import Search from "antd/es/input/Search";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import moment from "moment";
+import UserRoleViewTable from "./userRoleViewTable";
+import UserAuthorizationViewTable from "./userAuthorizationViewTable";
 
 const OrgUserTable = () => {
   const navigate = useNavigate();
@@ -29,6 +31,8 @@ const OrgUserTable = () => {
 
   const ownView = canDoOwn(accessName, "view");
   const othersView = canDoOther(accessName, "view");
+  const ownCreate = canDoOwn(accessName, "create");
+  const othersCreate = canDoOther(accessName, "create");
   const ownEdit = canDoOwn(accessName, "edit");
   const othersEdit = canDoOther(accessName, "edit");
   const ownDelete = canDoOwn(accessName, "delete");
@@ -70,7 +74,7 @@ const OrgUserTable = () => {
       key: "phone",
       // responsive: ["lg"],
     },
-    // Table.EXPAND_COLUMN,
+    Table.EXPAND_COLUMN,
     {
       title: "Created By",
       dataIndex: "createdBy",
@@ -273,7 +277,7 @@ const OrgUserTable = () => {
           <Button
             type="primary"
             onClick={() => navigate("new")}
-            disabled={!canDoOwn(accessName, "create")}
+            disabled={!ownCreate && !othersCreate}
             style={{ borderRadius: "0px", padding: "10px 30px" }}>
             Add Org-Member
           </Button>
@@ -309,19 +313,19 @@ const OrgUserTable = () => {
           // showTotal: (total) => `Total ${total} items`,
           defaultPageSize: 10,
         }}
-        // expandable={{
-        //   expandedRowRender: (record) => (
-        //     <>
-        //       <Divider>User Role Access</Divider>
-        //       <UserRoleViewTable data={record?.access?.access} />
-        //       <Divider>User Authorization Access</Divider>
-        //       <UserAuthorizationViewTable
-        //         data={record?.access?.authorization}
-        //       />
-        //     </>
-        //   ),
-        //   rowExpandable: (record) => record.access !== "Not Expandable",
-        // }}
+        expandable={{
+          expandedRowRender: (record) => (
+            <>
+              <Divider>User Role Access</Divider>
+              <UserRoleViewTable data={record?.access?.access} />
+              <Divider>User Authorization Access</Divider>
+              <UserAuthorizationViewTable
+                data={record?.access?.authorization}
+              />
+            </>
+          ),
+          rowExpandable: (record) => record.access !== "Not Expandable",
+        }}
       />
     </>
   );

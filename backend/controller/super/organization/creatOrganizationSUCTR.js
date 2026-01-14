@@ -1,6 +1,5 @@
 const Organization = require("../../../model/orgUser");
 
-
 async function creatOrganizationSUCTR(req, res, next) {
   const data = req.body;
   try {
@@ -35,7 +34,6 @@ async function creatOrganizationSUCTR(req, res, next) {
 
         // Add Log activites
         const logData = {
-          orgId: req.orgId,
           id: req.actionBy,
           refModel: "Organization",
           action: `New Organization "${newData.name}" created`,

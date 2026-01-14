@@ -55,7 +55,6 @@ async function updateOrgMemberSUCTR(req, res, next) {
           : `"${updatedMember.name}" updated`;
 
       const logData = {
-        orgId: updatedMember.orgId,
         id: req.actionBy,
         refModel: "Member",
         action: actionTex,
