@@ -13,12 +13,9 @@ import {
   Tooltip,
 } from "antd";
 import moment from "moment";
-import UserRoleViewTable from "../Users/userRoleViewTable";
-import UserAuthorizationViewTable from "../Users/userAuthorizationViewTable";
 import axios from "axios";
 import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
-import PasswordUpdateModal from "../../components/passwordUpdateModal";
 import {
   CheckCircleTwoTone,
   DeleteTwoTone,
@@ -41,6 +38,8 @@ const OrgListTable = () => {
   const lastSegment = pathname.split("/").filter(Boolean).pop();
   const own = canDoOwn(lastSegment, "view");
   const others = canDoOther(lastSegment, "view");
+  const ownEdit = canDoOwn(lastSegment, "edit");
+  const othersEdit = canDoOther(lastSegment, "edit");
   const ownDelete = canDoOwn(lastSegment, "delete");
   const othersDelete = canDoOther(lastSegment, "delete");
 
@@ -59,6 +58,7 @@ const OrgListTable = () => {
       dataIndex: "orgId",
       key: "orgId",
       width: 100,
+      fixed: "left",
       // responsive: ["lg"],
     },
     {
@@ -130,7 +130,13 @@ const OrgListTable = () => {
       // responsive: ["lg"],
       render: (_, action) => (
         <Switch
-          disabled={!user.isAdmin}
+          disabled={
+            ownEdit && user.id === action.access?.createdBySU?._id
+              ? false
+              : othersEdit && user.id !== action.access?.createdBySU?._id
+              ? false
+              : true
+          }
           checkedChildren="Active"
           unCheckedChildren="Inactive"
           defaultValue={_}
@@ -145,8 +151,7 @@ const OrgListTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {canDoOther("organization", "edit") &&
-            user.id !== record.access?.createdBySU?._id ? (
+            {othersEdit && user.id !== record.access?.createdBySU?._id ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>
@@ -159,8 +164,7 @@ const OrgListTable = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            ) : canDoOwn("organization", "edit") &&
-              user.id === record.access?.createdBySU?._id ? (
+            ) : ownEdit && user.id === record.access?.createdBySU?._id ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>

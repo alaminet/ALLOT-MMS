@@ -113,6 +113,13 @@ const OrgUserTable = () => {
       // responsive: ["lg"],
       render: (_, action) => (
         <Switch
+          disabled={
+            ownEdit && user.id === action.access?.createdBySU?._id
+              ? false
+              : othersEdit && user.id !== action.access?.createdBySU?._id
+              ? false
+              : true
+          }
           checkedChildren={true}
           unCheckedChildren={false}
           defaultValue={_}
@@ -128,6 +135,13 @@ const OrgUserTable = () => {
       // responsive: ["lg"],
       render: (_, action) => (
         <Switch
+          disabled={
+            ownEdit && user.id === action.access?.createdBySU?._id
+              ? false
+              : othersEdit && user.id !== action.access?.createdBySU?._id
+              ? false
+              : true
+          }
           checkedChildren={true}
           unCheckedChildren={false}
           defaultValue={_}
