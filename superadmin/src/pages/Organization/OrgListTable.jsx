@@ -146,7 +146,7 @@ const OrgListTable = () => {
                   onClick={() =>
                     navigate("update", {
                       state: {
-                        userInfo: record.access,
+                        orgDetails: record.access,
                       },
                     })
                   }

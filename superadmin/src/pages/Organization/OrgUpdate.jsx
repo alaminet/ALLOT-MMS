@@ -17,45 +17,24 @@ import {
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
-const OrgAdd = () => {
+const OrgUpdate = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { orgDetails } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   // User Permission Check
-  const { canViewPage, canDoOwn } = usePermission();
-  if (!canViewPage("organization")) {
+  const { canViewPage, canDoOwn, canDoOther } = usePermission();
+  const ownEdit = canDoOwn("organization", "edit");
+  const othersEdit = canDoOther("organization", "edit");
+  if (!ownEdit || !othersEdit) {
     return <NotAuth />;
   }
-  const canCreate = canDoOwn("organization", "create");
-
-  // // Module List
-  // const modules = [
-  //   { label: "Dashboard", value: "dashboard" },
-  //   { label: "Purchase", value: "purchase" },
-  //   { label: "Purchase requisition", value: "purchase-requisition" },
-  //   { label: "Supplier", value: "supplier" },
-  //   { label: "Purchase report", value: "purchase-report" },
-  //   { label: "Warehouse", value: "transaction" },
-  //   { label: "Inventory (Stock)", value: "inventory" },
-  //   { label: "Goods receive", value: "receive" },
-  //   { label: "Goods issue", value: "issue" },
-  //   { label: "Transaction report", value: "tnx-report" },
-  //   { label: "Move Order report", value: "mo-report" },
-  //   { label: "Item master", value: "master" },
-  //   { label: "Item Information", value: "item-list" },
-  //   { label: "Item details", value: "item-details" },
-  //   { label: "Users", value: "user" },
-  //   { label: "Password reset", value: "pwdr" },
-  //   { label: "Web settings", value: "settings" },
-  // ];
-  // const authorizations = [
-  //   { label: "Purchase requisition", value: "purchase-requisition" },
-  //   { label: "Purchase order", value: "purchase-order" },
-  //   { label: "Move order", value: "move-order" },
-  // ];
 
   // Form submission
   const onFinish = async (values) => {
@@ -65,7 +44,9 @@ const OrgAdd = () => {
     try {
       await axios
         .post(
-          `${import.meta.env.VITE_API_URL}/api/super/SUOrganization/new`,
+          `${import.meta.env.VITE_API_URL}/api/super/SUOrganization/update/${
+            orgDetails?._id
+          }`,
           formData,
           {
             headers: {
@@ -77,6 +58,7 @@ const OrgAdd = () => {
         .then((res) => {
           message.success(res.data.message);
           setLoading(false);
+          navigate("/organization");
         });
     } catch (error) {
       setLoading(false);
@@ -94,7 +76,9 @@ const OrgAdd = () => {
           form={form}
           name="new"
           layout="vertical"
-          // initialValues={{ ...businessSettings }}
+          initialValues={{
+            ...orgDetails,
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -429,62 +413,18 @@ const OrgAdd = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              {/* <Row>
-                <Col lg={24} xs={24}>
-                  <Form.Item
-                    label="Module access"
-                    style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
-                      <Form.Item
-                        name="module"
-                        noStyle
-                        initialValue={[
-                          "dashboard",
-                          "master",
-                          "item-list",
-                          "item-details",
-                          "user",
-                          "pwdr",
-                          "settings",
-                        ]}>
-                        <Checkbox.Group
-                          style={{ width: "100%" }}
-                          options={modules}
-                          // onChange={onChange}
-                        />
-                      </Form.Item>
-                    </Flex>
-                  </Form.Item>
-                </Col>
-              </Row> */}
-              {/* <Row>
-                <Col lg={24} xs={24}>
-                  <Form.Item
-                    label="Authorization access"
-                    style={{ marginBottom: "35px" }}>
-                    <Flex gap={16} style={{ marginBottom: "35px" }}>
-                      <Form.Item
-                        name="authorization"
-                        noStyle
-                        initialValue={null}>
-                        <Checkbox.Group options={authorizations} />
-                      </Form.Item>
-                    </Flex>
-                  </Form.Item>
-                </Col>
-              </Row> */}
               <Row justify="end">
                 <Col span={24}>
                   <Form.Item label={null}>
                     <Button
-                      disabled={!canCreate}
+                      //   disabled={!canCreate}
                       size="large"
                       type="primary"
                       htmlType="submit"
                       loading={loading}
                       block
                       style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Add Organization
+                      Update Organization
                     </Button>
                   </Form.Item>
                 </Col>
@@ -497,4 +437,4 @@ const OrgAdd = () => {
   );
 };
 
-export default OrgAdd;
+export default OrgUpdate;
