@@ -15,13 +15,16 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserAuthorizationTable from "./userAuthorizationTable";
 import { usePermission } from "../../hooks/usePermission";
+import NotAuth from "../notAuth";
 
-const OrgUserAdd = () => {
+const OrgUserUpdate = () => {
   const navigate = useNavigate();
   const user = useSelector((user) => user.loginSlice.login);
+  const location = useLocation();
+  const { orgUserDetails } = location.state || {};
   const [loading, setLoading] = useState(false);
-  const [roleData, setRoleData] = useState([]);
-  const [authData, setAuthData] = useState([]);
+  const [roleData, setRoleData] = useState(orgUserDetails?.access);
+  const [authData, setAuthData] = useState(orgUserDetails?.authorization);
   const [orgData, setOrgData] = useState([]);
 
   // Get pathname
@@ -30,9 +33,16 @@ const OrgUserAdd = () => {
   const accessName = "organization/org-user";
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-
   const ownCreate = canDoOwn(accessName, "create");
   const othersCreate = canDoOther(accessName, "create");
+  const ownEdit = canDoOwn(accessName, "edit");
+  const othersEdit = canDoOther(accessName, "edit");
+  if (
+    (!ownEdit && user.id === orgUserDetails?.createdBySU?._id) ||
+    (!othersEdit && user.id !== orgUserDetails?.createdBySU?._id)
+  ) {
+    return <NotAuth />;
+  }
 
   // Form submission
   const onFinish = async (values) => {
@@ -40,7 +50,9 @@ const OrgUserAdd = () => {
     const formData = { ...values, access: roleData, authorization: authData };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/super/SUOrgMember/new`,
+        `${import.meta.env.VITE_API_URL}/api/super/SUOrgMember/update/${
+          orgUserDetails?._id
+        }`,
         formData,
         {
           headers: {
@@ -109,21 +121,21 @@ const OrgUserAdd = () => {
   return (
     <>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
-        Create New User
+        Update Organization User
       </Title>
       <Flex justify="center">
         <Form
           name="form"
-          // labelCol={{ span: 8 }}
-          // wrapperCol={{ span: 16 }}
-          // style={{ maxWidth: 600 }}
-          initialValues={{ remember: true }}
+          initialValues={{
+            ...orgUserDetails,
+            orgId: Number(orgUserDetails?.orgId),
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
           className="form-input-borderless">
           <Flex justify="center">
-            <Form.Item style={{ maxWidth: 450 }}>
+            <Form.Item style={{ minWidth: 450 }}>
               <Form.Item
                 name="name"
                 rules={[
@@ -167,53 +179,6 @@ const OrgUserAdd = () => {
                   placeholder="Organization"
                 />
               </Form.Item>
-              <Form.Item style={{ marginBottom: 0 }}>
-                <Form.Item
-                  name="password"
-                  style={{ display: "inline-block", width: "calc(50% - 8px)" }}
-                  rules={[
-                    {
-                      required: true,
-                      message: "Your password!",
-                    },
-                    { min: 6, message: "Minimum 6 characters!" },
-                  ]}
-                  hasFeedback>
-                  <Input.Password
-                    prefix={<LockOutlined />}
-                    placeholder="Password"
-                  />
-                </Form.Item>
-
-                <Form.Item
-                  name="confirmPass"
-                  style={{
-                    display: "inline-block",
-                    width: "calc(50% - 2px)",
-                    marginLeft: "10px",
-                  }}
-                  dependencies={["password"]}
-                  hasFeedback
-                  rules={[
-                    {
-                      required: true,
-                      message: "Confirm password!",
-                    },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue("password") === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error("Password not match!"));
-                      },
-                    }),
-                  ]}>
-                  <Input.Password
-                    prefix={<LockOutlined />}
-                    placeholder="Confirm Password"
-                  />
-                </Form.Item>
-              </Form.Item>
             </Form.Item>
           </Flex>
           <Form.Item>
@@ -231,7 +196,7 @@ const OrgUserAdd = () => {
               loading={loading}
               block
               style={{ borderRadius: "0px", padding: "10px 30px" }}>
-              Submit
+              User Update
             </Button>
           </Form.Item>
         </Form>
@@ -240,4 +205,4 @@ const OrgUserAdd = () => {
   );
 };
 
-export default OrgUserAdd;
+export default OrgUserUpdate;

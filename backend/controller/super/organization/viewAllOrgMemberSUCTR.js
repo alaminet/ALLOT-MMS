@@ -6,15 +6,15 @@ async function viewAllOrgMemberSUCTR(req, res) {
   try {
     const query = {};
     if (data?.scope === "own") {
-      query["createdBy"] = req.actionBy;
+      query["createdBySU"] = req.actionBy;
     } else if (data.scope === "others") {
-      query["createdBy"] = { $ne: req.actionBy };
+      query["createdBySU"] = { $ne: req.actionBy };
     }
     const dataRetrived = await OrgMember.find(query)
       .select("-password")
-      .sort({ orgId: -1 })
+      .sort({ orgId: -1, createdAt: -1 })
       .populate({
-        path: ["createdBy", "updatedBy"],
+        path: ["createdBySU", "updatedBySU", "createdBy", "updatedBy"],
         select: "name",
       })
       .lean();

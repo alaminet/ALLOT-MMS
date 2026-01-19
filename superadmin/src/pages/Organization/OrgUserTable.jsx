@@ -8,7 +8,11 @@ import { useEffect } from "react";
 import axios from "axios";
 import { Button, Divider, Flex, message, Switch, Table, Tooltip } from "antd";
 import Search from "antd/es/input/Search";
-import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import {
+  CheckCircleTwoTone,
+  DeleteTwoTone,
+  EditTwoTone,
+} from "@ant-design/icons";
 import moment from "moment";
 import UserRoleViewTable from "./userRoleViewTable";
 import UserAuthorizationViewTable from "./userAuthorizationViewTable";
@@ -53,6 +57,7 @@ const OrgUserTable = () => {
       dataIndex: "orgId",
       key: "orgId",
       width: 100,
+      fixed: "left",
       // responsive: ["lg"],
     },
     {
@@ -115,20 +120,7 @@ const OrgUserTable = () => {
         />
       ),
     },
-    {
-      title: "Deleted",
-      dataIndex: "deleted",
-      key: "deleted",
-      // responsive: ["lg"],
-      render: (_, action) => (
-        <Switch
-          checkedChildren={true}
-          unCheckedChildren={false}
-          defaultValue={_}
-          onChange={(e) => handleUserChange(action.action, "deleted", e)}
-        />
-      ),
-    },
+
     {
       title: "Admin",
       dataIndex: "isAdmin",
@@ -150,33 +142,72 @@ const OrgUserTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {(othersEdit || (ownEdit && user.id == record.action)) && (
+            {othersEdit && user.id !== record.access?.createdBySU?._id ? (
               <Tooltip title="Edit">
                 <Button
-                  // onClick={() =>
-                  //   navigate("update", {
-                  //     state: {
-                  //       userInfo: record.access,
-                  //     },
-                  //   })
-                  // }
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        orgUserDetails: record.access,
+                      },
+                    })
+                  }
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(ownDelete && user.id == record.action) ||
-            (othersDelete && user.id !== record.action) ? (
-              <Tooltip title="Delete">
+            ) : ownEdit && user.id === record.access?.createdBySU?._id ? (
+              <Tooltip title="Edit">
                 <Button
-                  // onClick={(e) =>
-                  //   handleUserChange(record.action, "deleted", true)
-                  // }
-                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        orgUserDetails: record.access,
+                      },
+                    })
+                  }
+                  icon={<EditTwoTone />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : null}
+            {othersDelete && user.id !== record.access?.createdBySU?._id ? (
+              <Tooltip title={record.access?.deleted ? "Recovery" : "Delete"}>
+                <Button
+                  onClick={(e) =>
+                    handleUserChange(
+                      record.action,
+                      "deleted",
+                      !record.access?.deleted
+                    )
+                  }
+                  icon={
+                    record.access?.deleted ? (
+                      <CheckCircleTwoTone twoToneColor="#52c41a" />
+                    ) : (
+                      <DeleteTwoTone twoToneColor="#eb2f96" />
+                    )
+                  }
+                />
+              </Tooltip>
+            ) : ownDelete && user.id === record.access?.createdBySU?._id ? (
+              <Tooltip title={record.access?.deleted ? "Recovery" : "Delete"}>
+                <Button
+                  onClick={(e) =>
+                    handleUserChange(
+                      record.action,
+                      "deleted",
+                      !record.access?.deleted
+                    )
+                  }
+                  icon={
+                    record.access?.deleted ? (
+                      <CheckCircleTwoTone twoToneColor="#52c41a" />
+                    ) : (
+                      <DeleteTwoTone twoToneColor="#eb2f96" />
+                    )
+                  }
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -214,7 +245,7 @@ const OrgUserTable = () => {
         )
         .then((res) => {
           // console.log(res?.data?.data);
-          message.success(res.data.message);
+          message.success(res?.data?.message);
           const tableArr = res?.data?.data?.map((item, index) => ({
             key: index,
             orgId: item?.orgId,
@@ -224,9 +255,9 @@ const OrgUserTable = () => {
             deleted: item?.deleted,
             isAdmin: item?.isAdmin,
             status: item?.status,
-            createdBy: item?.createdBy?.name,
+            createdBy: item?.createdBySU?.name || item?.createdBy?.name,
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-            updatedBy: item?.updatedBy?.name,
+            updatedBy: item?.updatedBySU?.name || item?.updatedBy?.name,
             updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
             access: item,
             action: item?._id,

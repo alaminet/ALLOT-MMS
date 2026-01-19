@@ -30,14 +30,22 @@ async function updateOrgMemberSUCTR(req, res, next) {
           }
           updatedData.password = hash;
           updatedData.token = token;
-          updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
-            new: true,
-          }).select("-password -otp -token"); // Exclude sensitive fields
+          updatedMember = await Member.findByIdAndUpdate(
+            id,
+            { ...updatedData, updatedBySU: req.actionBy },
+            {
+              new: true,
+            }
+          ).select("-password -otp -token"); // Exclude sensitive fields
         });
       } else {
-        updatedMember = await Member.findByIdAndUpdate(id, updatedData, {
-          new: true,
-        }).select("-password -otp -token"); // Exclude sensitive fields
+        updatedMember = await Member.findByIdAndUpdate(
+          id,
+          { ...updatedData, updatedBySU: req.actionBy },
+          {
+            new: true,
+          }
+        ).select("-password -otp -token"); // Exclude sensitive fields
       }
 
       if (!updatedMember) {

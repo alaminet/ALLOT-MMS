@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Member = require("../../model/member");
+const Organization = require("../../model/orgUser");
 
 async function loginCTR(req, res, next) {
   const data = req.body;
@@ -13,10 +14,19 @@ async function loginCTR(req, res, next) {
       const existingMember = await Member.findOne({
         email: data.email?.toLowerCase().trim(),
       }).populate("costCenter");
+      const existingOrg = await Organization.findOne({
+        orgId: existingMember.orgId,
+      });
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });
       } else if (!existingMember?.status) {
         return res.status(403).send({ error: "Your Accounts is blocked" });
+      } else if (!existingOrg?.status) {
+        return res
+          .status(403)
+          .send({ error: "Your Organization is not active" });
+      } else if (existingOrg?.isDeleted) {
+        return res.status(403).send({ error: "Your Organization is deleted" });
       } else {
         const isPasswordValid = await bcrypt.compare(
           data.password,

@@ -24,8 +24,8 @@ async function creatOrganizationSUCTR(req, res, next) {
           officeAddress: data?.officeAddress,
           businessAddress: data?.businessAddress,
           paymentInfo: data.paymentInfo,
-          createdBy: req.actionBy,
-          updatedBy: req.actionBy,
+          createdBySU: req.actionBy,
+          updatedBySU: req.actionBy,
         });
         await newData.save();
         res.status(201).send({

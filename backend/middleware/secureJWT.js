@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const Member = require("../model/member");
+const Organization = require("../model/orgUser");
 
 function secureJWT(req, res, next) {
   const token = req.headers.token;
@@ -7,7 +8,15 @@ function secureJWT(req, res, next) {
   jwt.verify(token, process.env.JWT_SECRET, async (err, user) => {
     if (err) return res.status(403).send({ error: "Token expired" }); // Token expired or invalid
     const existingMember = await Member.findById(user.tokenRef);
-
+    const existingOrg = await Organization.findOne({
+      orgId: existingMember.orgId,
+    });
+    if (!existingOrg.status) {
+      return res.status(404).send({ error: "Your Organization is not active" });
+    }
+    if (existingOrg?.isDeleted) {
+      return res.status(404).send({ error: "Your Organization is deleted" });
+    }
     if (token !== existingMember?.token) {
       return res.status(403).send({ error: "Invalid Token" });
     } else {

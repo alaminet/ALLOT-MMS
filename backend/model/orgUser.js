@@ -25,9 +25,17 @@ const orgUserSchema = new Schema(
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "SU_Member",
+      ref: "Member",
     },
     updatedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "Member",
+    },
+    createdBySU: {
+      type: Schema.Types.ObjectId,
+      ref: "SU_Member",
+    },
+    updatedBySU: {
       type: Schema.Types.ObjectId,
       ref: "SU_Member",
     },

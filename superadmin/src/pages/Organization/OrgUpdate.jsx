@@ -32,7 +32,10 @@ const OrgUpdate = () => {
   const { canViewPage, canDoOwn, canDoOther } = usePermission();
   const ownEdit = canDoOwn("organization", "edit");
   const othersEdit = canDoOther("organization", "edit");
-  if (!ownEdit || !othersEdit) {
+  if (
+    (!ownEdit && user.id === orgDetails?.createdBySU?._id) ||
+    (!othersEdit && user.id !== orgDetails?.createdBySU?._id)
+  ) {
     return <NotAuth />;
   }
 

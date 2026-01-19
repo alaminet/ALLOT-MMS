@@ -106,7 +106,6 @@ p {
   border-color: var(--color-Brand) !important;
 }
 .form-input-borderless .ant-select-clear {
-  top: 90% !important;
   right: 7% !important;
   color: var(--color-Brand) !important;
 }

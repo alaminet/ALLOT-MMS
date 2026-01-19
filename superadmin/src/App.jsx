@@ -22,6 +22,7 @@ import OrgUserTable from "./pages/Organization/OrgUserTable";
 import OrgUserAdd from "./pages/Organization/OrgUserAdd";
 import OrgPackageTable from "./pages/Organization/OrgPackageTable";
 import OrgUpdate from "./pages/Organization/OrgUpdate";
+import OrgUserUpdate from "./pages/Organization/OrgUserUpdate";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -44,6 +45,7 @@ function App() {
               <Route path="org-user" element={<OrgUserTable />} />
               <Route path="update" element={<OrgUpdate />} />
               <Route path="org-user/new" element={<OrgUserAdd />} />
+              <Route path="org-user/update" element={<OrgUserUpdate />} />
               <Route path="org-package" element={<OrgPackageTable />} />
             </Route>
             {/* <Route path="/inventory" element={<Inventory />}>

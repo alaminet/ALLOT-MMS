@@ -43,7 +43,7 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
-  getItem("Organization", "organization", <ShoppingCartOutlined />, [
+  getItem("Organization", "org", <ShoppingCartOutlined />, [
     getItem("ORG-List", "organization", <FileDoneOutlined />),
     getItem("ORG-User", "organization/org-user", <FileProtectOutlined />),
     getItem("ORG-Package", "organization/org-package", <FileSyncOutlined />),

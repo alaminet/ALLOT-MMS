@@ -14,7 +14,7 @@ async function viewAllOrganizationSUCTR(req, res) {
     const organization = await Organization.find(query)
       .sort({ orgId: -1 })
       .populate({
-        path: ["createdBy", "updatedBy"],
+        path: ["createdBy", "updatedBy", "createdBySU", "updatedBySU"],
         select: "name",
       })
       .lean();

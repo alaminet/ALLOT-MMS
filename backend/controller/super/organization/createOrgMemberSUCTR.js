@@ -25,8 +25,8 @@ async function createOrgMemberSUCTR(req, res, next) {
             phone: data?.phone,
             access: data?.access,
             authorization: data?.authorization,
-            createdBy: req.actionBy,
-            updatedBy: req.actionBy,
+            createdBySU: req.actionBy,
+            updatedBySU: req.actionBy,
           });
           await newMember.save();
           res.status(201).send({

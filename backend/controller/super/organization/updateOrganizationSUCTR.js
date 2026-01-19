@@ -18,7 +18,7 @@ async function updateOrganizationSUCTR(req, res, next) {
     } else {
       const changedData = await Organization.findByIdAndUpdate(
         id,
-        updatedData,
+        { ...updatedData, updatedBySU: req.actionBy },
         {
           new: true,
         }

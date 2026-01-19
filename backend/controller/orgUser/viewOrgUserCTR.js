@@ -9,7 +9,7 @@ async function viewOrgUserCTR(req, res) {
 
     const qeryData = await OrgUser.findOne(query)
       .populate({
-        path: ["createdBy", "updatedBy"],
+        path: ["createdBy", "updatedBy", "createdBySU", "updatedBySU"],
         select: "name",
       })
       .lean();

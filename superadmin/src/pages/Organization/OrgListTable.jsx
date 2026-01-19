@@ -19,7 +19,11 @@ import axios from "axios";
 import Search from "antd/es/input/Search";
 import { useNavigate } from "react-router-dom";
 import PasswordUpdateModal from "../../components/passwordUpdateModal";
-import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import {
+  CheckCircleTwoTone,
+  DeleteTwoTone,
+  EditTwoTone,
+} from "@ant-design/icons";
 
 const OrgListTable = () => {
   const navigate = useNavigate();
@@ -37,6 +41,8 @@ const OrgListTable = () => {
   const lastSegment = pathname.split("/").filter(Boolean).pop();
   const own = canDoOwn(lastSegment, "view");
   const others = canDoOther(lastSegment, "view");
+  const ownDelete = canDoOwn(lastSegment, "delete");
+  const othersDelete = canDoOther(lastSegment, "delete");
 
   // Table Column
   const columns = [
@@ -139,8 +145,8 @@ const OrgListTable = () => {
       render: (_, record) => (
         <>
           <Flex gap={4} justify="end">
-            {(canDoOther("user", "edit") ||
-              (canDoOwn("user", "edit") && user.id == record.action)) && (
+            {canDoOther("organization", "edit") &&
+            user.id !== record.access?.createdBySU?._id ? (
               <Tooltip title="Edit">
                 <Button
                   onClick={() =>
@@ -153,21 +159,60 @@ const OrgListTable = () => {
                   icon={<EditTwoTone />}
                 />
               </Tooltip>
-            )}
-            {(canDoOwn("user", "delete") && user.id == record.action) ||
-            (canDoOther("user", "delete") && user.id !== record.action) ? (
-              <Tooltip title="Delete">
+            ) : canDoOwn("organization", "edit") &&
+              user.id === record.access?.createdBySU?._id ? (
+              <Tooltip title="Edit">
                 <Button
-                  disabled={record.role}
-                  onClick={(e) =>
-                    handleUserChange(record.action, "deleted", true)
+                  onClick={() =>
+                    navigate("update", {
+                      state: {
+                        orgDetails: record.access,
+                      },
+                    })
                   }
-                  icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+                  icon={<EditTwoTone />}
                 />
               </Tooltip>
-            ) : (
-              ""
-            )}
+            ) : null}
+            {othersDelete && user.id !== record.access?.createdBySU?._id ? (
+              <Tooltip title={record.access?.isDeleted ? "Recovery" : "Delete"}>
+                <Button
+                  onClick={(e) =>
+                    handleUserChange(
+                      record.action,
+                      "isDeleted",
+                      !record.access?.isDeleted
+                    )
+                  }
+                  icon={
+                    record.access?.isDeleted ? (
+                      <CheckCircleTwoTone twoToneColor="#52c41a" />
+                    ) : (
+                      <DeleteTwoTone twoToneColor="#eb2f96" />
+                    )
+                  }
+                />
+              </Tooltip>
+            ) : ownDelete && user.id === record.access?.createdBySU?._id ? (
+              <Tooltip title={record.access?.isDeleted ? "Recovery" : "Delete"}>
+                <Button
+                  onClick={(e) =>
+                    handleUserChange(
+                      record.action,
+                      "isDeleted",
+                      !record.access?.isDeleted
+                    )
+                  }
+                  icon={
+                    record.access?.isDeleted ? (
+                      <CheckCircleTwoTone twoToneColor="#52c41a" />
+                    ) : (
+                      <DeleteTwoTone twoToneColor="#eb2f96" />
+                    )
+                  }
+                />
+              </Tooltip>
+            ) : null}
           </Flex>
         </>
       ),
@@ -228,9 +273,9 @@ const OrgListTable = () => {
               .join(" ,"),
             paymentInfo: item?.paymentInfo,
             status: item?.status,
-            createdBy: item?.createdBy?.name,
+            createdBy: item?.createdBy?.name || item?.createdBySU?.name,
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
-            updatedBy: item?.updatedBy?.name,
+            updatedBy: item?.updatedBy?.name || item?.updatedBySU?.name,
             updatedAt: moment(item?.updatedAt).format("MMM DD, YYYY h:mm A"),
             access: item,
             action: item?._id,
@@ -246,7 +291,7 @@ const OrgListTable = () => {
   const handleUserChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/super/SUmember/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/super/SUOrganization/update/${id}`,
         { [field]: data },
         {
           headers: {

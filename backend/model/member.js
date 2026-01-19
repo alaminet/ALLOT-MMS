@@ -40,10 +40,22 @@ const memberSchema = new Schema(
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "Member",
+      default: null,
     },
     updatedBy: {
       type: Schema.Types.ObjectId,
       ref: "Member",
+      default: null,
+    },
+    createdBySU: {
+      type: Schema.Types.ObjectId,
+      ref: "SU_Member",
+      default: null,
+    },
+    updatedBySU: {
+      type: Schema.Types.ObjectId,
+      ref: "SU_Member",
+      default: null,
     },
   },
   {
