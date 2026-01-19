@@ -43,33 +43,13 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
-
   getItem("Organization", "organization", <ShoppingCartOutlined />, [
     getItem("ORG-List", "organization", <FileDoneOutlined />),
     getItem("ORG-User", "organization/org-user", <FileProtectOutlined />),
-    getItem("Supplier", "supplier", <FileSyncOutlined />),
+    getItem("ORG-Package", "organization/org-package", <FileSyncOutlined />),
     getItem("Report", "purchase-report", <FileDoneOutlined />),
   ]),
-  // getItem("Purchase", "purchase", <ShoppingCartOutlined />, [
-  //   getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
-  //   getItem("Order", "purchase-order", <FileProtectOutlined />),
-  //   getItem("Supplier", "supplier", <FileSyncOutlined />),
-  //   getItem("Report", "purchase-report", <FileDoneOutlined />),
-  // ]),
-  // getItem("Warehouse", "transaction", <ShopOutlined />, [
-  //   getItem("Inventory", "inventory", <AppstoreOutlined />),
-  //   getItem("Receive", "receive", <ArrowRightOutlined />),
-  //   getItem("Issue", "issue", <ArrowLeftOutlined />),
-  //   getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),
-  //   getItem("MO-Report", "mo-report", <FileDoneOutlined />),
-  // ]),
   getItem("User", "user", <TeamOutlined />),
-  // getItem("Settings", "settings", <SettingOutlined />),
-  // getItem("Item Master", "master", <ProductOutlined />, [
-  //   getItem("Item List", "item-list", <FileDoneOutlined />),
-  //   getItem("Item Details", "item-details", <FileDoneOutlined />),
-  // ]),
-  // getItem("Category", "category", <GroupOutlined />),
 ];
 
 // Theme configure

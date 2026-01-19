@@ -91,7 +91,6 @@ const OrgUserAdd = () => {
           }
         )
         .then((res) => {
-          message.success(res.data.message);
           const tableArr = res?.data?.organization?.map((item, index) => ({
             label: item?.orgName,
             value: item?.orgId,
@@ -146,7 +145,15 @@ const OrgUserAdd = () => {
               <Form.Item name="phone">
                 <Input prefix={<PhoneOutlined />} placeholder="Phone" />
               </Form.Item>
-              <Form.Item name="orgId" style={{ marginBottom: "30px" }}>
+              <Form.Item
+                name="orgId"
+                style={{ marginBottom: "30px" }}
+                rules={[
+                  {
+                    required: true,
+                    message: "Select Organization!",
+                  },
+                ]}>
                 <Select
                   prefix={<DollarOutlined />}
                   style={{
