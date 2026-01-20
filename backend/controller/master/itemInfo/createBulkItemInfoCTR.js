@@ -2,12 +2,18 @@ const ItemInfo = require("../../../model/master/itemInfo");
 
 async function createBulkItemInfoCTR(req, res, next) {
   const data = req.body;
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
 
   try {
     if (data.length > 100) {
       return res
         .status(400)
         .send({ error: "Maximum 100 items can be inserted at a time" });
+    }
+    const itemExistCount = await ItemInfo.countDocuments({ orgId: orgId });
+    if (itemExistCount + data.length > orgPackage?.limit?.items) {
+      return res.status(400).send({ error: "Package limit exceeded" });
     }
 
     // Step 1: Check for existing SKUs

@@ -16,10 +16,21 @@ async function createItemDetailsCTR(req, res, next) {
   const data = req.body;
   const modelName = req.body.model;
   const Model = modelMap[modelName];
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
 
   try {
     if (!Model || typeof Model.find !== "function") {
       return res.status(400).send({ error: "Invalid model name" });
+    }
+    if (modelName == "StoreLocation" || modelName == "CostCenter") {
+      const itemExistCount = await Model.countDocuments({ orgId: orgId });
+      if (
+        itemExistCount + 1 > orgPackage?.limit?.locations ||
+        itemExistCount + 1 > orgPackage?.limit?.costCenters
+      ) {
+        return res.status(400).send({ error: "Package limit exceeded" });
+      }
     }
 
     //   Set a query filed

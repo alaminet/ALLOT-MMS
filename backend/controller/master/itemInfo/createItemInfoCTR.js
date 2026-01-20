@@ -2,12 +2,18 @@ const ItemInfo = require("../../../model/master/itemInfo");
 
 async function createItemInfoCTR(req, res, next) {
   const data = req.body;
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
   try {
-    if (!data.name) {
+    const itemExistCount = await ItemInfo.countDocuments({ orgId: orgId });
+    if (itemExistCount + 1 > orgPackage?.limit?.items) {
+      return res.status(400).send({ error: "Package limit exceeded" });
+    }
+    if (!data?.name) {
       return res.status(400).send({ error: "Name is required" });
     } else {
       const existingItemInfo = await ItemInfo.findOne({
-        SKU: data.SKU?.trim(),
+        SKU: data?.SKU?.trim(),
         orgId: req.orgId,
       });
       if (existingItemInfo) {
@@ -17,7 +23,7 @@ async function createItemInfoCTR(req, res, next) {
         // const lastCode = lastItem?.code + 1;
         // const lastCodeExist = await ItemInfo.findOne({ code: lastCode });
         // if (lastCodeExist) {
-          
+
         // }
         const newItemInfo = new ItemInfo({
           orgId: req.orgId,

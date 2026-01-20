@@ -3,8 +3,13 @@ const Member = require("../../model/member");
 
 async function createMemberCTR(req, res, next) {
   const data = req.body;
-
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
   try {
+    const itemExistCount = await Member.countDocuments({ orgId: orgId });
+    if (itemExistCount + 1 > orgPackage?.limit?.users) {
+      return res.status(400).send({ error: "Package limit exceeded" });
+    }
     if (!data.email || !data.password) {
       return res
         .status(400)

@@ -15,12 +15,23 @@ const modelMap = {
 async function createBulkItemDetailsCTR(req, res, next) {
   const { model: modelName, items } = req.body;
   const Model = modelMap[modelName];
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
+  const actionBy = req.actionBy;
 
   try {
     if (!Model || typeof Model.find !== "function") {
       return res.status(400).send({ error: "Invalid model name" });
     }
-
+    if (modelName == "StoreLocation" || modelName == "CostCenter") {
+      const itemExistCount = await Model.countDocuments({ orgId: orgId });
+      if (
+        itemExistCount + items.length > orgPackage?.limit?.locations ||
+        itemExistCount + items.length > orgPackage?.limit?.costCenters
+      ) {
+        return res.status(400).send({ error: "Package limit exceeded" });
+      }
+    }
     if (Model === ItemUOM && items.some((i) => !i.code?.trim())) {
       return res
         .status(400)
@@ -36,9 +47,6 @@ async function createBulkItemDetailsCTR(req, res, next) {
         .status(400)
         .send({ error: "Maximum 100 items can be inserted at a time" });
     }
-
-    const orgId = req.orgId;
-    const actionBy = req.actionBy;
 
     // Fetch existing names and codes
     const nameList = items.map((i) => i.name.trim());
