@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { Checkbox, Table } from "antd";
+import { useSelector } from "react-redux";
+import { Checkbox, Table, Divider } from "antd";
+import useModuleFilter from "../../hooks/useModuleFilter";
 const { Column, ColumnGroup } = Table;
 
 const UserAuthorizationTable = ({ data, setData }) => {
+  const user = useSelector((user) => user.loginSlice.login);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   // Row Data
-  const initialData = [
+  const basicData = [
     {
       key: "purchase-requisition",
       module: "Purchase Requisition",
@@ -27,6 +30,7 @@ const UserAuthorizationTable = ({ data, setData }) => {
     },
   ];
 
+  const initialData = useModuleFilter(basicData, user?.authorizationList);
   const normalizeData = (data) => {
     return initialData.map((template) => {
       const override = data?.find((d) => d.key === template.key) || {};
@@ -134,198 +138,222 @@ const UserAuthorizationTable = ({ data, setData }) => {
 
   return (
     <>
-      <Table
-        bordered
-        pagination={false}
-        // dataSource={data}
-        dataSource={mergedValue}
-        rowSelection={rowSelection}
-        sticky
-        scroll={{ x: 1200 }}>
-        <ColumnGroup title="Authorization Point">
-          <Column title="Module" dataIndex="module" key="module" fixed="left" />
-        </ColumnGroup>
-        <ColumnGroup title="Own Cost-Center">
-          <Column
-            align="center"
-            title="Check"
-            dataIndex="own-check"
-            key="own-check"
-            // render={(_, record) => {
-            //   return (
-            //     <>
-            //       {record?.own ? (
-            //         <Checkbox
-            //           checked={record?.own?.check}
-            //           onChange={handleCheckboxChange(
-            //             record?.key,
-            //             "own",
-            //             "check"
-            //           )}
-            //         />
-            //       ) : null}
-            //     </>
-            //   );
-            // }}
-            render={(_, record) => {
-              const hasField =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "check");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.check)}
-                  onChange={handleCheckboxChange(record?.key, "own", "check")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Confirm"
-            dataIndex="own-confirm"
-            key="own-confirm"
-            render={(_, record) => {
-              const hasField =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "confirm");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.confirm)}
-                  onChange={handleCheckboxChange(record?.key, "own", "confirm")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Approve"
-            dataIndex="own-approve"
-            key="own-approve"
-            render={(_, record) => {
-              const hasField =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "approve");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.approve)}
-                  onChange={handleCheckboxChange(record?.key, "own", "approve")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Hold"
-            dataIndex="own-hold"
-            key="own-hold"
-            render={(_, record) => {
-              const hasField =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "hold");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.hold)}
-                  onChange={handleCheckboxChange(record?.key, "own", "hold")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-        </ColumnGroup>
-        <ColumnGroup title="Others Cost-Center">
-          <Column
-            align="center"
-            title="Check"
-            dataIndex="other-check"
-            key="other-check"
-            render={(_, record) => {
-              const hasField =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "check");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.check)}
-                  onChange={handleCheckboxChange(record?.key, "other", "check")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Confirm"
-            dataIndex="other-confirm"
-            key="other-confirm"
-            render={(_, record) => {
-              const hasField =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "confirm");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.confirm)}
-                  onChange={handleCheckboxChange(
-                    record?.key,
-                    "other",
-                    "confirm"
-                  )}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Approve"
-            dataIndex="other-approve"
-            key="other-approve"
-            render={(_, record) => {
-              const hasField =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "approve");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.approve)}
-                  onChange={handleCheckboxChange(
-                    record?.key,
-                    "other",
-                    "approve"
-                  )}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Hold"
-            dataIndex="other-hold"
-            key="other-hold"
-            render={(_, record) => {
-              const hasField =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "hold");
-              return hasField ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.hold)}
-                  onChange={handleCheckboxChange(record?.key, "other", "hold")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-        </ColumnGroup>
-      </Table>
+      {mergedValue?.length > 0 && (
+        <>
+          <Divider>User Authorization Access</Divider>
+          <Table
+            bordered
+            pagination={false}
+            // dataSource={data}
+            dataSource={mergedValue}
+            rowSelection={rowSelection}
+            sticky
+            scroll={{ x: 1200 }}>
+            <ColumnGroup title="Authorization Point">
+              <Column
+                title="Module"
+                dataIndex="module"
+                key="module"
+                fixed="left"
+              />
+            </ColumnGroup>
+            <ColumnGroup title="Own Cost-Center">
+              <Column
+                align="center"
+                title="Check"
+                dataIndex="own-check"
+                key="own-check"
+                render={(_, record) => {
+                  const hasField =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "check");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.check)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "check"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Confirm"
+                dataIndex="own-confirm"
+                key="own-confirm"
+                render={(_, record) => {
+                  const hasField =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "confirm");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.confirm)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "confirm"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Approve"
+                dataIndex="own-approve"
+                key="own-approve"
+                render={(_, record) => {
+                  const hasField =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "approve");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.approve)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "approve"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Hold"
+                dataIndex="own-hold"
+                key="own-hold"
+                render={(_, record) => {
+                  const hasField =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "hold");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.hold)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "hold"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+            </ColumnGroup>
+            <ColumnGroup title="Others Cost-Center">
+              <Column
+                align="center"
+                title="Check"
+                dataIndex="other-check"
+                key="other-check"
+                render={(_, record) => {
+                  const hasField =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(record.other, "check");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.check)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "check"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Confirm"
+                dataIndex="other-confirm"
+                key="other-confirm"
+                render={(_, record) => {
+                  const hasField =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(
+                      record.other,
+                      "confirm"
+                    );
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.confirm)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "confirm"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Approve"
+                dataIndex="other-approve"
+                key="other-approve"
+                render={(_, record) => {
+                  const hasField =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(
+                      record.other,
+                      "approve"
+                    );
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.approve)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "approve"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Hold"
+                dataIndex="other-hold"
+                key="other-hold"
+                render={(_, record) => {
+                  const hasField =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(record.other, "hold");
+                  return hasField ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.hold)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "hold"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+            </ColumnGroup>
+          </Table>
+        </>
+      )}
     </>
   );
 };

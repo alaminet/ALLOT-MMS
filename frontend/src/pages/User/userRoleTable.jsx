@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from "react";
-import { Checkbox, Table } from "antd";
+import { useSelector } from "react-redux";
+import { Checkbox, Table, Divider } from "antd";
+import useModuleFilter from "../../hooks/useModuleFilter";
 const { Column, ColumnGroup } = Table;
 
 const UserRoleTable = ({ data, setData }) => {
+  const user = useSelector((user) => user.loginSlice.login);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   // Row Data
-  const initialData = [
+  const basicData = [
     {
       key: "dashboard",
       module: "Dashboard",
@@ -135,6 +138,7 @@ const UserRoleTable = ({ data, setData }) => {
     },
   ];
 
+  const initialData = useModuleFilter(basicData, user?.moduleList);
   const normalizeData = (data) => {
     return initialData.map((template) => {
       const override = data?.find((d) => d.key === template.key) || {};
@@ -247,215 +251,258 @@ const UserRoleTable = ({ data, setData }) => {
 
   return (
     <>
-      <Table
-        bordered
-        pagination={false}
-        // dataSource={data}
-        dataSource={mergedValue}
-        rowSelection={rowSelection}
-        sticky
-        scroll={{ x: 1200 }}>
-        <ColumnGroup title="Access Point">
-          <Column title="Module" dataIndex="module" key="module" fixed="left" />
-          <Column
-            align="center"
-            title="Page Access"
-            dataIndex="pageAccess"
-            key="pageAccess"
-            // render={(_, record) => (
-            //   <Checkbox
-            //     checked={record?.pageAccess?.view}
-            //     onChange={handleCheckboxChange(
-            //       record.key,
-            //       "pageAccess",
-            //       "view"
-            //     )}
-            //   />
-            // )}
-            render={(_, record) => {
-              const hasCreate =
-                record?.pageAccess &&
-                Object.prototype.hasOwnProperty.call(record.pageAccess, "view");
-              return hasCreate ? (
-                <Checkbox
-                  checked={Boolean(record?.pageAccess?.view)}
-                  onChange={handleCheckboxChange(
-                    record?.key,
-                    "pageAccess",
-                    "view"
-                  )}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-        </ColumnGroup>
-        <ColumnGroup title="Own Data">
-          <Column
-            align="center"
-            title="Create"
-            dataIndex="own-create"
-            key="own-create"
-            render={(_, record) => {
-              const hasCreate =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "create");
-              return hasCreate ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.create)}
-                  onChange={handleCheckboxChange(record?.key, "own", "create")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Edit"
-            dataIndex="own-edit"
-            key="own-edit"
-            render={(_, record) => {
-              const hasEdit =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "edit");
-              return hasEdit ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.edit)}
-                  onChange={handleCheckboxChange(record?.key, "own", "edit")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="View"
-            dataIndex="own-view"
-            key="own-view"
-            render={(_, record) => {
-              const hasView =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "view");
-              return hasView ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.view)}
-                  onChange={handleCheckboxChange(record?.key, "own", "view")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Delete"
-            dataIndex="own-delete"
-            key="own-delete"
-            render={(_, record) => {
-              const hasDelete =
-                record?.own &&
-                Object.prototype.hasOwnProperty.call(record.own, "delete");
-              return hasDelete ? (
-                <Checkbox
-                  checked={Boolean(record?.own?.delete)}
-                  onChange={handleCheckboxChange(record?.key, "own", "delete")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-        </ColumnGroup>
-        <ColumnGroup title="Others Data">
-          <Column
-            align="center"
-            title="Create"
-            dataIndex="other-create"
-            key="other-create"
-            render={(_, record) => {
-              const hasCreate =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "create");
-              return hasCreate ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.create)}
-                  onChange={handleCheckboxChange(
-                    record?.key,
-                    "other",
-                    "create"
-                  )}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Edit"
-            dataIndex="other-edit"
-            key="other-edit"
-            render={(_, record) => {
-              const hasEdit =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "edit");
-              return hasEdit ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.edit)}
-                  onChange={handleCheckboxChange(record?.key, "other", "edit")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="View"
-            dataIndex="other-view"
-            key="other-view"
-            render={(_, record) => {
-              const hasView =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "view");
-              return hasView ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.view)}
-                  onChange={handleCheckboxChange(record?.key, "other", "view")}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-          <Column
-            align="center"
-            title="Delete"
-            dataIndex="other-delete"
-            key="other-delete"
-            render={(_, record) => {
-              const hasDelete =
-                record?.other &&
-                Object.prototype.hasOwnProperty.call(record.other, "delete");
-              return hasDelete ? (
-                <Checkbox
-                  checked={Boolean(record?.other?.delete)}
-                  onChange={handleCheckboxChange(
-                    record?.key,
-                    "other",
-                    "delete"
-                  )}
-                />
-              ) : (
-                "-"
-              );
-            }}
-          />
-        </ColumnGroup>
-      </Table>
+      {mergedValue?.length > 0 && (
+        <>
+          <Divider>User Role Access</Divider>
+          <Table
+            bordered
+            pagination={false}
+            // dataSource={data}
+            dataSource={mergedValue}
+            rowSelection={rowSelection}
+            sticky
+            scroll={{ x: 1200 }}>
+            <ColumnGroup title="Access Point">
+              <Column
+                title="Module"
+                dataIndex="module"
+                key="module"
+                fixed="left"
+              />
+              <Column
+                align="center"
+                title="Page Access"
+                dataIndex="pageAccess"
+                key="pageAccess"
+                // render={(_, record) => (
+                //   <Checkbox
+                //     checked={record?.pageAccess?.view}
+                //     onChange={handleCheckboxChange(
+                //       record.key,
+                //       "pageAccess",
+                //       "view"
+                //     )}
+                //   />
+                // )}
+                render={(_, record) => {
+                  const hasCreate =
+                    record?.pageAccess &&
+                    Object.prototype.hasOwnProperty.call(
+                      record.pageAccess,
+                      "view"
+                    );
+                  return hasCreate ? (
+                    <Checkbox
+                      checked={Boolean(record?.pageAccess?.view)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "pageAccess",
+                        "view"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+            </ColumnGroup>
+            <ColumnGroup title="Own Data">
+              <Column
+                align="center"
+                title="Create"
+                dataIndex="own-create"
+                key="own-create"
+                render={(_, record) => {
+                  const hasCreate =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "create");
+                  return hasCreate ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.create)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "create"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Edit"
+                dataIndex="own-edit"
+                key="own-edit"
+                render={(_, record) => {
+                  const hasEdit =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "edit");
+                  return hasEdit ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.edit)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "edit"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="View"
+                dataIndex="own-view"
+                key="own-view"
+                render={(_, record) => {
+                  const hasView =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "view");
+                  return hasView ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.view)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "view"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Delete"
+                dataIndex="own-delete"
+                key="own-delete"
+                render={(_, record) => {
+                  const hasDelete =
+                    record?.own &&
+                    Object.prototype.hasOwnProperty.call(record.own, "delete");
+                  return hasDelete ? (
+                    <Checkbox
+                      checked={Boolean(record?.own?.delete)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "own",
+                        "delete"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+            </ColumnGroup>
+            <ColumnGroup title="Others Data">
+              <Column
+                align="center"
+                title="Create"
+                dataIndex="other-create"
+                key="other-create"
+                render={(_, record) => {
+                  const hasCreate =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(
+                      record.other,
+                      "create"
+                    );
+                  return hasCreate ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.create)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "create"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Edit"
+                dataIndex="other-edit"
+                key="other-edit"
+                render={(_, record) => {
+                  const hasEdit =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(record.other, "edit");
+                  return hasEdit ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.edit)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "edit"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="View"
+                dataIndex="other-view"
+                key="other-view"
+                render={(_, record) => {
+                  const hasView =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(record.other, "view");
+                  return hasView ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.view)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "view"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+              <Column
+                align="center"
+                title="Delete"
+                dataIndex="other-delete"
+                key="other-delete"
+                render={(_, record) => {
+                  const hasDelete =
+                    record?.other &&
+                    Object.prototype.hasOwnProperty.call(
+                      record.other,
+                      "delete"
+                    );
+                  return hasDelete ? (
+                    <Checkbox
+                      checked={Boolean(record?.other?.delete)}
+                      onChange={handleCheckboxChange(
+                        record?.key,
+                        "other",
+                        "delete"
+                      )}
+                    />
+                  ) : (
+                    "-"
+                  );
+                }}
+              />
+            </ColumnGroup>
+          </Table>
+        </>
+      )}
     </>
   );
 };

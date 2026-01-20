@@ -64,6 +64,8 @@ async function loginCTR(req, res, next) {
               authorization: existingMember?.authorization,
               isAdmin: existingMember?.isAdmin,
               token: existingMember?.token,
+              moduleList: existingOrgPackage?.module || [],
+              authorizationList: existingOrgPackage?.authorization || [],
             },
           });
 

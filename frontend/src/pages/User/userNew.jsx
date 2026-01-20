@@ -183,11 +183,10 @@ const UserNew = () => {
             </Form.Item>
           </Flex>
           <Form.Item>
-            <Divider>User Role Access</Divider>
+           
             <UserRoleTable data={roleData} setData={setRoleData} />
           </Form.Item>
           <Form.Item>
-            <Divider>User Authorization Access</Divider>
             <UserAuthorizationTable data={authData} setData={setAuthData} />
           </Form.Item>
           <Form.Item label={null}>

@@ -27,6 +27,8 @@ async function getAccessCTR(req, res) {
             authorization: existingMember?.authorization,
             isAdmin: existingMember?.isAdmin,
             token: existingMember?.token,
+            moduleList: req.orgPackage?.module || [],
+            authorizationList: req.orgPackage?.authorization || [],
           },
         });
       }

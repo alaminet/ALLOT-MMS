@@ -32,6 +32,7 @@ function secureJWT(req, res, next) {
     } else {
       req.actionBy = existingMember._id;
       req.orgId = existingMember.orgId;
+      req.orgPackage = existingOrgPackage;
       next();
     }
   });

@@ -236,9 +236,7 @@ const UserTable = () => {
           expandable={{
             expandedRowRender: (record) => (
               <>
-                <Divider>User Role Access</Divider>
                 <UserRoleViewTable data={record?.access?.access} />
-                <Divider>User Authorization Access</Divider>
                 <UserAuthorizationViewTable
                   data={record?.access?.authorization}
                 />

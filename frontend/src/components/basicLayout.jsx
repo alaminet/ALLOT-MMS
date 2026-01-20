@@ -32,6 +32,7 @@ const { Header, Content, Footer, Sider } = Layout;
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Loginuser } from "../features/userSlice";
+import useModuleFilter from "../hooks/useModuleFilter";
 const { Text } = Typography;
 // Navigation
 function getItem(label, key, icon, children) {
@@ -44,7 +45,6 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
-
   getItem("Purchase", "purchase", <ShoppingCartOutlined />, [
     getItem("Requisition", "purchase-requisition", <FileDoneOutlined />),
     getItem("Order", "purchase-order", <FileProtectOutlined />),
@@ -100,6 +100,9 @@ const BasicLayout = () => {
   const {
     token: { colorBgContainer, colorDark, colorPrimary },
   } = theme.useToken();
+
+  // Filter Menu as per Org Package
+  const filterWithOrgPack = useModuleFilter(items, user?.moduleList);
 
   // Get Accessable menu
   const allowedKeys = user?.access
@@ -157,7 +160,7 @@ const BasicLayout = () => {
   );
 
   const menuItems = [
-    ...filterMenuItems(items, allowedKeys),
+    ...filterMenuItems(filterWithOrgPack, allowedKeys),
     {
       key: "profile",
       icon: <UserOutlined />,
