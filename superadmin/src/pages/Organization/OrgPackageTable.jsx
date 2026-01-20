@@ -52,7 +52,6 @@ const OrgPackageTable = () => {
       key: "sl",
       width: 50,
       render: (text, record, index) => index + 1,
-      // responsive: ["lg"],
     },
     {
       title: "ORG ID",
@@ -60,90 +59,43 @@ const OrgPackageTable = () => {
       key: "orgId",
       width: 100,
       fixed: "left",
-      // responsive: ["lg"],
     },
     {
       title: "Organization Name",
       dataIndex: "orgName",
       key: "orgName",
       fixed: "left",
-      // responsive: ["lg"],
     },
     {
-      title: "Phone(s)",
-      dataIndex: "phone",
-      key: "phone",
-      width: 220,
-      // responsive: ["lg"],
+      title: "Affiliater (%)",
+      dataIndex: "affiliater",
+      key: "affiliater",
     },
     {
-      title: "Email(s)",
-      dataIndex: "email",
-      key: "email",
-      width: 220,
-      // responsive: ["lg"],
+      title: "Due Date",
+      dataIndex: "dueDate",
+      key: "dueDate",
     },
-    {
-      title: "Business Address",
-      dataIndex: "businessAddress",
-      key: "businessAddress",
-      width: 220,
-      // responsive: ["lg"],
-    },
-    {
-      title: "Office Address",
-      dataIndex: "officeAddress",
-      key: "officeAddress",
-      width: 220,
-      // responsive: ["lg"],
-    },
-
-    // Table.EXPAND_COLUMN,
 
     {
       title: "Created By",
       dataIndex: "createdBy",
       key: "createdBy",
-      // responsive: ["lg"],
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      // responsive: ["lg"],
     },
     {
       title: "Updated By",
       dataIndex: "updatedBy",
       key: "updatedBy",
-      // responsive: ["lg"],
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      // responsive: ["lg"],
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      // responsive: ["lg"],
-      render: (_, action) => (
-        <Switch
-          disabled={
-            ownEdit && user.id === action.access?.createdBySU?._id
-              ? false
-              : othersEdit && user.id !== action.access?.createdBySU?._id
-              ? false
-              : true
-          }
-          checkedChildren="Active"
-          unCheckedChildren="Inactive"
-          defaultValue={_}
-          onChange={(e) => handleUserChange(action.action, "status", e)}
-        />
-      ),
     },
     {
       title: "Action",
@@ -158,7 +110,7 @@ const OrgPackageTable = () => {
                   onClick={() =>
                     navigate("update", {
                       state: {
-                        orgDetails: record.access,
+                        orgPackageDetails: record.access,
                       },
                     })
                   }
@@ -171,7 +123,7 @@ const OrgPackageTable = () => {
                   onClick={() =>
                     navigate("update", {
                       state: {
-                        orgDetails: record.access,
+                        orgPackageDetails: record.access,
                       },
                     })
                   }
@@ -186,7 +138,7 @@ const OrgPackageTable = () => {
                     handleUserChange(
                       record.action,
                       "isDeleted",
-                      !record.access?.isDeleted
+                      !record.access?.isDeleted,
                     )
                   }
                   icon={
@@ -205,7 +157,7 @@ const OrgPackageTable = () => {
                     handleUserChange(
                       record.action,
                       "isDeleted",
-                      !record.access?.isDeleted
+                      !record.access?.isDeleted,
                     )
                   }
                   icon={
@@ -230,10 +182,10 @@ const OrgPackageTable = () => {
       ownView && othersView
         ? "all"
         : ownView
-        ? "own"
-        : othersView
-        ? "others"
-        : null;
+          ? "own"
+          : othersView
+            ? "others"
+            : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -244,46 +196,24 @@ const OrgPackageTable = () => {
     try {
       await axios
         .post(
-          `${import.meta.env.VITE_API_URL}/api/super/SUOrganization/view`,
+          `${import.meta.env.VITE_API_URL}/api/super/SUOrgPackage/view`,
           payload,
           {
             headers: {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
-          const tableArr = res?.data?.organization?.map((item, index) => ({
+          const tableArr = res?.data?.queryData?.map((item, index) => ({
             key: index,
-            orgId: item?.orgId,
-            orgName: item?.orgName,
-            phone: (
-              <>
-                Office: {item?.phone?.office || "—"} <br />
-                Contact: {item?.phone?.contact || "—"} <br />
-                Alternate: {item?.phone?.alternate || "—"}
-              </>
-            ),
-            email: (
-              <>
-                Office: {item?.email?.office || "—"} <br />
-                Contact: {item?.email?.contact || "—"} <br />
-                Alternate: {item?.email?.alternate || "—"}
-              </>
-            ),
-            trade: item?.trade,
-            TIN: item?.TIN,
-            taxInfo: item?.taxInfo,
-            businessAddress: Object.values(item?.businessAddress)
-              .reverse()
-              .join(" ,"),
-            officeAddress: Object.values(item?.officeAddress)
-              .reverse()
-              .join(" ,"),
-            paymentInfo: item?.paymentInfo,
-            status: item?.status,
+            orgId: item?.organization?.orgId,
+            orgName: item?.organization?.orgName,
+            affiliater:
+              item?.affiliater?.name + " (" + item?.affaliteAmount + "%)",
+            dueDate: moment(item?.dueDate).format("MMM DD, YYYY h:mm A"),
             createdBy: item?.createdBy?.name || item?.createdBySU?.name,
             createdAt: moment(item?.createdAt).format("MMM DD, YYYY h:mm A"),
             updatedBy: item?.updatedBy?.name || item?.updatedBySU?.name,
@@ -309,7 +239,7 @@ const OrgPackageTable = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       getTableData();
@@ -334,14 +264,16 @@ const OrgPackageTable = () => {
               gap: "10px",
               display:
                 (lastSegment === "new" || lastSegment === "update") && "none",
-            }}>
+            }}
+          >
             {lastSegment !== "new" && (
               <Button
                 type="primary"
                 onClick={() => navigate("new")}
                 disabled={!ownCreate && !othersCreate}
-                style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                Add Organization
+                style={{ borderRadius: "0px", padding: "10px 30px" }}
+              >
+                Add Org Package
               </Button>
             )}
             <Search
@@ -358,7 +290,7 @@ const OrgPackageTable = () => {
           <Table
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item?.orgName?.toLowerCase().includes(search?.toLowerCase())
+              item?.orgName?.toLowerCase().includes(search?.toLowerCase()),
             )}
             sticky
             scroll={{
@@ -375,19 +307,6 @@ const OrgPackageTable = () => {
               // showTotal: (total) => `Total ${total} items`,
               defaultPageSize: 10,
             }}
-            // expandable={{
-            //   expandedRowRender: (record) => (
-            //     <>
-            //       <Divider>User Role Access</Divider>
-            //       <UserRoleViewTable data={record?.access?.access} />
-            //       <Divider>User Authorization Access</Divider>
-            //       <UserAuthorizationViewTable
-            //         data={record?.access?.authorization}
-            //       />
-            //     </>
-            //   ),
-            //   rowExpandable: (record) => record.access !== "Not Expandable",
-            // }}
           />
         </>
       )}

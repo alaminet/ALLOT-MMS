@@ -3,6 +3,7 @@ const route = express.Router();
 const SUmemberApi = require("./SUmember");
 const SUOrganizationApi = require("./SUOrganization");
 const SUOrgMemberApi = require("./SUOrgMember");
+const SUOrgPackageApi = require("./SUOrgPackage");
 const secureSUAPI = require("../../../middleware/secureSUAPI");
 const secureSUJWT = require("../../../middleware/secureSUJWT");
 const viewLogsActivitesSUCTR = require("../../../controller/super/logActivities/viewLogsActivitesSUCTR");
@@ -10,6 +11,7 @@ const viewLogsActivitesSUCTR = require("../../../controller/super/logActivities/
 route.use("/SUmember", SUmemberApi);
 route.use("/SUOrganization", SUOrganizationApi);
 route.use("/SUOrgMember", SUOrgMemberApi);
+route.use("/SUOrgPackage", SUOrgPackageApi);
 // route.use("/issue", issueApi);
 // route.use("/move-order", moveOrderApi);
 // route.post("/tnx-details", viewAllTnxDetails);

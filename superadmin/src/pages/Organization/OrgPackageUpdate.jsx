@@ -21,10 +21,13 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DollarOutlined } from "@ant-design/icons";
+import { useLocation } from "react-router-dom";
 const { Title } = Typography;
 
-const OrgPackageAdd = () => {
+const OrgPackageUpdate = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const location = useLocation();
+  const { orgPackageDetails } = location.state || {};
   const [loading, setLoading] = useState(false);
   const [orgData, setOrgData] = useState([]);
   const [userData, setUserData] = useState([]);
@@ -34,10 +37,6 @@ const OrgPackageAdd = () => {
   const pathname = location.pathname;
   const lastSegment = "organization/org-package";
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
-  if (!canViewPage(lastSegment)) {
-    return <NotAuth />;
-  }
-  // Get pathname
   const ownView = canDoOwn(lastSegment, "view");
   const othersView = canDoOther(lastSegment, "view");
   const ownCreate = canDoOwn(lastSegment, "create");
@@ -46,6 +45,12 @@ const OrgPackageAdd = () => {
   const othersEdit = canDoOther(lastSegment, "edit");
   const ownDelete = canDoOwn(lastSegment, "delete");
   const othersDelete = canDoOther(lastSegment, "delete");
+  if (
+    (!ownEdit && user.id === orgPackageDetails?.createdBy?._id) ||
+    (!othersEdit && user.id !== orgPackageDetails?.createdBy?._id)
+  ) {
+    return <NotAuth />;
+  }
 
   // Module List
   const modules = [
@@ -183,7 +188,9 @@ const OrgPackageAdd = () => {
           form={form}
           name="new"
           layout="vertical"
-          // initialValues={{ ...businessSettings }}
+          initialValues={{
+            ...orgPackageDetails,
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -240,7 +247,7 @@ const OrgPackageAdd = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                {/* <Col lg={8} xs={24}>
                   <Form.Item
                     label="Due Date"
                     name="dueDate"
@@ -256,7 +263,7 @@ const OrgPackageAdd = () => {
                       placeholder="Due Date"
                     />
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
               <Row>
                 <Col lg={24} xs={24}>
@@ -265,19 +272,7 @@ const OrgPackageAdd = () => {
                     style={{ marginBottom: "35px" }}
                   >
                     <Flex gap={16}>
-                      <Form.Item
-                        name="module"
-                        noStyle
-                        initialValue={[
-                          "dashboard",
-                          "master",
-                          "item-list",
-                          "item-details",
-                          "user",
-                          "pwdr",
-                          "settings",
-                        ]}
-                      >
+                      <Form.Item name="module" noStyle>
                         <Checkbox.Group
                           style={{ width: "100%" }}
                           options={modules}
@@ -295,11 +290,7 @@ const OrgPackageAdd = () => {
                     style={{ marginBottom: "35px" }}
                   >
                     <Flex gap={16}>
-                      <Form.Item
-                        name="authorization"
-                        noStyle
-                        initialValue={null}
-                      >
+                      <Form.Item name="authorization" noStyle>
                         <Checkbox.Group options={authorizations} />
                       </Form.Item>
                     </Flex>
@@ -524,4 +515,4 @@ const OrgPackageAdd = () => {
   );
 };
 
-export default OrgPackageAdd;
+export default OrgPackageUpdate;
