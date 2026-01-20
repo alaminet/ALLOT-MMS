@@ -21,10 +21,12 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
 import { DollarOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
 
 const OrgPackageAdd = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [orgData, setOrgData] = useState([]);
   const [userData, setUserData] = useState([]);
@@ -88,11 +90,12 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          },
+          }
         )
         .then((res) => {
           message.success(res.data.message);
           setLoading(false);
+          navigate("/organization/org-package");
         });
     } catch (error) {
       setLoading(false);
@@ -109,10 +112,10 @@ const OrgPackageAdd = () => {
       ownCreate && othersCreate
         ? "all"
         : ownCreate
-          ? "own"
-          : othersCreate
-            ? "others"
-            : null;
+        ? "own"
+        : othersCreate
+        ? "others"
+        : null;
     if (!scope) {
       setOrgData([]);
       message.warning("You are not authorized");
@@ -130,7 +133,7 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          },
+          }
         )
         .then((res) => {
           const tableArr = res?.data?.organization?.map((item, index) => ({
@@ -157,7 +160,7 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          },
+          }
         )
         .then((res) => {
           const tableArr = res?.data?.members?.map((item, index) => ({
@@ -187,8 +190,7 @@ const OrgPackageAdd = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="borderlessInput"
-        >
+          className="borderlessInput">
           <Row gutter={16}>
             <Col>
               <Row justify="space-between" gutter={16}>
@@ -201,8 +203,7 @@ const OrgPackageAdd = () => {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%" }}
-                  >
+                    style={{ width: "100%" }}>
                     <Select
                       style={{
                         width: "100%",
@@ -225,8 +226,7 @@ const OrgPackageAdd = () => {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%" }}
-                  >
+                    style={{ width: "100%" }}>
                     <Select
                       style={{
                         width: "100%",
@@ -249,8 +249,7 @@ const OrgPackageAdd = () => {
                         required: true,
                       },
                     ]}
-                    style={{ width: "100%", marginBottom: "35px" }}
-                  >
+                    style={{ width: "100%", marginBottom: "35px" }}>
                     <DatePicker
                       style={{ width: "100%" }}
                       placeholder="Due Date"
@@ -262,8 +261,7 @@ const OrgPackageAdd = () => {
                 <Col lg={24} xs={24}>
                   <Form.Item
                     label="Module access"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name="module"
@@ -276,8 +274,7 @@ const OrgPackageAdd = () => {
                           "user",
                           "pwdr",
                           "settings",
-                        ]}
-                      >
+                        ]}>
                         <Checkbox.Group
                           style={{ width: "100%" }}
                           options={modules}
@@ -292,14 +289,12 @@ const OrgPackageAdd = () => {
                 <Col lg={24} xs={24}>
                   <Form.Item
                     label="Authorization access"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name="authorization"
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <Checkbox.Group options={authorizations} />
                       </Form.Item>
                     </Flex>
@@ -310,14 +305,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="User Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "users"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="User Limit"
                           style={{ width: "100%" }}
@@ -329,14 +322,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Item/SKU Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "items"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Item/SKU Limit"
                           style={{ width: "100%" }}
@@ -348,14 +339,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Storage Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "locations"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Storage Limit"
                           style={{ width: "100%" }}
@@ -367,14 +356,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Cost Center Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "costCenters"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Cost Center Limit"
                           style={{ width: "100%" }}
@@ -386,14 +373,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Purchase Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "purchases"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Purchase Limit"
                           style={{ width: "100%" }}
@@ -405,14 +390,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Transaction Limit"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "transactions"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Transaction Limit"
                           style={{ width: "100%" }}
@@ -426,14 +409,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Package Price (BDT)"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "packagePrice"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Package Price (BDT)"
                           style={{ width: "100%" }}
@@ -445,14 +426,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Discount (Flat BDT)"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "discount"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Discount (Flat BDT)"
                           style={{ width: "100%" }}
@@ -464,14 +443,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Payable Amount (BDT)"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "payableAmount"]}
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Payable Amount (BDT)"
                           style={{ width: "100%" }}
@@ -483,14 +460,12 @@ const OrgPackageAdd = () => {
                 <Col lg={6} xs={24}>
                   <Form.Item
                     label="Affalite (%)"
-                    style={{ marginBottom: "35px" }}
-                  >
+                    style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
                       <Form.Item
                         name="affaliteAmount"
                         noStyle
-                        initialValue={null}
-                      >
+                        initialValue={null}>
                         <InputNumber
                           placeholder="Affalite (%)"
                           style={{ width: "100%" }}
@@ -509,8 +484,7 @@ const OrgPackageAdd = () => {
                       htmlType="submit"
                       loading={loading}
                       block
-                      style={{ borderRadius: "0px", padding: "10px 30px" }}
-                    >
+                      style={{ borderRadius: "0px", padding: "10px 30px" }}>
                       Add Pacakage
                     </Button>
                   </Form.Item>

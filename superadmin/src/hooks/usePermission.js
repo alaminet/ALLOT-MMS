@@ -32,6 +32,8 @@ export const usePermission = () => {
         error.response.data.error === "Token expired" ||
         error.response.data.error === "Your Organization is deleted" ||
         error.response.data.error === "Your Organization is not active" ||
+        error.response.data.error ===
+          "Package expired — kindly renew to continue service." ||
         error.response.data.error === "Your Accounts is blocked"
       ) {
         message.error("Your session expaired");

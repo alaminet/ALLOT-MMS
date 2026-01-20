@@ -131,7 +131,7 @@ const OrgPackageTable = () => {
                 />
               </Tooltip>
             ) : null}
-            {othersDelete && user.id !== record.access?.createdBySU?._id ? (
+            {/* {othersDelete && user.id !== record.access?.createdBySU?._id ? (
               <Tooltip title={record.access?.isDeleted ? "Recovery" : "Delete"}>
                 <Button
                   onClick={(e) =>
@@ -169,7 +169,7 @@ const OrgPackageTable = () => {
                   }
                 />
               </Tooltip>
-            ) : null}
+            ) : null} */}
           </Flex>
         </>
       ),
@@ -182,10 +182,10 @@ const OrgPackageTable = () => {
       ownView && othersView
         ? "all"
         : ownView
-          ? "own"
-          : othersView
-            ? "others"
-            : null;
+        ? "own"
+        : othersView
+        ? "others"
+        : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -203,7 +203,7 @@ const OrgPackageTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          },
+          }
         )
         .then((res) => {
           message.success(res.data.message);
@@ -232,14 +232,14 @@ const OrgPackageTable = () => {
   const handleUserChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/super/SUOrganization/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/super/SUOrgPackage/update/${id}`,
         { [field]: data },
         {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        },
+        }
       );
       message.success(res.data.message);
       getTableData();
@@ -264,15 +264,13 @@ const OrgPackageTable = () => {
               gap: "10px",
               display:
                 (lastSegment === "new" || lastSegment === "update") && "none",
-            }}
-          >
+            }}>
             {lastSegment !== "new" && (
               <Button
                 type="primary"
                 onClick={() => navigate("new")}
                 disabled={!ownCreate && !othersCreate}
-                style={{ borderRadius: "0px", padding: "10px 30px" }}
-              >
+                style={{ borderRadius: "0px", padding: "10px 30px" }}>
                 Add Org Package
               </Button>
             )}
@@ -290,7 +288,7 @@ const OrgPackageTable = () => {
           <Table
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item?.orgName?.toLowerCase().includes(search?.toLowerCase()),
+              item?.orgName?.toLowerCase().includes(search?.toLowerCase())
             )}
             sticky
             scroll={{

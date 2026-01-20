@@ -12,7 +12,10 @@ const orgPackageSchema = new Schema(
       ref: "SU_Member",
     },
     affaliteAmount: Number,
-    dueDate: Date,
+    dueDate: {
+      type: Date,
+      default: new Date(),
+    },
     module: Object,
     authorization: Object,
     limit: Object,
@@ -30,7 +33,7 @@ const orgPackageSchema = new Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 module.exports = mongoose.model("ORG_Package", orgPackageSchema);

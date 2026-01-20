@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Member = require("../../model/member");
 const Organization = require("../../model/orgUser");
+const OrgPackage = require("../../model/super/orgPackage");
 
 async function loginCTR(req, res, next) {
   const data = req.body;
@@ -17,6 +18,9 @@ async function loginCTR(req, res, next) {
       const existingOrg = await Organization.findOne({
         orgId: existingMember.orgId,
       });
+      const existingOrgPackage = await OrgPackage.findOne({
+        organization: existingOrg._id,
+      });
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });
       } else if (!existingMember?.status) {
@@ -27,6 +31,10 @@ async function loginCTR(req, res, next) {
           .send({ error: "Your Organization is not active" });
       } else if (existingOrg?.isDeleted) {
         return res.status(403).send({ error: "Your Organization is deleted" });
+      } else if (existingOrgPackage?.dueDate < Date.now()) {
+        return res.status(403).send({
+          error: "Package expired — kindly renew to continue service.",
+        });
       } else {
         const isPasswordValid = await bcrypt.compare(
           data.password,
