@@ -310,8 +310,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "users"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="User Limit"
                           style={{ width: "100%" }}
@@ -327,8 +326,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "items"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Item/SKU Limit"
                           style={{ width: "100%" }}
@@ -344,8 +342,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "locations"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Storage Limit"
                           style={{ width: "100%" }}
@@ -361,8 +358,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "costCenters"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Cost Center Limit"
                           style={{ width: "100%" }}
@@ -378,10 +374,25 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "purchases"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Purchase Limit"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Flex>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Supplier Limit"
+                    style={{ marginBottom: "35px" }}>
+                    <Flex gap={16}>
+                      <Form.Item
+                        name={["limit", "suppliers"]}
+                        noStyle>
+                        <InputNumber
+                          placeholder="Supplier Limit"
                           style={{ width: "100%" }}
                         />
                       </Form.Item>
@@ -395,8 +406,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["limit", "transactions"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Transaction Limit"
                           style={{ width: "100%" }}
@@ -414,8 +424,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "packagePrice"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Package Price (BDT)"
                           style={{ width: "100%" }}
@@ -431,8 +440,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "discount"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Discount (Flat BDT)"
                           style={{ width: "100%" }}
@@ -448,8 +456,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name={["price", "payableAmount"]}
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Payable Amount (BDT)"
                           style={{ width: "100%" }}
@@ -465,8 +472,7 @@ const OrgPackageUpdate = () => {
                     <Flex gap={16}>
                       <Form.Item
                         name="affaliteAmount"
-                        noStyle
-                        initialValue={null}>
+                        noStyle>
                         <InputNumber
                           placeholder="Affalite (%)"
                           style={{ width: "100%" }}

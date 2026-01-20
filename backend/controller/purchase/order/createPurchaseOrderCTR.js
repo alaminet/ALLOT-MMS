@@ -3,8 +3,28 @@ const PurchaseReq = require("../../../model/purchaseReq");
 
 async function createPurchaseOrderCTR(req, res, next) {
   const data = req.body;
-
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
   try {
+    // Date Ranges
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfNow = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+    const itemExistCount = await PurchaseOrder.countDocuments({
+      orgId: orgId,
+      createdAt: { $gte: startOfMonth, $lte: endOfNow },
+    });
+    if (itemExistCount + 1 > orgPackage?.limit?.purchases) {
+      return res.status(400).send({ error: "Package limit exceeded" });
+    }
     if (!data.itemDetails || data.itemDetails.length == 0) {
       return res.status(400).send({ error: "Item is required" });
     } else {

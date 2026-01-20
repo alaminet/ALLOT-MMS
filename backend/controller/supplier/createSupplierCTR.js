@@ -2,7 +2,13 @@ const Supplier = require("../../model/supplier");
 
 async function createSupplierCTR(req, res, next) {
   const data = req.body;
+  const orgId = req.orgId;
+  const orgPackage = req.orgPackage;
   try {
+    const itemExistCount = await Supplier.countDocuments({ orgId: orgId });
+    if (itemExistCount + 1 > orgPackage?.limit?.suppliers) {
+      return res.status(400).send({ error: "Package limit exceeded" });
+    }
     if (!data.name) {
       return res.status(400).send({ error: "Name is required" });
     } else {

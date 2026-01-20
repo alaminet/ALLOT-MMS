@@ -10,13 +10,13 @@ function secureJWT(req, res, next) {
     if (err) return res.status(403).send({ error: "Token expired" }); // Token expired or invalid
     const existingMember = await Member.findById(user.tokenRef);
     const existingOrg = await Organization.findOne({
-      orgId: existingMember.orgId,
+      orgId: existingMember?.orgId,
     });
     const existingOrgPackage = await OrgPackage.findOne({
-      organization: existingOrg._id,
+      organization: existingOrg?._id,
     });
 
-    if (!existingOrg.status) {
+    if (!existingOrg?.status) {
       return res.status(404).send({ error: "Your Organization is not active" });
     }
     if (existingOrg?.isDeleted) {
@@ -30,8 +30,8 @@ function secureJWT(req, res, next) {
     if (token !== existingMember?.token) {
       return res.status(403).send({ error: "Invalid Token" });
     } else {
-      req.actionBy = existingMember._id;
-      req.orgId = existingMember.orgId;
+      req.actionBy = existingMember?._id;
+      req.orgId = existingMember?.orgId;
       req.orgPackage = existingOrgPackage;
       next();
     }
