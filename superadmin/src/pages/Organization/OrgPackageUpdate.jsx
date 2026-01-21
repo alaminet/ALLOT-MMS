@@ -60,6 +60,7 @@ const OrgPackageUpdate = () => {
     { label: "Dashboard", value: "dashboard" },
     { label: "Purchase", value: "purchase" },
     { label: "Purchase requisition", value: "purchase-requisition" },
+    { label: "Purchase Order", value: "purchase-order" },
     { label: "Supplier", value: "supplier" },
     { label: "Purchase report", value: "purchase-report" },
     { label: "Warehouse", value: "transaction" },
@@ -98,7 +99,7 @@ const OrgPackageUpdate = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -120,10 +121,10 @@ const OrgPackageUpdate = () => {
       ownCreate && othersCreate
         ? "all"
         : ownCreate
-        ? "own"
-        : othersCreate
-        ? "others"
-        : null;
+          ? "own"
+          : othersCreate
+            ? "others"
+            : null;
     if (!scope) {
       setOrgData([]);
       message.warning("You are not authorized");
@@ -141,7 +142,7 @@ const OrgPackageUpdate = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.organization?.map((item, index) => ({
@@ -168,7 +169,7 @@ const OrgPackageUpdate = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.members?.map((item, index) => ({
@@ -308,9 +309,7 @@ const OrgPackageUpdate = () => {
                     label="User Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "users"]}
-                        noStyle>
+                      <Form.Item name={["limit", "users"]} noStyle>
                         <InputNumber
                           placeholder="User Limit"
                           style={{ width: "100%" }}
@@ -324,9 +323,7 @@ const OrgPackageUpdate = () => {
                     label="Item/SKU Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "items"]}
-                        noStyle>
+                      <Form.Item name={["limit", "items"]} noStyle>
                         <InputNumber
                           placeholder="Item/SKU Limit"
                           style={{ width: "100%" }}
@@ -340,9 +337,7 @@ const OrgPackageUpdate = () => {
                     label="Storage Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "locations"]}
-                        noStyle>
+                      <Form.Item name={["limit", "locations"]} noStyle>
                         <InputNumber
                           placeholder="Storage Limit"
                           style={{ width: "100%" }}
@@ -356,9 +351,7 @@ const OrgPackageUpdate = () => {
                     label="Cost Center Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "costCenters"]}
-                        noStyle>
+                      <Form.Item name={["limit", "costCenters"]} noStyle>
                         <InputNumber
                           placeholder="Cost Center Limit"
                           style={{ width: "100%" }}
@@ -372,9 +365,7 @@ const OrgPackageUpdate = () => {
                     label="Purchase Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "purchases"]}
-                        noStyle>
+                      <Form.Item name={["limit", "purchases"]} noStyle>
                         <InputNumber
                           placeholder="Purchase Limit"
                           style={{ width: "100%" }}
@@ -388,9 +379,7 @@ const OrgPackageUpdate = () => {
                     label="Supplier Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "suppliers"]}
-                        noStyle>
+                      <Form.Item name={["limit", "suppliers"]} noStyle>
                         <InputNumber
                           placeholder="Supplier Limit"
                           style={{ width: "100%" }}
@@ -404,9 +393,7 @@ const OrgPackageUpdate = () => {
                     label="Transaction Limit"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["limit", "transactions"]}
-                        noStyle>
+                      <Form.Item name={["limit", "transactions"]} noStyle>
                         <InputNumber
                           placeholder="Transaction Limit"
                           style={{ width: "100%" }}
@@ -422,9 +409,7 @@ const OrgPackageUpdate = () => {
                     label="Package Price (BDT)"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["price", "packagePrice"]}
-                        noStyle>
+                      <Form.Item name={["price", "packagePrice"]} noStyle>
                         <InputNumber
                           placeholder="Package Price (BDT)"
                           style={{ width: "100%" }}
@@ -438,9 +423,7 @@ const OrgPackageUpdate = () => {
                     label="Discount (Flat BDT)"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["price", "discount"]}
-                        noStyle>
+                      <Form.Item name={["price", "discount"]} noStyle>
                         <InputNumber
                           placeholder="Discount (Flat BDT)"
                           style={{ width: "100%" }}
@@ -454,9 +437,7 @@ const OrgPackageUpdate = () => {
                     label="Payable Amount (BDT)"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name={["price", "payableAmount"]}
-                        noStyle>
+                      <Form.Item name={["price", "payableAmount"]} noStyle>
                         <InputNumber
                           placeholder="Payable Amount (BDT)"
                           style={{ width: "100%" }}
@@ -470,9 +451,7 @@ const OrgPackageUpdate = () => {
                     label="Affalite (%)"
                     style={{ marginBottom: "35px" }}>
                     <Flex gap={16}>
-                      <Form.Item
-                        name="affaliteAmount"
-                        noStyle>
+                      <Form.Item name="affaliteAmount" noStyle>
                         <InputNumber
                           placeholder="Affalite (%)"
                           style={{ width: "100%" }}

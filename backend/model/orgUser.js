@@ -42,7 +42,7 @@ const orgUserSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("ORG_User", orgUserSchema);

@@ -54,6 +54,7 @@ const OrgPackageAdd = () => {
     { label: "Dashboard", value: "dashboard" },
     { label: "Purchase", value: "purchase" },
     { label: "Purchase requisition", value: "purchase-requisition" },
+    { label: "Purchase Order", value: "purchase-order" },
     { label: "Supplier", value: "supplier" },
     { label: "Purchase report", value: "purchase-report" },
     { label: "Warehouse", value: "transaction" },
@@ -90,7 +91,7 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -112,10 +113,10 @@ const OrgPackageAdd = () => {
       ownCreate && othersCreate
         ? "all"
         : ownCreate
-        ? "own"
-        : othersCreate
-        ? "others"
-        : null;
+          ? "own"
+          : othersCreate
+            ? "others"
+            : null;
     if (!scope) {
       setOrgData([]);
       message.warning("You are not authorized");
@@ -133,7 +134,7 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.organization?.map((item, index) => ({
@@ -160,7 +161,7 @@ const OrgPackageAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.members?.map((item, index) => ({
