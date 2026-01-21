@@ -46,7 +46,8 @@ async function viewSingleTnxDetails(req, res) {
       .select("costCenter")
       .populate("costCenter", "name")
       .lean();
-    const userDept = userCostCenter?.costCenter?.name || null;
+    const userDept =
+      transactions?.costCenter || userCostCenter?.costCenter?.name || null;
 
     // last 6 months transaction details summary
     const lastSixMonths = new Date();
@@ -71,7 +72,7 @@ async function viewSingleTnxDetails(req, res) {
         sixMonthUsedSummary.reduce(
           (sum, trnx) =>
             trnx.costCenter == userDept ? trnx.tnxQty + sum : sum,
-          0
+          0,
         ) * -1;
     }
 

@@ -190,7 +190,8 @@ const PurchaseReqPrintView = () => {
 
     // ROW 7
     worksheet.addRow(new Array(13));
-    worksheet.getCell(currentRow, 1).value = `PR No.: ${queryData?.code || ""}`;
+    worksheet.getCell(currentRow, 1).value =
+      `PR No.: ${queryData?.code || ""} (${queryData?.type || ""})`;
     worksheet.getCell(currentRow, 5).value = `Department: ${
       queryData?.costCenter?.name || ""
     }`;
@@ -282,11 +283,11 @@ const PurchaseReqPrintView = () => {
       // Add totals
       const totalQty = queryData.itemDetails.reduce(
         (sum, item) => sum + (item?.reqQty || 0),
-        0
+        0,
       );
       const totalValue = queryData.itemDetails.reduce(
         (sum, item) => sum + (item?.unitPrice || 0) * (item?.reqQty || 0),
-        0
+        0,
       );
       worksheet.addRow([
         "",
@@ -680,7 +681,7 @@ const PurchaseReqPrintView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // message.success(res?.data?.message);
@@ -764,7 +765,7 @@ const PurchaseReqPrintView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -833,7 +834,7 @@ const PurchaseReqPrintView = () => {
               <Col>
                 <p>
                   <strong>PR No.: </strong>
-                  {queryData?.code}
+                  {queryData?.code} ({queryData?.type})
                 </p>
                 <p>
                   <strong>Reference: </strong>
@@ -883,12 +884,12 @@ const PurchaseReqPrintView = () => {
               summary={() => {
                 const totalQty = queryData?.itemDetails?.reduce(
                   (sum, item) => sum + (item?.reqQty || 0),
-                  0
+                  0,
                 );
                 const totalValue = queryData?.itemDetails?.reduce(
                   (sum, item) =>
                     sum + (item?.unitPrice || 0) * (item?.reqQty || 0),
-                  0
+                  0,
                 );
 
                 return (
