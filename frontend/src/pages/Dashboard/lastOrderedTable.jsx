@@ -5,6 +5,8 @@ import Title from "antd/es/typography/Title";
 import { Link } from "react-router-dom";
 
 const LastOrderedTbl = ({ tableData }) => {
+  console.log(tableData);
+
   const dataArr = Object.values(tableData || {})?.map((item, key) => ({
     key: ++key,
     date: moment(item?.issuedAt).format("DD-MMM-YY"),
@@ -56,8 +58,7 @@ const LastOrderedTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title"
-      >
+        className="colorLink form-title">
         Latest orders
       </Title>
       <Table

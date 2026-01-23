@@ -197,6 +197,11 @@ p {
   border-color: var(--color-Brand);
 }
 
+.search-field .ant-input-search-btn {
+  padding-top: 21px !important;
+  padding-bottom: 21px !important;
+}
+
 .ant-input-outlined:focus {
   box-shadow: inset 0 0 0 2px rgba(0, 55, 60, 0.22) !important;
 }

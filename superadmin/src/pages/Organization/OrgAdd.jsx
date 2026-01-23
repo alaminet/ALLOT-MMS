@@ -17,6 +17,7 @@ import {
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 const { Title } = Typography;
 
 const OrgAdd = () => {
@@ -72,7 +73,7 @@ const OrgAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -89,6 +90,9 @@ const OrgAdd = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+      </Flex>
       <Card>
         <Form
           form={form}

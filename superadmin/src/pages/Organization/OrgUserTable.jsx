@@ -16,6 +16,7 @@ import {
 import moment from "moment";
 import UserRoleViewTable from "./userRoleViewTable";
 import UserAuthorizationViewTable from "./userAuthorizationViewTable";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 
 const OrgUserTable = () => {
   const navigate = useNavigate();
@@ -117,8 +118,8 @@ const OrgUserTable = () => {
             ownEdit && user.id === action.access?.createdBySU?._id
               ? false
               : othersEdit && user.id !== action.access?.createdBySU?._id
-              ? false
-              : true
+                ? false
+                : true
           }
           checkedChildren={true}
           unCheckedChildren={false}
@@ -139,8 +140,8 @@ const OrgUserTable = () => {
             ownEdit && user.id === action.access?.createdBySU?._id
               ? false
               : othersEdit && user.id !== action.access?.createdBySU?._id
-              ? false
-              : true
+                ? false
+                : true
           }
           checkedChildren={true}
           unCheckedChildren={false}
@@ -190,7 +191,7 @@ const OrgUserTable = () => {
                     handleUserChange(
                       record.action,
                       "deleted",
-                      !record.access?.deleted
+                      !record.access?.deleted,
                     )
                   }
                   icon={
@@ -209,7 +210,7 @@ const OrgUserTable = () => {
                     handleUserChange(
                       record.action,
                       "deleted",
-                      !record.access?.deleted
+                      !record.access?.deleted,
                     )
                   }
                   icon={
@@ -234,10 +235,10 @@ const OrgUserTable = () => {
       ownView && othersView
         ? "all"
         : ownView
-        ? "own"
-        : othersView
-        ? "others"
-        : null;
+          ? "own"
+          : othersView
+            ? "others"
+            : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -255,7 +256,7 @@ const OrgUserTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // console.log(res?.data?.data);
@@ -295,7 +296,7 @@ const OrgUserTable = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       getTableData();
@@ -310,38 +311,42 @@ const OrgUserTable = () => {
 
   return (
     <>
-      <Flex
-        justify="end"
-        style={{
-          marginBottom: "10px",
-          gap: "10px",
-          display:
-            (lastSegment === "new" || lastSegment === "update") && "none",
-        }}>
-        {lastSegment !== "new" && (
-          <Button
-            type="primary"
-            onClick={() => navigate("new")}
-            disabled={!ownCreate && !othersCreate}
-            style={{ borderRadius: "0px", padding: "10px 30px" }}>
-            Add Org-Member
-          </Button>
-        )}
-        <Search
-          className="search-field"
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+        <Flex
+          justify="end"
           style={{
-            width: "300px",
-          }}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name"
-          // onSearch={onSearch}
-          enterButton
-        />
+            marginBottom: "10px",
+            gap: "10px",
+            display:
+              (lastSegment === "new" || lastSegment === "update") && "none",
+          }}>
+          {lastSegment !== "new" && (
+            <Button
+              type="primary"
+              onClick={() => navigate("new")}
+              disabled={!ownCreate && !othersCreate}
+              style={{ borderRadius: "0px", padding: "21px 30px" }}>
+              Add Org-Member
+            </Button>
+          )}
+          <Search
+            className="search-field"
+            style={{
+              width: "300px",
+            }}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name"
+            // onSearch={onSearch}
+            enterButton
+          />
+        </Flex>
       </Flex>
+
       <Table
         columns={columns}
         dataSource={queryData?.filter((item) =>
-          item?.name?.toLowerCase().includes(search?.toLowerCase())
+          item?.name?.toLowerCase().includes(search?.toLowerCase()),
         )}
         sticky
         scroll={{

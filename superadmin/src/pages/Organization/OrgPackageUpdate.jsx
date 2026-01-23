@@ -23,6 +23,7 @@ import { useEffect } from "react";
 import { DollarOutlined } from "@ant-design/icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 const { Title } = Typography;
 
 const OrgPackageUpdate = () => {
@@ -190,6 +191,9 @@ const OrgPackageUpdate = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+      </Flex>
       <Card>
         <Form
           form={form}

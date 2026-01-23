@@ -21,6 +21,7 @@ import {
   DeleteTwoTone,
   EditTwoTone,
 } from "@ant-design/icons";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 
 const OrgListTable = () => {
   const navigate = useNavigate();
@@ -134,8 +135,8 @@ const OrgListTable = () => {
             ownEdit && user.id === action.access?.createdBySU?._id
               ? false
               : othersEdit && user.id !== action.access?.createdBySU?._id
-              ? false
-              : true
+                ? false
+                : true
           }
           checkedChildren="Active"
           unCheckedChildren="Inactive"
@@ -185,7 +186,7 @@ const OrgListTable = () => {
                     handleUserChange(
                       record.action,
                       "isDeleted",
-                      !record.access?.isDeleted
+                      !record.access?.isDeleted,
                     )
                   }
                   icon={
@@ -204,7 +205,7 @@ const OrgListTable = () => {
                     handleUserChange(
                       record.action,
                       "isDeleted",
-                      !record.access?.isDeleted
+                      !record.access?.isDeleted,
                     )
                   }
                   icon={
@@ -244,7 +245,7 @@ const OrgListTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -302,7 +303,7 @@ const OrgListTable = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       getTableData();
@@ -320,38 +321,42 @@ const OrgListTable = () => {
         <NotAuth />
       ) : (
         <>
-          <Flex
-            justify="end"
-            style={{
-              marginBottom: "10px",
-              gap: "10px",
-              display:
-                (lastSegment === "new" || lastSegment === "update") && "none",
-            }}>
-            {lastSegment !== "new" && (
-              <Button
-                type="primary"
-                onClick={() => navigate("new")}
-                disabled={!canDoOwn("organization", "create")}
-                style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                Add Organization
-              </Button>
-            )}
-            <Search
-              className="search-field"
+          <Flex justify="space-between">
+            <BreadCrumbCustom />
+            <Flex
+              justify="end"
               style={{
-                width: "300px",
-              }}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name"
-              // onSearch={onSearch}
-              enterButton
-            />
+                marginBottom: "10px",
+                gap: "10px",
+                display:
+                  (lastSegment === "new" || lastSegment === "update") && "none",
+              }}>
+              {lastSegment !== "new" && (
+                <Button
+                  type="primary"
+                  onClick={() => navigate("new")}
+                  disabled={!canDoOwn("organization", "create")}
+                  style={{ borderRadius: "0px", padding: "21px 30px" }}>
+                  Add Organization
+                </Button>
+              )}
+              <Search
+                className="search-field"
+                style={{
+                  width: "300px",
+                }}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by name"
+                // onSearch={onSearch}
+                enterButton
+              />
+            </Flex>
           </Flex>
+
           <Table
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item?.orgName?.toLowerCase().includes(search?.toLowerCase())
+              item?.orgName?.toLowerCase().includes(search?.toLowerCase()),
             )}
             sticky
             scroll={{

@@ -16,6 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import UserAuthorizationTable from "./userAuthorizationTable";
 import { usePermission } from "../../hooks/usePermission";
 import NotAuth from "../notAuth";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 
 const OrgUserUpdate = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const OrgUserUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -79,10 +80,10 @@ const OrgUserUpdate = () => {
       ownCreate && othersCreate
         ? "all"
         : ownCreate
-        ? "own"
-        : othersCreate
-        ? "others"
-        : null;
+          ? "own"
+          : othersCreate
+            ? "others"
+            : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -100,7 +101,7 @@ const OrgUserUpdate = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.organization?.map((item, index) => ({
@@ -120,6 +121,9 @@ const OrgUserUpdate = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+      </Flex>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
         Update Organization User
       </Title>

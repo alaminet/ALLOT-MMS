@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 const { Title } = Typography;
 
 const OrgUpdate = () => {
@@ -56,7 +57,7 @@ const OrgUpdate = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -74,6 +75,9 @@ const OrgUpdate = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+      </Flex>
       <Card>
         <Form
           form={form}

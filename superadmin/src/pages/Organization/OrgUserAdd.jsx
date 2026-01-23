@@ -15,6 +15,7 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserAuthorizationTable from "./userAuthorizationTable";
 import { usePermission } from "../../hooks/usePermission";
+import BreadCrumbCustom from "../../components/breadCrumbCustom";
 
 const OrgUserAdd = () => {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const OrgUserAdd = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -67,10 +68,10 @@ const OrgUserAdd = () => {
       ownCreate && othersCreate
         ? "all"
         : ownCreate
-        ? "own"
-        : othersCreate
-        ? "others"
-        : null;
+          ? "own"
+          : othersCreate
+            ? "others"
+            : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -88,7 +89,7 @@ const OrgUserAdd = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           const tableArr = res?.data?.organization?.map((item, index) => ({
@@ -108,6 +109,9 @@ const OrgUserAdd = () => {
 
   return (
     <>
+      <Flex justify="space-between">
+        <BreadCrumbCustom />
+      </Flex>
       <Title style={{ textAlign: "center" }} className="colorLink form-title">
         Create New User
       </Title>
