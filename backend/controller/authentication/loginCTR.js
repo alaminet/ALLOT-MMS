@@ -16,10 +16,10 @@ async function loginCTR(req, res, next) {
         email: data.email?.toLowerCase().trim(),
       }).populate("costCenter");
       const existingOrg = await Organization.findOne({
-        orgId: existingMember.orgId,
+        orgId: existingMember?.orgId,
       });
       const existingOrgPackage = await OrgPackage.findOne({
-        organization: existingOrg._id,
+        organization: existingOrg?._id,
       });
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });

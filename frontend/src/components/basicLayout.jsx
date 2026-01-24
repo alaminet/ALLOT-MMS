@@ -13,6 +13,7 @@ import {
   ProductOutlined,
   SettingOutlined,
   ShopOutlined,
+  PicRightOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
   UserOutlined,
@@ -57,6 +58,11 @@ const items = [
     getItem("Issue", "issue", <ArrowLeftOutlined />),
     getItem("Tnx-Report", "tnx-report", <FileDoneOutlined />),
     getItem("MO-Report", "mo-report", <FileDoneOutlined />),
+  ]),
+  getItem("Sales", "sales", <ShopOutlined />, [
+    getItem("B2B/Invoic", "B2B", <AppstoreOutlined />),
+    getItem("ECommerce", "ecommerce", <ShoppingCartOutlined />),
+    getItem("POS/Retail", "POS", <PicRightOutlined />),
   ]),
   getItem("Item Master", "master", <ProductOutlined />, [
     getItem("Item List", "item-list", <FileDoneOutlined />),

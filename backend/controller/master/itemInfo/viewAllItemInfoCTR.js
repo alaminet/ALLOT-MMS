@@ -12,6 +12,10 @@ async function viewAllItemInfoCTR(req, res) {
     } else if (data.scope === "others") {
       query["createdBy"] = { $ne: req.actionBy };
     }
+
+    if (data.isSaleable !== undefined) {
+      query["isSaleable"] = data.isSaleable;
+    }
     const items = await ItemInfo.find(query)
       .sort({ createdAt: -1 })
       .populate({

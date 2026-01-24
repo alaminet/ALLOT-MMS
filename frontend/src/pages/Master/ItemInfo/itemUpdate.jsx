@@ -45,7 +45,7 @@ const ItemUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -77,7 +77,7 @@ const ItemUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({ value: i._id, label: i.name }));
@@ -154,6 +154,18 @@ const ItemUpdate = () => {
                       />
                     </Form.Item>
                   </Col>
+                  <Col lg={12} xs={24}>
+                    <Form.Item
+                      label="Sale Price"
+                      name="salePrice"
+                      style={{ width: "100%" }}>
+                      <InputNumber
+                        type="number"
+                        placeholder="Sale Price"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
                   <Col lg={8} xs={24}>
                     <Form.Item
                       label="SKU"
@@ -168,7 +180,7 @@ const ItemUpdate = () => {
                     </Form.Item>
                   </Col>
 
-                  <Col lg={8} xs={24}>
+                  <Col lg={4} xs={24}>
                     <Form.Item
                       label="UOM"
                       name="UOM"
@@ -183,14 +195,14 @@ const ItemUpdate = () => {
                         allowClear
                         options={
                           categories?.filter(
-                            (item) => item.modelName === "ItemUOM"
+                            (item) => item.modelName === "ItemUOM",
                           )[0]?.data
                         }
                         placeholder="Select UOM"
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={24}>
+                  <Col lg={6} xs={24}>
                     <Form.Item
                       label="Group"
                       name="group"
@@ -205,14 +217,14 @@ const ItemUpdate = () => {
                         allowClear
                         options={
                           categories?.filter(
-                            (item) => item.modelName === "ItemGroup"
+                            (item) => item.modelName === "ItemGroup",
                           )[0]?.data
                         }
                         placeholder="Select Group"
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={24}>
+                  <Col lg={6} xs={24}>
                     <Form.Item
                       label="Type"
                       name="type"
@@ -227,14 +239,14 @@ const ItemUpdate = () => {
                         allowClear
                         options={
                           categories?.filter(
-                            (item) => item.modelName === "ItemType"
+                            (item) => item.modelName === "ItemType",
                           )[0]?.data
                         }
                         placeholder="Select Type"
                       />
                     </Form.Item>
                   </Col>
-                  <Col lg={8} xs={24}>
+                  <Col lg={6} xs={24}>
                     <Form.Item
                       label="Low Stock"
                       name="safetyStock"
@@ -246,10 +258,36 @@ const ItemUpdate = () => {
                       />
                     </Form.Item>
                   </Col>
+                  <Col lg={6} xs={24}>
+                    <Form.Item
+                      label="% of VAT"
+                      name="vat"
+                      style={{ width: "100%" }}>
+                      <InputNumber
+                        type="number"
+                        placeholder="10"
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Col>
                   <Col lg={4} xs={12}>
                     <Form.Item
                       label="Shelf Life"
                       name="isShelfLife"
+                      style={{ width: "100%" }}
+                      required
+                      rules={{ required: true }}>
+                      <Switch
+                        checkedChildren="YES"
+                        unCheckedChildren="NO"
+                        defaultChecked={false}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col lg={4} xs={12}>
+                    <Form.Item
+                      label="Saleable Items"
+                      name="isSaleable"
                       style={{ width: "100%" }}
                       required
                       rules={{ required: true }}>

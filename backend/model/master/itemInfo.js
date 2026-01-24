@@ -24,13 +24,25 @@ const itemInfoSchema = new Schema(
       type: Number,
       default: null,
     },
+    vat: {
+      type: Number,
+      default: 0,
+    },
     isShelfLife: {
+      type: Boolean,
+      default: false,
+    },
+    isSaleable: {
       type: Boolean,
       default: false,
     },
     isSerialized: {
       type: Boolean,
       default: false,
+    },
+    salePrice: {
+      type: Number,
+      default: 0,
     },
     lastPrice: {
       type: Number,
@@ -69,7 +81,7 @@ const itemInfoSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("Item_Info", itemInfoSchema);

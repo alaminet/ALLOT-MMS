@@ -95,6 +95,34 @@ const UserRoleTable = ({ data, setData }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
+      key: "sales",
+      module: "Sales",
+      pageAccess: { view: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "B2B",
+      module: "B2B",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "ecommerce",
+      module: "E-Commerce",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "POS",
+      module: "POS",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "master",
       module: "Master Access",
       pageAccess: { view: false },
@@ -147,14 +175,14 @@ const UserRoleTable = ({ data, setData }) => {
         module: template.module,
         pageAccess: template.pageAccess
           ? { ...template.pageAccess, ...override?.pageAccess }
-          : override?.pageAccess ?? null,
+          : (override?.pageAccess ?? null),
         // Preserve null/undefined for modules that don't have 'own' or 'other'
         own: template.own
           ? { ...template.own, ...override?.own }
-          : override?.own ?? null,
+          : (override?.own ?? null),
         other: template.other
           ? { ...template.other, ...override?.other }
-          : override?.other ?? null,
+          : (override?.other ?? null),
       };
     });
   };
@@ -169,10 +197,10 @@ const UserRoleTable = ({ data, setData }) => {
         // Keep null for other/own when the base item doesn't define them
         other: item.other
           ? { ...item.other, ...override?.other }
-          : override?.other ?? null,
+          : (override?.other ?? null),
         own: item.own
           ? { ...item.own, ...override?.own }
-          : override?.own ?? null,
+          : (override?.own ?? null),
         pageAccess: { ...item.pageAccess, ...override?.pageAccess },
       };
     });
@@ -289,7 +317,7 @@ const UserRoleTable = ({ data, setData }) => {
                     record?.pageAccess &&
                     Object.prototype.hasOwnProperty.call(
                       record.pageAccess,
-                      "view"
+                      "view",
                     );
                   return hasCreate ? (
                     <Checkbox
@@ -297,7 +325,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "pageAccess",
-                        "view"
+                        "view",
                       )}
                     />
                   ) : (
@@ -322,7 +350,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "own",
-                        "create"
+                        "create",
                       )}
                     />
                   ) : (
@@ -345,7 +373,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "own",
-                        "edit"
+                        "edit",
                       )}
                     />
                   ) : (
@@ -368,7 +396,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "own",
-                        "view"
+                        "view",
                       )}
                     />
                   ) : (
@@ -391,7 +419,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "own",
-                        "delete"
+                        "delete",
                       )}
                     />
                   ) : (
@@ -411,7 +439,7 @@ const UserRoleTable = ({ data, setData }) => {
                     record?.other &&
                     Object.prototype.hasOwnProperty.call(
                       record.other,
-                      "create"
+                      "create",
                     );
                   return hasCreate ? (
                     <Checkbox
@@ -419,7 +447,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "other",
-                        "create"
+                        "create",
                       )}
                     />
                   ) : (
@@ -442,7 +470,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "other",
-                        "edit"
+                        "edit",
                       )}
                     />
                   ) : (
@@ -465,7 +493,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "other",
-                        "view"
+                        "view",
                       )}
                     />
                   ) : (
@@ -483,7 +511,7 @@ const UserRoleTable = ({ data, setData }) => {
                     record?.other &&
                     Object.prototype.hasOwnProperty.call(
                       record.other,
-                      "delete"
+                      "delete",
                     );
                   return hasDelete ? (
                     <Checkbox
@@ -491,7 +519,7 @@ const UserRoleTable = ({ data, setData }) => {
                       onChange={handleCheckboxChange(
                         record?.key,
                         "other",
-                        "delete"
+                        "delete",
                       )}
                     />
                   ) : (

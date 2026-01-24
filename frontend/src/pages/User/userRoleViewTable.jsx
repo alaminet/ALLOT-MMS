@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Table,Divider } from "antd";
+import { Table, Divider } from "antd";
 import { useSelector } from "react-redux";
 import { CheckSquareTwoTone, CloseSquareTwoTone } from "@ant-design/icons";
 import useModuleFilter from "../../hooks/useModuleFilter";
@@ -94,6 +94,34 @@ const UserRoleViewTable = ({ data }) => {
       other: { create: false, edit: false, view: false, delete: false },
     },
     {
+      key: "sales",
+      module: "Sales",
+      pageAccess: { view: false },
+      // own: { create: false, edit: false, view: false, delete: false },
+      // other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "B2B",
+      module: "B2B",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "ecommerce",
+      module: "E-Commerce",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
+      key: "POS",
+      module: "POS",
+      pageAccess: { view: false },
+      own: { create: false, edit: false, view: false, delete: false },
+      other: { create: false, edit: false, view: false, delete: false },
+    },
+    {
       key: "master",
       module: "Master Access",
       pageAccess: { view: false },
@@ -148,10 +176,10 @@ const UserRoleViewTable = ({ data }) => {
         // Keep null for other/own when the base item doesn't define them
         other: item.other
           ? { ...item.other, ...override?.other }
-          : override?.other ?? null,
+          : (override?.other ?? null),
         own: item.own
           ? { ...item.own, ...override?.own }
-          : override?.own ?? null,
+          : (override?.own ?? null),
         pageAccess: { ...item.pageAccess, ...override?.pageAccess },
       };
     });
@@ -185,7 +213,7 @@ const UserRoleViewTable = ({ data }) => {
                     record?.pageAccess &&
                     Object.prototype.hasOwnProperty.call(
                       record?.pageAccess,
-                      "view"
+                      "view",
                     );
                   return hasField ? (
                     record.pageAccess?.view ? (
@@ -292,7 +320,7 @@ const UserRoleViewTable = ({ data }) => {
                     record?.other &&
                     Object.prototype.hasOwnProperty.call(
                       record.other,
-                      "create"
+                      "create",
                     );
                   return hasField ? (
                     record.other?.create ? (
@@ -355,7 +383,7 @@ const UserRoleViewTable = ({ data }) => {
                     record?.other &&
                     Object.prototype.hasOwnProperty.call(
                       record.other,
-                      "delete"
+                      "delete",
                     );
                   return hasField ? (
                     record.other?.delete ? (

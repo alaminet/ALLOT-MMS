@@ -62,6 +62,10 @@ import MOReport from "./pages/Transaction/MOReport/index.jsx";
 import MoReportTable from "./pages/Transaction/MOReport/moReportTable.jsx";
 import Profile from "./pages/Profile/index.jsx";
 import MOReportPrintView from "./pages/Transaction/MOReport/MOReportPrintView.jsx";
+import Sales from "./pages/Sales/index.jsx";
+import POS from "./pages/Sales/POS/index.jsx";
+import Ecommerce from "./pages/Sales/Ecommerce/index.jsx";
+import B2B from "./pages/Sales/B2B/index.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -113,6 +117,7 @@ function App() {
                 <Route path="view" element={<MOReportPrintView />} />
               </Route>
             </Route>
+            {/* Purchase Routes */}
             <Route path="" element={<Purchase />}>
               <Route
                 path="purchase-requisition"
@@ -135,7 +140,28 @@ function App() {
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>
-
+            {/* Sales Routes */}
+            <Route path="" element={<Sales />}>
+              <Route path="B2B" element={<B2B />}>
+                <Route path="" element={<PurchaseReqViewTable />} />
+                <Route path="new" element={<PurchaseRequisitiion />} />
+                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+                <Route path="print" element={<PurchaseReqPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="ecommerce" element={<Ecommerce />}>
+                <Route path="" element={<PurchaseOrderViewTable />} />
+                <Route path="new" element={<PurchaseOrderReqTable />} />
+                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
+                <Route path="print" element={<PurchaseOrderPrintView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+              <Route path="POS" element={<POS />}>
+                <Route path="" element={<PurchaseReportView />} />
+                <Route path="logs" element={<LogActivites />} />
+              </Route>
+            </Route>
+            {/* Item Master Routes */}
             <Route path="" element={<Items />}>
               <Route path="/item-list" element={<ItemInfo />}>
                 <Route path="" element={<ItemViewTable />} />
@@ -157,8 +183,8 @@ function App() {
         <Route element={<LoggedOutUser />}>
           <Route path="/login" element={<Login />}></Route>
         </Route>
-      </Route>
-    )
+      </Route>,
+    ),
   );
   return (
     <>
