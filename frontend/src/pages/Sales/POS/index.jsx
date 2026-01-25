@@ -60,7 +60,7 @@ function handlePrint(invId, orgName, orgLoc) {
       .ant-list-item{
       padding: 0 !important;
       }
-      .ant-typography-edit{
+      .ant-typography-edit, .ant-card-actions{
       display: none !important;
       }
       .ant-form-item{
@@ -603,7 +603,6 @@ const POS = () => {
             className="print-page"
             actions={[
               <Button
-                className="no-print"
                 type="primary"
                 style={{ backgroundColor: "#ff9800" }}
                 icon={<PlusCircleOutlined />}
@@ -624,21 +623,18 @@ const POS = () => {
                 New
               </Button>,
               <Button
-                className="no-print"
+                disabled={cartData.length > 0 ? false : true}
                 icon={<PrinterOutlined />}
                 onClick={() =>
                   handlePrint("No bill", user.orgName, user.orgAddress)
                 }>
                 Print
               </Button>,
-              <Button
-                className="no-print"
-                type="default"
-                icon={<UnorderedListOutlined />}>
+              <Button type="default" icon={<UnorderedListOutlined />}>
                 Orders
               </Button>,
               <Button
-                className="no-print"
+                disabled={cartData.length > 0 ? false : true}
                 type="primary"
                 icon={<DollarOutlined />}
                 onClick={handleOrderConfirm}>

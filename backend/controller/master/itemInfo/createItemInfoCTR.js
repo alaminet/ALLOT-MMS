@@ -20,17 +20,17 @@ async function createItemInfoCTR(req, res, next) {
         return res.status(400).send({ error: "Item already exists" });
       } else {
         const lastItem = await ItemInfo.findOne({}).sort({ code: -1 });
-        // const lastCode = lastItem?.code + 1;
+        const lastCode = lastItem?.code + 1 || 1000000001;
         // const lastCodeExist = await ItemInfo.findOne({ code: lastCode });
         // if (lastCodeExist) {
 
         // }
         const newItemInfo = new ItemInfo({
           orgId: req.orgId,
-          code: lastItem?.code + 1 || 1000000001,
+          code: lastCode,
           name: data.name?.trim(),
           discription: data.discription?.trim(),
-          SKU: data.SKU?.trim(),
+          SKU: data.SKU?.trim() || lastCode,
           UOM: data.UOM,
           salePrice: data.salePrice,
           group: data.group,

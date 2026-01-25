@@ -45,6 +45,7 @@ async function createBulkItemInfoCTR(req, res, next) {
       createdBy: req.actionBy,
       updatedBy: req.actionBy,
       code: nextCode++,
+      SKU: item?.SKU?.trim() || nextCode++,
     }));
 
     // Step 5: Insert into MongoDB
