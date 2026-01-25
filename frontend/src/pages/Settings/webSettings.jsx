@@ -97,7 +97,8 @@ const WebSettings = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="borderlessInput">
+          className="borderlessInput"
+        >
           <Row gutter={16}>
             <Col span={24}>
               <Row justify="space-between" gutter={16}>
@@ -110,16 +111,19 @@ const WebSettings = () => {
                       <Col span={8}>
                         <Form.Item label="Water Chart One" layout="vertical">
                           <Form.Item
-                            name={["dashboard", "waterChart", 0, "SKU"]}>
+                            name={["dashboard", "waterChart", 0, "SKU"]}
+                          >
                             <Input placeholder="SKU" showCount />
                           </Form.Item>
                           <Form.Item
-                            name={["dashboard", "waterChart", 0, "Limit"]}>
+                            name={["dashboard", "waterChart", 0, "Limit"]}
+                          >
                             <Input placeholder="Limit" showCount />
                           </Form.Item>
                           <Form.Item
                             name={["dashboard", "waterChart", 0, "status"]}
-                            valuePropName="checked">
+                            valuePropName="checked"
+                          >
                             <Checkbox>Show on dashboard</Checkbox>
                           </Form.Item>
                         </Form.Item>
@@ -127,16 +131,19 @@ const WebSettings = () => {
                       <Col span={8}>
                         <Form.Item label="Water Chart Two">
                           <Form.Item
-                            name={["dashboard", "waterChart", 1, "SKU"]}>
+                            name={["dashboard", "waterChart", 1, "SKU"]}
+                          >
                             <Input placeholder="SKU" showCount />
                           </Form.Item>
                           <Form.Item
-                            name={["dashboard", "waterChart", 1, "Limit"]}>
+                            name={["dashboard", "waterChart", 1, "Limit"]}
+                          >
                             <Input placeholder="Limit" showCount />
                           </Form.Item>
                           <Form.Item
                             name={["dashboard", "waterChart", 1, "status"]}
-                            valuePropName="checked">
+                            valuePropName="checked"
+                          >
                             <Checkbox>Show on dashboard</Checkbox>
                           </Form.Item>
                         </Form.Item>
@@ -144,27 +151,32 @@ const WebSettings = () => {
                       <Col span={8}>
                         <Form.Item
                           name={["dashboard", "safetyChart", "status"]}
-                          valuePropName="checked">
-                          <Checkbox>Show Safety Stock Chart</Checkbox>
+                          valuePropName="checked"
+                        >
+                          <Checkbox>Show Stock Type Chart</Checkbox>
                         </Form.Item>
                         <Form.Item
                           name={["dashboard", "weeklyOrder", "status"]}
-                          valuePropName="checked">
-                          <Checkbox>Show Weekly Order Chart</Checkbox>
+                          valuePropName="checked"
+                        >
+                          <Checkbox>Show Weekly Move Order Chart</Checkbox>
                         </Form.Item>
                         <Form.Item
                           name={["dashboard", "monthlyOrder", "status"]}
-                          valuePropName="checked">
-                          <Checkbox>Show Monthly Order Chart</Checkbox>
+                          valuePropName="checked"
+                        >
+                          <Checkbox>Show Monthly Move Order Chart</Checkbox>
                         </Form.Item>
                         <Form.Item
                           name={["dashboard", "moveOrderTable", "status"]}
-                          valuePropName="checked">
+                          valuePropName="checked"
+                        >
                           <Checkbox>Show Latest Move Order Table</Checkbox>
                         </Form.Item>
                         <Form.Item
                           name={["dashboard", "PRTable", "status"]}
-                          valuePropName="checked">
+                          valuePropName="checked"
+                        >
                           <Checkbox>
                             Show Latest Parchase Request Table
                           </Checkbox>
@@ -181,7 +193,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Currency"
                           name={["accounts", "currency"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input placeholder="$/৳ or USD/BDT" showCount />
                         </Form.Item>
                       </Col>
@@ -196,7 +209,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Delivery Terms"
                           name={["terms", "deliveryTerms"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input.TextArea
                             rows={4}
                             placeholder="Delivery Terms"
@@ -208,7 +222,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Delivery Location"
                           name={["terms", "deliveryLocation"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input.TextArea
                             rows={4}
                             placeholder="Delivery Location"
@@ -220,7 +235,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Bill Submission"
                           name={["terms", "billSubmission"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input.TextArea
                             rows={4}
                             placeholder="Bill Submission"
@@ -232,7 +248,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Required Documents for Billing"
                           name={["terms", "POReqDoc"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input.TextArea
                             rows={4}
                             placeholder="Required Documents for Billing"
@@ -244,7 +261,8 @@ const WebSettings = () => {
                         <Form.Item
                           label="Payment Terms"
                           name={["terms", "paymentTerms"]}
-                          layout="vertical">
+                          layout="vertical"
+                        >
                           <Input.TextArea
                             rows={4}
                             placeholder="Payment Terms"
@@ -266,7 +284,8 @@ const WebSettings = () => {
                       htmlType="submit"
                       loading={loading}
                       block
-                      style={{ borderRadius: "0px", padding: "10px 30px" }}>
+                      style={{ borderRadius: "0px", padding: "10px 30px" }}
+                    >
                       Save Web Settings
                     </Button>
                   </Form.Item>

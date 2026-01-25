@@ -85,10 +85,10 @@ const Dashboard = () => {
       ownView && othersView
         ? "all"
         : ownView
-        ? "own"
-        : othersView
-        ? "others"
-        : null;
+          ? "own"
+          : othersView
+            ? "others"
+            : null;
 
     // PO Scope
     const scopePOCheck = getScopeValue(ownPOCheck, othersPOCheck);
@@ -150,7 +150,8 @@ const Dashboard = () => {
         <Col>
           <Title
             style={{ textAlign: "center", margin: "0" }}
-            className="colorLink form-title">
+            className="colorLink form-title"
+          >
             Hi, {user?.name}!
           </Title>
           <Text type="secondary">
@@ -163,7 +164,8 @@ const Dashboard = () => {
             gap={16}
             style={{
               marginBottom: "10px",
-            }}>
+            }}
+          >
             <StockCheckModal />
             <MoveOrderReq />
           </Flex>
@@ -173,13 +175,15 @@ const Dashboard = () => {
         <Row
           style={{ marginTop: "16px" }}
           justify="space-between"
-          gutter={[16, 16]}>
+          gutter={[16, 16]}
+        >
           <Col xs={12} md={8} lg={4}>
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(dashboardData?.daily?.value)}(${Math.abs(
-                  dashboardData?.daily?.qty
-                )})`}>
+                  dashboardData?.daily?.qty,
+                )})`}
+              >
                 <Statistic
                   title="Today Order(Qty)"
                   value={formatNumber(Math.abs(dashboardData?.daily?.value))}
@@ -187,7 +191,7 @@ const Dashboard = () => {
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowUpOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.daily?.qty)
+                    Math.abs(dashboardData?.daily?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -197,18 +201,19 @@ const Dashboard = () => {
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(
-                  dashboardData?.last7Days[6]?.value
-                )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}>
+                  dashboardData?.last7Days[6]?.value,
+                )}(${Math.abs(dashboardData?.last7Days[6]?.qty)})`}
+              >
                 <Statistic
                   title="Lastday Order(Qty)"
                   value={formatNumber(
-                    Math.abs(dashboardData?.last7Days[6]?.value)
+                    Math.abs(dashboardData?.last7Days[6]?.value),
                   )}
                   precision={0}
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowDownOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.last7Days[6]?.qty)
+                    Math.abs(dashboardData?.last7Days[6]?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -218,8 +223,9 @@ const Dashboard = () => {
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(dashboardData?.weekly?.value)}(${Math.abs(
-                  dashboardData?.weekly?.qty
-                )})`}>
+                  dashboardData?.weekly?.qty,
+                )})`}
+              >
                 <Statistic
                   title="Weekly Order(Qty)"
                   value={formatNumber(Math.abs(dashboardData?.weekly?.value))}
@@ -227,7 +233,7 @@ const Dashboard = () => {
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowDownOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.weekly?.qty)
+                    Math.abs(dashboardData?.weekly?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -237,8 +243,9 @@ const Dashboard = () => {
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(dashboardData?.monthly?.value)}(${Math.abs(
-                  dashboardData?.monthly?.qty
-                )})`}>
+                  dashboardData?.monthly?.qty,
+                )})`}
+              >
                 <Statistic
                   title="Monthly Order(Qty)"
                   value={formatNumber(Math.abs(dashboardData?.monthly?.value))}
@@ -246,7 +253,7 @@ const Dashboard = () => {
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowDownOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.monthly?.qty)
+                    Math.abs(dashboardData?.monthly?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -256,8 +263,9 @@ const Dashboard = () => {
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(dashboardData?.weeklyPR?.value)}(${Math.abs(
-                  dashboardData?.weeklyPR?.qty
-                )})`}>
+                  dashboardData?.weeklyPR?.qty,
+                )})`}
+              >
                 <Statistic
                   title="Weekly PR(Qty)"
                   value={formatNumber(Math.abs(dashboardData?.weeklyPR?.value))}
@@ -265,7 +273,7 @@ const Dashboard = () => {
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowDownOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.weeklyPR?.qty)
+                    Math.abs(dashboardData?.weeklyPR?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -275,18 +283,19 @@ const Dashboard = () => {
             <Card variant="borderless">
               <Tooltip
                 title={`${Math.abs(dashboardData?.monthlyPR?.value)}(${Math.abs(
-                  dashboardData?.monthlyPR?.qty
-                )})`}>
+                  dashboardData?.monthlyPR?.qty,
+                )})`}
+              >
                 <Statistic
                   title="Monthly PR(Qty)"
                   value={formatNumber(
-                    Math.abs(dashboardData?.monthlyPR?.value)
+                    Math.abs(dashboardData?.monthlyPR?.value),
                   )}
                   precision={0}
                   valueStyle={{ color: "#cf1322" }}
                   // prefix={<ArrowDownOutlined />}
                   suffix={`(${formatNumber(
-                    Math.abs(dashboardData?.monthlyPR?.qty)
+                    Math.abs(dashboardData?.monthlyPR?.qty),
                   )})`}
                 />
               </Tooltip>
@@ -335,7 +344,7 @@ const Dashboard = () => {
           <Col xs={24} lg={12}>
             <Card>
               <DualAxesChart
-                title="Weekly Order"
+                title="Weekly Move Order"
                 height={460}
                 cartData={dashboardData?.last7Days}
               />
@@ -346,7 +355,7 @@ const Dashboard = () => {
           <Col xs={24} lg={12}>
             <Card>
               <LineChart
-                title="Monthly Order"
+                title="Monthly Move Order"
                 height={460}
                 cartData={dashboardData?.yearly}
               />
@@ -367,7 +376,7 @@ const Dashboard = () => {
                   (
                     (dashboardData?.liqStock[1]?.onHand || 0) /
                     (dashboardData?.liqStock[1]?.limit || 1)
-                  ).toFixed(2)
+                  ).toFixed(2),
                 )}
               />
             </Card>
@@ -385,7 +394,7 @@ const Dashboard = () => {
                   (
                     (dashboardData?.liqStock[0]?.onHand || 0) /
                     (dashboardData?.liqStock[0]?.limit || 1)
-                  ).toFixed(2)
+                  ).toFixed(2),
                 )}
               />
             </Card>
@@ -402,7 +411,8 @@ const Dashboard = () => {
       <Row
         style={{ marginTop: "16px" }}
         justify="space-between"
-        gutter={[16, 16]}>
+        gutter={[16, 16]}
+      >
         {dashboardData?.webSettings?.dashboard?.moveOrderTable?.status ? (
           <Col xs={24} lg={12}>
             <Card>
