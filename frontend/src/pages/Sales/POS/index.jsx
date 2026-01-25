@@ -5,10 +5,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   Col,
   Row,
-  Popover,
   Typography,
-  Space,
-  DatePicker,
   List,
   Card,
   Button,
@@ -17,36 +14,21 @@ import {
   Flex,
   InputNumber,
   Select,
-  Collapse,
   Form,
-  Cascader,
   Divider,
   message,
-  Tag,
-  Drawer,
-  Table,
 } from "antd";
 
 import {
   PrinterOutlined,
   PlusCircleOutlined,
-  InfoCircleTwoTone,
+  UnorderedListOutlined,
   DollarOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
   DeleteTwoTone,
-  DoubleLeftOutlined,
-  DoubleRightOutlined,
   EditOutlined,
-  ExclamationCircleOutlined,
-  FilterFilled,
   MinusOutlined,
-  PaperClipOutlined,
   PlusOutlined,
-  SaveOutlined,
   ShoppingCartOutlined,
-  SyncOutlined,
-  WarningOutlined,
 } from "@ant-design/icons";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
@@ -54,6 +36,100 @@ import { useEffect } from "react";
 
 const { Search } = Input;
 const { Title, Text, Link } = Typography;
+
+// Print layout
+function handlePrint(invId, orgName, orgLoc) {
+  const orgAdd = Object.values(orgLoc).reverse().join(", ");
+  const styleTag = document.createElement("style");
+  styleTag.innerHTML = `
+    @media print {
+      @page {
+        width: 80mm !important;
+        height:auto !important;
+        margin: 0 !important;
+      }
+      body {
+        margin: 0 !important;
+      }
+      *{
+       font-size: 10px !important;
+       }
+       .ant-card-body{
+       padding: 5px !important;
+       }
+      .ant-list-item{
+      padding: 0 !important;
+      }
+      .ant-typography-edit{
+      display: none !important;
+      }
+      .ant-form-item{
+      margin: 0 !important;
+      }
+      input::placeholder{
+      color: transparent !important;
+      }
+      textarea::placeholder{
+      color: transparent !important;
+      }
+      .ant-form input::placeholder,
+      .ant-form textarea::placeholder {
+      color: transparent !important;
+      }
+    }
+  `;
+
+  // Create print header with org name and invoice ID
+  const printHeader = document.createElement("div");
+  printHeader.id = "print-header-temp";
+  printHeader.style.cssText = `
+    text-align: center;
+    padding: 10px 5px;
+    border-bottom: 2px solid #000;
+    margin-bottom: 5px;
+    page-break-after: avoid;
+  `;
+  printHeader.innerHTML = `
+    <div style="font-weight: bold; font-size: 14px;">${orgName || "Organization"}</div>
+    <div style="margin: 0 auto; font-size: 10px; width: 80%">${orgAdd || "Organization Location"}</div>
+    <div style="font-size: 12px; font-weight: bold;">Invoice: ${invId || "---"}</div>
+  `;
+
+  //create print footer
+  const printFooter = document.createElement("div");
+  printFooter.id = "print-footer-temp";
+  printFooter.style.cssText = `
+  text-align: center;
+    padding: 10px 5px;
+    border-top: 0.5px solid #b3b3b3;
+    margin-top: 5px;
+    page-break-after: avoid;
+  `;
+  printFooter.innerHTML = `
+    <div style="font-size: 8px;">©ALLOT 2026 | Developed by Al Amin ET</div>
+  `;
+
+  const printPageDiv = document.querySelector(".print-page");
+  if (printPageDiv) {
+    printPageDiv.insertBefore(printHeader, printPageDiv.firstChild);
+    printPageDiv.insertBefore(printFooter, printPageDiv.lastChild);
+  }
+
+  // Remove the print header after print dialog closes
+  const removePrintHeader = () => {
+    const header = document.getElementById("print-header-temp");
+    const footer = document.getElementById("print-footer-temp");
+    if (header) {
+      header.remove();
+      footer.remove();
+    }
+    window.removeEventListener("afterprint", removePrintHeader);
+  };
+
+  window.addEventListener("afterprint", removePrintHeader);
+  document.head.appendChild(styleTag);
+  window.print();
+}
 
 const POS = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -63,13 +139,14 @@ const POS = () => {
   const [form] = Form.useForm();
   const [queryData, setQueryData] = useState([]);
   const [cartData, setCartData] = useState([]);
-  const [billingAdd, setBillingAdd] = useState([]);
   const [discountAmount, setDiscountAmount] = useState(0);
-  const [vatAmount, setVatAmount] = useState(0);
   const [adjustment, setAdjustment] = useState(0);
   const [payment, setPayment] = useState(0);
   const [paymentBy, setPaymentBy] = useState("Cash");
   const [paymentRef, setPaymentRef] = useState(null);
+  const [customerNumber, setCustomerNumber] = useState("");
+  const [customerName, setCustomerName] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
   const [isDiscountManual, setIsDiscountManual] = useState(false);
   // User Permission Check
   const { canViewPage, canDoOwn } = usePermission();
@@ -146,11 +223,6 @@ const POS = () => {
       ? (base * discount) / 100
       : discount * item.quantity;
   };
-  const getVatAmount = (item) => {
-    const base = Number(item.salePrice) * Number(item.quantity);
-    const vat = item.VAT || 0;
-    return (base * vat) / 100;
-  };
 
   const handleRemove = (key) => {
     setCartData((prev) => prev.filter((item) => item.key !== key));
@@ -158,7 +230,6 @@ const POS = () => {
 
   // Get Product Table data
   const getTableData = async () => {
-    const payload = { scope: "all" };
     try {
       await axios
         .post(
@@ -178,12 +249,12 @@ const POS = () => {
             name: item?.name,
             SKU: item.SKU,
             UOM: item?.UOM?.code,
-            VAT: item?.vat,
+            VAT: item?.vat || 0,
             label: item?.name + "-" + item?.SKU,
             stock: item?.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0),
-            salePrice: item?.salePrice || item?.avgPrice,
-            avgPrice: item?.avgPrice,
-            search: `${item?.SKU}-${item?.name}`,
+            salePrice:
+              item?.salePrice?.toFixed(0) || item?.avgPrice?.toFixed(0),
+            avgPrice: item?.avgPrice?.toFixed(0),
           }));
           setQueryData(tableArr);
         });
@@ -192,20 +263,14 @@ const POS = () => {
     }
   };
 
-  useEffect(() => {
-    // Get Product Data
-    getTableData();
-
-    // set Discount Amount
-    if (!isDiscountManual) {
-      const totalDiscount = cartData?.reduce(
-        (sum, item) => sum + getDiscountAmount(item),
-        0,
-      );
-      setDiscountAmount(totalDiscount);
+  // Get Customer Data
+  const handleCustomer = (values) => {
+    if (values.length >= 10) {
+      const localNumber = values.replace(/^(\+88)/, "");
+      setCustomerNumber(localNumber);
+      console.log("Local Number:", localNumber);
     }
-  }, [cartData]);
-
+  };
   const handleOrderConfirm = async () => {
     if (!canCreate) {
       message.warning("You are not authorized");
@@ -242,9 +307,25 @@ const POS = () => {
         ),
       ).toFixed(2);
 
+      if (dueAmount < 0) {
+        message.warning("Payment exceeds the total amount due.");
+        return; // stop execution
+      }
+      if (
+        dueAmount > 0 &&
+        (!customerNumber || !customerName || !customerAddress)
+      ) {
+        message.warning("Need due billing details.");
+        return; // stop execution
+      }
+
       const payload = {
         products: cartData,
-        billingAddress: billingAdd,
+        billing: {
+          number: customerNumber,
+          name: customerName,
+          address: customerAddress,
+        },
         payments: {
           totalBill: Number(billAmount),
           vat: Number(VAT),
@@ -257,33 +338,59 @@ const POS = () => {
           duePay: Number(dueAmount),
         },
       };
-      console.log(payload);
 
-      //   await axios
-      //     .post(`${import.meta.env.VITE_API_URL}/api/order/new`, payload, {
-      //       headers: {
-      //         Authorization: import.meta.env.VITE_SECURE_API_KEY,
-      //         token: user?.token,
-      //       },
-      //     })
-      //     .then((res) => {
-      //       message.success(res.data.message);
-      //       form.resetFields();
-      //       setCartData([]);
-      //       setBillingAdd([]);
-      //       setDiscountAmount(0);
-      //       setVatAmount(0);
-      //       setIsDiscountManual(false);
-      //     });
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/new`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          },
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          handlePrint(res.data.code, user.orgName, user.orgAddress);
+
+          // Reset form and state after successful order
+          setTimeout(() => {
+            getTableData();
+            form.resetFields();
+            setCartData([]);
+            setDiscountAmount(0);
+            setIsDiscountManual(false);
+            setAdjustment(0);
+            setPayment(0);
+            setPaymentRef(null);
+            setCustomerNumber("");
+            setCustomerName("");
+            setCustomerAddress("");
+          }, 100);
+        });
     } catch (error) {
       console.log(error);
     }
   };
 
+  useEffect(() => {
+    // Get Product Data
+    getTableData();
+
+    // set Discount Amount
+    if (!isDiscountManual) {
+      const totalDiscount = cartData?.reduce(
+        (sum, item) => sum + getDiscountAmount(item),
+        0,
+      );
+      setDiscountAmount(totalDiscount);
+    }
+  }, [cartData]);
   return (
     <>
       <Row gutter={[16, 16]}>
-        <Col md={8}>
+        <Col md={8} className="no-print">
           <Card>
             <Flex gap={10}>
               <Input.Search
@@ -387,7 +494,7 @@ const POS = () => {
             />
           </Card>
         </Col>
-        <Col md={8}>
+        <Col md={8} className="no-print">
           <Card
             actions={[
               <Text strong>Total</Text>,
@@ -493,53 +600,67 @@ const POS = () => {
         </Col>
         <Col md={8}>
           <Card
+            className="print-page"
             actions={[
               <Button
+                className="no-print"
                 type="primary"
                 style={{ backgroundColor: "#ff9800" }}
                 icon={<PlusCircleOutlined />}
                 onClick={() => {
                   message.success("New bill initialized");
+                  getTableData();
                   form.resetFields();
                   setCartData([]);
-                  setBillingAdd([]);
                   setDiscountAmount(0);
-                  setVatAmount(0);
-                  setAdjustment(0);
                   setIsDiscountManual(false);
+                  setAdjustment(0);
+                  setPayment(0);
+                  setPaymentRef(null);
+                  setCustomerNumber("");
+                  setCustomerName("");
+                  setCustomerAddress("");
                 }}>
                 New
               </Button>,
               <Button
+                className="no-print"
                 icon={<PrinterOutlined />}
-                //   onClick={() => handleOrderConfirm("Draft")}
-              >
+                onClick={() =>
+                  handlePrint("No bill", user.orgName, user.orgAddress)
+                }>
                 Print
               </Button>,
-              <Button type="primary" danger icon={<DollarOutlined />}>
-                Due
+              <Button
+                className="no-print"
+                type="default"
+                icon={<UnorderedListOutlined />}>
+                Orders
               </Button>,
               <Button
+                className="no-print"
                 type="primary"
                 icon={<DollarOutlined />}
                 onClick={handleOrderConfirm}>
                 Save
               </Button>,
             ]}>
-            <Text strong>Checkout & Confirm</Text>
+            <Text className="no-print" strong>
+              Checkout & Confirm
+            </Text>
             <div>
               <List
                 itemLayout="horizontal"
                 dataSource={cartData}
                 renderItem={(item, index) => (
                   <List.Item key={index}>
-                    <Flex style={{ flexFlow: "column" }}>
-                      <Text strong>{`${item.name}, ${item.UOM}`}</Text>
+                    <Flex style={{ flexFlow: "column", width: "auto" }}>
+                      <Text strong>{`${item.name}`}</Text>
                       <Text style={{ color: "#00000073" }}>
                         {`SKU: ${item.SKU} | Cart: ${item.quantity} ${item.UOM}`}
                       </Text>
                     </Flex>
-                    <Flex justify="end" style={{ minWidth: "140px" }}>
+                    <Flex justify="end" style={{ minWidth: "100px" }}>
                       <Flex style={{ flexDirection: "column" }}>
                         <div
                           style={{ textAlign: "right", paddingRight: "8px" }}>
@@ -574,21 +695,39 @@ const POS = () => {
               <Flex gap={8} justify="space-between">
                 <div>
                   <Divider orientation="center">Billing Details</Divider>
-                  <Input
-                    variant="filled"
-                    placeholder="Customer Mobile"
-                    defaultValue={"+880"}
-                    // onChange={(e) => handleCustomer(e.target.value)}
-                  />
-                  <Flex style={{ flexDirection: "column" }}>
-                    <Typography.Text>{billingAdd.name}</Typography.Text>
-                    <Typography.Text>{billingAdd.number}</Typography.Text>
-                    <Typography.Text>{billingAdd.numberAlt}</Typography.Text>
-                    <Typography.Text>{billingAdd.address1}</Typography.Text>
-                    <Typography.Text>
-                      {billingAdd.address2?.slice().reverse().join(", ")}
-                    </Typography.Text>
-                  </Flex>
+                  <Form form={form} name="form" layout="vertical">
+                    <Form.Item
+                      name="customerNumber"
+                      style={{ marginBottom: "10px" }}>
+                      <Input
+                        variant="filled"
+                        placeholder="Customer Mobile"
+                        value={customerNumber}
+                        onChange={(e) => handleCustomer(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="customerName"
+                      style={{ marginBottom: "10px" }}>
+                      <Input
+                        variant="filled"
+                        placeholder="Name"
+                        value={customerName}
+                        onChange={(e) => setCustomerName(e.target.value)}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="customerAddress"
+                      style={{ marginBottom: "0px" }}>
+                      <Input.TextArea
+                        variant="filled"
+                        rows={4}
+                        placeholder="Address"
+                        value={customerAddress}
+                        onChange={(e) => setCustomerAddress(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
                 </div>
                 <div>
                   <Divider orientation="center">Payment Details</Divider>

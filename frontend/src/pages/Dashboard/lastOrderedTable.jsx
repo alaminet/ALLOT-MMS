@@ -5,8 +5,6 @@ import Title from "antd/es/typography/Title";
 import { Link } from "react-router-dom";
 
 const LastOrderedTbl = ({ tableData }) => {
-  console.log(tableData);
-
   const dataArr = Object.values(tableData || {})?.map((item, key) => ({
     key: ++key,
     date: moment(item?.issuedAt).format("DD-MMM-YY"),

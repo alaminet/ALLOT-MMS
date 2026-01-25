@@ -38,7 +38,7 @@ async function loginCTR(req, res, next) {
       } else {
         const isPasswordValid = await bcrypt.compare(
           data.password,
-          existingMember.password
+          existingMember.password,
         );
         if (!isPasswordValid) {
           return res.status(400).send({ error: "Invalid password" });
@@ -66,6 +66,8 @@ async function loginCTR(req, res, next) {
               token: existingMember?.token,
               moduleList: existingOrgPackage?.module || [],
               authorizationList: existingOrgPackage?.authorization || [],
+              orgName: existingOrg.orgName,
+              orgAddress: existingOrg.businessAddress,
             },
           });
 

@@ -430,6 +430,23 @@ const OrgPackageAdd = () => {
                     </Flex>
                   </Form.Item>
                 </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Sales/POS Limit"
+                    style={{ marginBottom: "35px" }}>
+                    <Flex gap={16}>
+                      <Form.Item
+                        name={["limit", "POS"]}
+                        noStyle
+                        initialValue={0}>
+                        <InputNumber
+                          placeholder="Sales/POS Limit"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Flex>
+                  </Form.Item>
+                </Col>
               </Row>
               <Row gutter={16}>
                 <Col lg={6} xs={24}>

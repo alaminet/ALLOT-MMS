@@ -9,6 +9,7 @@ const dashboardApi = require("./dashboard");
 const orgUserApi = require("./orgUser");
 const webSettingApi = require("./webSetting");
 const superApi = require("./super");
+const salesApi = require("./sales");
 const viewLogsActivitesCTR = require("../../controller/logActivities/viewLogsActivitesCTR");
 const secureAPI = require("../../middleware/secureAPI");
 const secureJWT = require("../../middleware/secureJWT");
@@ -19,19 +20,20 @@ route.use("/member", memberApi, addLogActivitiesCTR);
 route.use("/master", secureAPI, secureJWT, masterApI, addLogActivitiesCTR);
 route.use("/supplier", secureAPI, secureJWT, supplierApi, addLogActivitiesCTR);
 route.use("/purchase", secureAPI, secureJWT, purchaseApi, addLogActivitiesCTR);
+route.use("/sales", secureAPI, secureJWT, salesApi, addLogActivitiesCTR);
 route.use(
   "/transaction",
   secureAPI,
   secureJWT,
   transactionApi,
-  addLogActivitiesCTR
+  addLogActivitiesCTR,
 );
 route.use(
   "/dashboard",
   secureAPI,
   secureJWT,
   dashboardApi,
-  addLogActivitiesCTR
+  addLogActivitiesCTR,
 );
 route.use("/orgUser", secureAPI, secureJWT, orgUserApi, addLogActivitiesCTR);
 route.use(
@@ -39,7 +41,7 @@ route.use(
   secureAPI,
   secureJWT,
   webSettingApi,
-  addLogActivitiesCTR
+  addLogActivitiesCTR,
 );
 route.post("/logs", secureAPI, secureJWT, viewLogsActivitesCTR);
 

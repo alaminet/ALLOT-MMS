@@ -1,4 +1,5 @@
 const Member = require("../../model/member");
+const Organization = require("../../model/orgUser");
 
 async function getAccessCTR(req, res) {
   const data = req.body;
@@ -7,8 +8,11 @@ async function getAccessCTR(req, res) {
       return res.status(400).send({ error: "ID are required" });
     } else {
       const existingMember = await Member.findById(data.id).populate(
-        "costCenter"
+        "costCenter",
       );
+      const existingOrg = await Organization.findOne({
+        orgId: existingMember?.orgId,
+      });
       if (!existingMember) {
         return res.status(400).send({ error: "Member not exists" });
       } else if (!existingMember.status) {
@@ -29,6 +33,8 @@ async function getAccessCTR(req, res) {
             token: existingMember?.token,
             moduleList: req.orgPackage?.module || [],
             authorizationList: req.orgPackage?.authorization || [],
+            orgName: existingOrg.orgName,
+            orgAddress: existingOrg.businessAddress,
           },
         });
       }

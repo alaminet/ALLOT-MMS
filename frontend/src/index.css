@@ -31,14 +31,14 @@
   /* Printable container */
   .print-page {
     box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    top: 0 !important;
+    left: 0 !important;
     padding: 0 !important;
     page-break-after: always;
   }
   .print-page .ant-table-cell {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .print-page .ant-table-content table {
