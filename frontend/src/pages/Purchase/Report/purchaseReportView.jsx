@@ -73,11 +73,9 @@ const PurchaseReportView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
-          console.log(res?.data?.items);
-
           message.success(res?.data.message);
           const tableArr = res?.data?.items?.flatMap((item, index) =>
             item?.itemDetails.map((subItem, subIndex) => ({
@@ -87,8 +85,8 @@ const PurchaseReportView = () => {
                 item?.tnxType === "purchaseRequisition"
                   ? "Purchase Requisition"
                   : item?.tnxType === "purchaseOrder"
-                  ? "Purchase Order"
-                  : null,
+                    ? "Purchase Order"
+                    : null,
               docRef: item?.code,
               SKU: subItem?.SKU || subItem?.code?.SKU,
               name: subItem?.name,
@@ -100,7 +98,7 @@ const PurchaseReportView = () => {
               updatedBy: item?.updatedBy?.name,
               status: item?.status,
               action: item,
-            }))
+            })),
           );
           setQueryData(tableArr);
         });
@@ -131,7 +129,7 @@ const PurchaseReportView = () => {
         (item) => ({
           text: item,
           value: item,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.tnxType === value,
       filterSearch: true,
@@ -144,7 +142,7 @@ const PurchaseReportView = () => {
         (item) => ({
           text: item,
           value: item,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.code === value,
       filterSearch: true,
@@ -171,7 +169,7 @@ const PurchaseReportView = () => {
         (code) => ({
           text: code,
           value: code,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.SKU === value,
       filterSearch: true,
@@ -185,7 +183,7 @@ const PurchaseReportView = () => {
         (code) => ({
           text: code,
           value: code,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.name === value,
       filterSearch: true,
@@ -256,7 +254,7 @@ const PurchaseReportView = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         label: item?.name + ";" + item.SKU,
@@ -324,7 +322,7 @@ const PurchaseReportView = () => {
           </Form.Item>
           <Form.Item name="endDate" initialValue={dayjs()}>
             <DatePicker
-               style={{ width: "130px" }}
+              style={{ width: "130px" }}
               placeholder="End Date"
               disabledDate={(current) => {
                 const startDate = form.getFieldValue("startDate");

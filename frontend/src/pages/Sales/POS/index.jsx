@@ -33,6 +33,7 @@ import {
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { useEffect } from "react";
+import SalesListDrawer from "../../../components/salesListDrawer";
 
 const { Search } = Input;
 const { Title, Text, Link } = Typography;
@@ -630,9 +631,7 @@ const POS = () => {
                 }>
                 Print
               </Button>,
-              <Button type="default" icon={<UnorderedListOutlined />}>
-                Orders
-              </Button>,
+              <SalesListDrawer />,
               <Button
                 disabled={cartData.length > 0 ? false : true}
                 type="primary"
