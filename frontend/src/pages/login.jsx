@@ -43,7 +43,7 @@ const Login = () => {
           headers: {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
           },
-        }
+        },
       );
       message.success(res.data.message);
       dispatch(Loginuser(res.data.member));
@@ -61,67 +61,64 @@ const Login = () => {
   };
 
   return (
-    <>
-      <ConfigProvider theme={customTheme}>
-        <Flex
+    <ConfigProvider theme={customTheme}>
+      <Flex
+        style={{
+          height: "100vh",
+          flexDirection: "column",
+          backgroundColor: "#e6e6e6ff",
+        }}
+        align="center"
+        justify="center">
+        <Card
+          // variant="outlined"
           style={{
-            height: "100vh",
-            flexDirection: "column",
-            backgroundColor: "#e6e6e6ff",
-          }}
-          align="center"
-          justify="center">
-          <Card
-            // variant="outlined"
-            style={{
-              width: 450,
-              // backgroundColor: "#121212",
-              padding: "20px",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-            }}>
-            <div style={{ textAlign: "center", padding: "0 0 30px 0" }}>
-              {/* <img src={logoWhite} alt="Logo" style={{ width: 200 }} /> */}
-              <span style={{ fontSize: "36px", fontWeight: "800" }}>ALLOT</span>
-            </div>
-            <Form
-              name="login"
-              initialValues={{ remember: true }}
-              style={{ maxWidth: 360 }}
-              onFinish={onFinish}>
-              <Form.Item
-                name="email"
-                rules={[
-                  { required: true, message: "Please input your email!" },
-                ]}>
-                <Input
-                  size="large"
-                  style={{
-                    borderRadius: "0px",
-                    alignItems: "baseline",
-                    padding: "8px 16px",
-                  }}
-                  prefix={<UserOutlined />}
-                  placeholder="Enter your mail here"
-                />
-              </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your Password!" },
-                ]}>
-                <Input.Password
-                  size="large"
-                  style={{
-                    borderRadius: "0px",
-                    alignItems: "baseline",
-                    padding: "8px 16px",
-                  }}
-                  prefix={<LockOutlined />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              {/* <Form.Item>
+            width: 450,
+            // backgroundColor: "#121212",
+            padding: "20px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+          }}>
+          <div style={{ textAlign: "center", padding: "0 0 30px 0" }}>
+            {/* <img src={logoWhite} alt="Logo" style={{ width: 200 }} /> */}
+            <span style={{ fontSize: "36px", fontWeight: "800" }}>ALLOT</span>
+          </div>
+          <Form
+            name="login"
+            initialValues={{ remember: true }}
+            style={{ maxWidth: 360 }}
+            onFinish={onFinish}>
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: "Please input your email!" }]}>
+              <Input
+                size="large"
+                style={{
+                  borderRadius: "0px",
+                  alignItems: "baseline",
+                  padding: "8px 16px",
+                }}
+                prefix={<UserOutlined />}
+                placeholder="Enter your mail here"
+              />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                { required: true, message: "Please input your Password!" },
+              ]}>
+              <Input.Password
+                size="large"
+                style={{
+                  borderRadius: "0px",
+                  alignItems: "baseline",
+                  padding: "8px 16px",
+                }}
+                prefix={<LockOutlined />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+            {/* <Form.Item>
                 <Flex
                   justify="space-between"
                   align="center"
@@ -135,22 +132,21 @@ const Login = () => {
                 </Flex>
               </Form.Item> */}
 
-              <Form.Item>
-                <Button
-                  loading={loading}
-                  size="large"
-                  block
-                  type="primary"
-                  htmlType="submit"
-                  style={{ borderRadius: "1px" }}>
-                  Log in
-                </Button>
-              </Form.Item>
-            </Form>
-          </Card>
-        </Flex>
-      </ConfigProvider>
-    </>
+            <Form.Item>
+              <Button
+                loading={loading}
+                size="large"
+                block
+                type="primary"
+                htmlType="submit"
+                style={{ borderRadius: "1px" }}>
+                Log in
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
+      </Flex>
+    </ConfigProvider>
   );
 };
 export default Login;

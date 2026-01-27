@@ -34,6 +34,7 @@ import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import { useEffect } from "react";
 import SalesListDrawer from "../../../components/salesListDrawer";
+import usePhoneNormalize from "../../../hooks/usePhoneNormalize";
 
 const { Search } = Input;
 const { Title, Text, Link } = Typography;
@@ -113,7 +114,7 @@ function handlePrint(invId, orgName, orgLoc) {
   const printPageDiv = document.querySelector(".print-page");
   if (printPageDiv) {
     printPageDiv.insertBefore(printHeader, printPageDiv.firstChild);
-    printPageDiv.insertBefore(printFooter, printPageDiv.lastChild);
+    printPageDiv.appendChild(printFooter);
   }
 
   // Remove the print header after print dialog closes
@@ -145,10 +146,9 @@ const POS = () => {
   const [payment, setPayment] = useState(0);
   const [paymentBy, setPaymentBy] = useState("Cash");
   const [paymentRef, setPaymentRef] = useState(null);
-  const [customerNumber, setCustomerNumber] = useState("");
-  const [customerName, setCustomerName] = useState("");
-  const [customerAddress, setCustomerAddress] = useState("");
+  const [billingAdd, setBillingAdd] = useState();
   const [isDiscountManual, setIsDiscountManual] = useState(false);
+  const { toE164 } = usePhoneNormalize();
   // User Permission Check
   const { canViewPage, canDoOwn } = usePermission();
   if (!canViewPage("POS")) {
@@ -268,7 +268,7 @@ const POS = () => {
   const handleCustomer = (values) => {
     if (values.length >= 10) {
       const localNumber = values.replace(/^(\+88)/, "");
-      setCustomerNumber(localNumber);
+      setCustomerNumber(numberNormalize(values));
       console.log("Local Number:", localNumber);
     }
   };
@@ -312,34 +312,44 @@ const POS = () => {
         message.warning("Payment exceeds the total amount due.");
         return; // stop execution
       }
+      const normalNumber = toE164(billingAdd?.number);
+
       if (
         dueAmount > 0 &&
-        (!customerNumber || !customerName || !customerAddress)
+        (!billingAdd?.address || !billingAdd?.name || !billingAdd?.number)
       ) {
         message.warning("Need due billing details.");
+        return; // stop execution
+      }
+      if (normalNumber?.length < 14) {
+        message.warning("Incorrect Phone number");
         return; // stop execution
       }
 
       const payload = {
         products: cartData,
         billing: {
-          number: customerNumber,
-          name: customerName,
-          address: customerAddress,
+          number: normalNumber,
+          name: billingAdd.name,
+          address: billingAdd.address,
         },
         payments: {
           totalBill: Number(billAmount),
           vat: Number(VAT),
           discount: Number(discountAmount.toFixed(0)),
           discountType: isDiscountManual ? "Manual" : "Calculated",
-          payment: Number(payment),
-          paymentBy: paymentBy,
-          paymentRef: paymentRef,
+          payment: [
+            {
+              amount: Number(payment),
+              payBy: paymentBy,
+              payRef: paymentRef,
+              receBy: user.id,
+            },
+          ],
           adjustment: Number(adjustment),
           duePay: Number(dueAmount),
         },
       };
-
       await axios
         .post(
           `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/new`,
@@ -365,9 +375,6 @@ const POS = () => {
             setAdjustment(0);
             setPayment(0);
             setPaymentRef(null);
-            setCustomerNumber("");
-            setCustomerName("");
-            setCustomerAddress("");
           }, 100);
         });
     } catch (error) {
@@ -617,9 +624,6 @@ const POS = () => {
                   setAdjustment(0);
                   setPayment(0);
                   setPaymentRef(null);
-                  setCustomerNumber("");
-                  setCustomerName("");
-                  setCustomerAddress("");
                 }}>
                 New
               </Button>,
@@ -689,43 +693,35 @@ const POS = () => {
               />
               <Flex gap={8} justify="space-between">
                 <div>
-                  <Divider orientation="center">Billing Details</Divider>
-                  <Form form={form} name="form" layout="vertical">
-                    <Form.Item
-                      name="customerNumber"
-                      style={{ marginBottom: "10px" }}>
+                  <Divider>Billing Details</Divider>
+                  <Form
+                    form={form}
+                    name="form"
+                    layout="vertical"
+                    onValuesChange={(changedValues, allValues) =>
+                      setBillingAdd(allValues)
+                    }>
+                    <Form.Item name="number" style={{ marginBottom: "10px" }}>
                       <Input
                         variant="filled"
                         placeholder="Customer Mobile"
-                        value={customerNumber}
-                        onChange={(e) => handleCustomer(e.target.value)}
+                        // onChange={(e) => handleCustomer(e.target.value)}
                       />
                     </Form.Item>
-                    <Form.Item
-                      name="customerName"
-                      style={{ marginBottom: "10px" }}>
-                      <Input
-                        variant="filled"
-                        placeholder="Name"
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                      />
+                    <Form.Item name="name" style={{ marginBottom: "10px" }}>
+                      <Input variant="filled" placeholder="Name" />
                     </Form.Item>
-                    <Form.Item
-                      name="customerAddress"
-                      style={{ marginBottom: "0px" }}>
+                    <Form.Item name="address" style={{ marginBottom: "0px" }}>
                       <Input.TextArea
                         variant="filled"
                         rows={4}
                         placeholder="Address"
-                        value={customerAddress}
-                        onChange={(e) => setCustomerAddress(e.target.value)}
                       />
                     </Form.Item>
                   </Form>
                 </div>
                 <div>
-                  <Divider orientation="center">Payment Details</Divider>
+                  <Divider>Payment Details</Divider>
                   <Flex style={{ flexDirection: "column" }}>
                     <Flex justify="space-between">
                       <Text>Sub Total :</Text>

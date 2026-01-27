@@ -143,7 +143,7 @@ const PurchaseOrderReviewForm = ({
     // Pass modified data back to parent after deletion
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
     if (newData?.length == 0) {
       onClose();
@@ -239,7 +239,7 @@ const PurchaseOrderReviewForm = ({
     // Pass modified data back to parent
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
   };
   const components = {
@@ -309,7 +309,7 @@ const PurchaseOrderReviewForm = ({
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -392,7 +392,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
     <>
       <Drawer
         title="Make a Purchase Order(PO)"
-        width="95%"
+        size="large"
         onClose={onClose}
         open={drawerOpen}
         styles={{

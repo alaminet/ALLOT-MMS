@@ -62,7 +62,7 @@ const MoveOrderReq = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       onClose();
       notification.success({
@@ -104,7 +104,7 @@ const MoveOrderReq = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         ...item,
@@ -128,7 +128,7 @@ const MoveOrderReq = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
@@ -150,14 +150,13 @@ const MoveOrderReq = () => {
         icon={<PlusCircleOutlined />}
         type="primary"
         className="borderBrand"
-        style={{ borderRadius: "0px" }}
-      >
+        style={{ borderRadius: "0px" }}>
         Move Order
       </Button>
       <Drawer
         title="Move Order Request"
         placement="bottom"
-        height="95%"
+        size="large"
         closable={{ "aria-label": "Close Button" }}
         onClose={onClose}
         open={open}
@@ -165,21 +164,18 @@ const MoveOrderReq = () => {
           <Space>
             <Button
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}
-            >
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}
-            >
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Submit
             </Button>
           </Space>
-        }
-      >
+        }>
         <Form
           form={form}
           name="new"
@@ -187,8 +183,7 @@ const MoveOrderReq = () => {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
-          className="borderlessInput"
-        >
+          className="borderlessInput">
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
@@ -196,8 +191,7 @@ const MoveOrderReq = () => {
                   <Form.Item
                     label="Referance"
                     name="reference"
-                    style={{ width: "100%" }}
-                  >
+                    style={{ width: "100%" }}>
                     <Input
                       placeholder="Movement Ref."
                       maxLength={50}
@@ -210,8 +204,7 @@ const MoveOrderReq = () => {
                   <Form.Item
                     label="Header Text"
                     name="headerText"
-                    style={{ width: "100%" }}
-                  >
+                    style={{ width: "100%" }}>
                     <Input placeholder="Header Text" maxLength={50} showCount />
                   </Form.Item>
                 </Col>
@@ -220,13 +213,12 @@ const MoveOrderReq = () => {
                     label="Deptartment"
                     name="costCenter"
                     initialValue={user?.costCenter}
-                    style={{ width: "100%" }}
-                  >
+                    style={{ width: "100%" }}>
                     <Select
                       allowClear
                       options={
                         costCenter?.filter(
-                          (item) => item.modelName === "CostCenter"
+                          (item) => item.modelName === "CostCenter",
                         )[0]?.data
                       }
                       showSearch
@@ -243,8 +235,7 @@ const MoveOrderReq = () => {
               <div>
                 <Form.Item
                   label="Item Details"
-                  style={{ marginBottom: "35px" }}
-                >
+                  style={{ marginBottom: "35px" }}>
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
@@ -281,8 +272,7 @@ const MoveOrderReq = () => {
                                       required: true,
                                       message: "Enter name",
                                     },
-                                  ]}
-                                >
+                                  ]}>
                                   <Select
                                     allowClear
                                     showSearch
@@ -299,52 +289,52 @@ const MoveOrderReq = () => {
                                     }
                                     onSelect={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.name === value
+                                        (i) => i.name === value,
                                       );
                                       if (matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          matched.UOM.code
+                                          matched.UOM.code,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          matched._id
+                                          matched._id,
                                         );
 
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          matched.SKU
+                                          matched.SKU,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "onHand"],
                                           matched.stock?.reduce(
                                             (sum, acc) =>
                                               sum + (acc.onHandQty || 0),
-                                            0
-                                          )
+                                            0,
+                                          ),
                                         );
                                       }
                                     }}
                                     onChange={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.name === value
+                                        (i) => i.name === value,
                                       );
                                       if (!matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          ""
+                                          "",
                                         ); // clear UOM for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          ""
+                                          "",
                                         ); // clear code for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          ""
+                                          "",
                                         ); // clear SKU for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "onHand"],
-                                          ""
+                                          "",
                                         ); // clear onHand for manual input
                                       }
                                     }}
@@ -365,16 +355,14 @@ const MoveOrderReq = () => {
                                       required: true,
                                       message: "Enter UOM",
                                     },
-                                  ]}
-                                >
+                                  ]}>
                                   <Input disabled placeholder="UOM" />
                                 </Form.Item>
                               </Col>
                               <Col xs={0} sm={3}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "onHand"]}
-                                >
+                                  name={[name, "onHand"]}>
                                   <Input disabled placeholder="On-Hand" />
                                 </Form.Item>
                               </Col>
@@ -389,11 +377,10 @@ const MoveOrderReq = () => {
                                         value > 0
                                           ? Promise.resolve()
                                           : Promise.reject(
-                                              new Error("Greater then 0")
+                                              new Error("Greater then 0"),
                                             ),
                                     },
-                                  ]}
-                                >
+                                  ]}>
                                   <InputNumber
                                     placeholder="Req. Qty"
                                     style={{ width: "100%" }}
@@ -403,8 +390,7 @@ const MoveOrderReq = () => {
                               <Col xs={4} sm={4}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "remarks"]}
-                                >
+                                  name={[name, "remarks"]}>
                                   <Input placeholder="Remarks" />
                                 </Form.Item>
                               </Col>
@@ -416,8 +402,7 @@ const MoveOrderReq = () => {
                                   alignItems: "center",
                                   height: "42px",
                                   justifyContent: "center",
-                                }}
-                              >
+                                }}>
                                 <DeleteTwoTone
                                   twoToneColor="#eb2f96"
                                   onClick={() => remove(name)}
@@ -434,8 +419,7 @@ const MoveOrderReq = () => {
                             style={{
                               borderRadius: "0px",
                               padding: "10px 30px",
-                            }}
-                          >
+                            }}>
                             + Add Item
                           </Button>
                         </Form.Item>

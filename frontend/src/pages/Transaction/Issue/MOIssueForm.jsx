@@ -102,7 +102,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
@@ -129,7 +129,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     // Pass modified data back to parent after deletion
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
   };
 
@@ -201,7 +201,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
               // Pass modified data back to parent
               onSelectChange(
                 newData.map((item) => item.key),
-                newData
+                newData,
               );
             }
           }}
@@ -233,7 +233,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
               // Pass modified data back to parent
               onSelectChange(
                 newData.map((item) => item.key),
-                newData
+                newData,
               );
             }
           }}
@@ -276,7 +276,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     // Pass modified data back to parent
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
   };
   const components = {
@@ -319,7 +319,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
       dataSource?.some(
         (item) =>
           typeof Number(item.issueQty) !== "number" ||
-          Number(item.issueQty) <= 0
+          Number(item.issueQty) <= 0,
       )
     ) {
       message.error("Please check MO Qty for all items");
@@ -374,7 +374,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         );
         responses.push(res);
       }
@@ -422,7 +422,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     <>
       <Drawer
         title="Materials Movemement Form"
-        width="90%"
+        size="large"
         onClose={onClose}
         open={drawerOpen}
         styles={{

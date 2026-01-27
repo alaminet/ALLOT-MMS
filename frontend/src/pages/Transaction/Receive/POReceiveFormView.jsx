@@ -454,7 +454,7 @@ const POReceiveFormView = ({
     <>
       <Drawer
         title="Make a Gate Receive Note(GRN)"
-        width="90%"
+        size="large"
         onClose={onClose}
         open={drawerOpen}
         styles={{

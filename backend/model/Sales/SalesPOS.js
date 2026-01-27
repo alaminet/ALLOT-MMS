@@ -5,9 +5,32 @@ const salesPOSSchema = new Schema(
   {
     orgId: String,
     code: Number,
-    billing: Object,
-    payments: Object,
-    products: Object,
+    billing: {
+      number: String,
+      name: String,
+      address: String,
+    },
+    payments: {
+      totalBill: Number,
+      vat: Number,
+      discount: Number,
+      discountType: String,
+      adjustment: Number,
+      payment: [
+        {
+          amount: Number,
+          payBy: String,
+          payRef: String,
+          payAt: { type: Date, default: new Date() },
+          receBy: {
+            type: Schema.Types.ObjectId,
+            ref: "Member",
+          },
+        },
+      ],
+      duePay: Number,
+    },
+    products: Array,
 
     // Common Schema
     status: {

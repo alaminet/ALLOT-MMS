@@ -15,10 +15,18 @@ import {
   message,
   Select,
   Space,
+  Typography,
   Table,
 } from "antd";
-import { FileExcelOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  FileExcelOutlined,
+  PhoneFilled,
+  UnorderedListOutlined,
+  WhatsAppOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import PosSalesView from "./posSalesView";
+const { Title, Text } = Typography;
 
 const SalesListDrawer = () => {
   const user = useSelector((user) => user.loginSlice.login);
@@ -30,7 +38,7 @@ const SalesListDrawer = () => {
   // Modal Open
   const onOpen = () => {
     setOpen(true);
-    setQueryData([]);
+    // setQueryData([]);
     getItems();
   };
 
@@ -62,11 +70,7 @@ const SalesListDrawer = () => {
       ),
       onFilter: (value, record) => record?.invoice === value,
       filterSearch: true,
-      //   render: (text, record) => (
-      //     <Link to={`/${text}/print?ref=${record?.action?._id}`} target="_blank">
-      //       {text}
-      //     </Link>
-      //   ),
+      render: (text, record) => <PosSalesView data={record?.action} />,
     },
     {
       title: "Products",
@@ -80,13 +84,38 @@ const SalesListDrawer = () => {
         )),
     },
     {
+      title: "Billing",
+      dataIndex: "billing",
+      key: "billing",
+      render: (text, record) => (
+        <>
+          <p>{text?.name}</p>
+          <p>
+            {text?.number}{" "}
+            <a
+              href={`https://wa.me/${text?.number}?text=${encodeURIComponent(
+                `Hi ${text?.name},\nYour Order ${record?.action?.code} at ${moment(record?.action?.createdAt).format("DD-MMM-YY hh:mm A")}, Amount-${record?.action?.payments?.totalBill}, Due-${record?.action?.payments?.duePay}\n-${user.orgName}`,
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer">
+              <WhatsAppOutlined />
+            </a>{" "}
+            <a href={`tel:${text?.number}`}>
+              <PhoneFilled />
+            </a>
+          </p>
+          <p>{text?.address}</p>
+        </>
+      ),
+    },
+    {
       title: "Payments",
       dataIndex: "payments",
       key: "payments",
       render: (text, record) => (
         <>
-          <p>Total Bill: {text.totalBill}</p>
-          <p>Total Due: {text.duePay}</p>
+          <p>Total Bill: {text?.totalBill}</p>
+          <p>Total Due: {text?.duePay}</p>
         </>
       ),
     },
@@ -171,8 +200,6 @@ const SalesListDrawer = () => {
       console.log(error);
     }
   };
-
-  console.log(queryData);
 
   return (
     <>
