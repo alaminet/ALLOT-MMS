@@ -382,7 +382,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
     <>
       <Drawer
         title="Update Purchase Order(PO)"
-        size="large"
+       size="100%"
         onClose={onClose}
         open={drawerOpen}
         styles={{

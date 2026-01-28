@@ -72,14 +72,16 @@ const EditableCell = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[{ required: true, message: `${title} is required.` }]}>
+        rules={[{ required: true, message: `${title} is required.` }]}
+      >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
         style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}>
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );
@@ -220,7 +222,8 @@ const PurchaseOrderReviewForm = ({
         dataSource?.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => handleDelete(record.key)}>
+            onConfirm={() => handleDelete(record.key)}
+          >
             <DeleteTwoTone twoToneColor="#eb2f96" />
           </Popconfirm>
         ) : null,
@@ -392,7 +395,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
     <>
       <Drawer
         title="Make a Purchase Order(PO)"
-        size="large"
+        size="100%"
         onClose={onClose}
         open={drawerOpen}
         styles={{
@@ -404,18 +407,21 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
           <Space>
             <Button
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Submit
             </Button>
           </Space>
-        }>
+        }
+      >
         <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
           <Row>
             <Col span={24}>
@@ -435,7 +441,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                   <Form.Item
                     name="supplier"
                     label="Supplier"
-                    style={{ margin: 0 }}>
+                    style={{ margin: 0 }}
+                  >
                     <Select
                       showSearch
                       allowClear
@@ -499,7 +506,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                   <Form.Item
                     name="delveryTerms"
                     label="Delivery Terms"
-                    initialValue={webSettings?.terms?.deliveryTerms}>
+                    initialValue={webSettings?.terms?.deliveryTerms}
+                  >
                     <Input.TextArea
                       rows={7}
                       placeholder="Please enter Delivery Terms..."
@@ -514,7 +522,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="deliveryLocation"
                 label="Delivery Location"
-                initialValue={webSettings?.terms?.deliveryLocation}>
+                initialValue={webSettings?.terms?.deliveryLocation}
+              >
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
@@ -525,7 +534,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="billingLocation"
                 label="Bill Submission"
-                initialValue={webSettings?.terms?.billSubmission}>
+                initialValue={webSettings?.terms?.billSubmission}
+              >
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
@@ -536,7 +546,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="requiredDoc"
                 label="Documents Requied For Billing"
-                initialValue={webSettings?.terms?.POReqDoc}>
+                initialValue={webSettings?.terms?.POReqDoc}
+              >
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."
@@ -547,7 +558,8 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               <Form.Item
                 name="paymentTerms"
                 label="Payment Terms"
-                initialValue={webSettings?.terms?.paymentTerms}>
+                initialValue={webSettings?.terms?.paymentTerms}
+              >
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."

@@ -110,7 +110,8 @@ const SalesListDrawer = () => {
                   `Hi ${text?.name},\nYour Order ${invoice} at ${orderAt}, \nTotal Bill-${billAmount}, \n*Due-${dueAmount}*\n-${user.orgName}`,
                 )}`}
                 target="_blank"
-                rel="noopener noreferrer">
+                rel="noopener noreferrer"
+              >
                 <WhatsAppOutlined />
               </a>{" "}
               <a href={`tel:${text?.number}`}>
@@ -133,7 +134,15 @@ const SalesListDrawer = () => {
         );
         return (
           <>
-            <p>Total Bill: {text?.totalBill}</p>
+            <p>
+              Total Bill:{" "}
+              {(
+                text?.totalBill +
+                text?.vat -
+                text?.discount -
+                text?.adjustment
+              ).toFixed(2)}
+            </p>
             <p>
               Total Due:{" "}
               {(
@@ -254,13 +263,14 @@ const SalesListDrawer = () => {
       <Button
         type="default"
         onClick={() => onOpen(true)}
-        icon={<UnorderedListOutlined />}>
+        icon={<UnorderedListOutlined />}
+      >
         Orders
       </Button>
       <Drawer
         title={`Sales List`}
         placement="bottom"
-        size="large"
+        size="100%"
         onClose={() => setOpen(false)}
         open={open}
         extra={
@@ -270,18 +280,21 @@ const SalesListDrawer = () => {
               type="primary"
               className="borderBrand"
               style={{ borderRadius: "0px" }}
-              onClick={handleExportExcel}>
+              onClick={handleExportExcel}
+            >
               <FileExcelOutlined />
               Excel
             </Button>
             <Button
               danger
               onClick={() => setOpen(false)}
-              style={{ borderRadius: "0px" }}>
+              style={{ borderRadius: "0px" }}
+            >
               Close
             </Button>
           </Space>
-        }>
+        }
+      >
         <Flex justify="center" style={{ marginBottom: "10px" }}>
           <Form
             form={form}
@@ -290,7 +303,8 @@ const SalesListDrawer = () => {
             onFinish={onFinish}
             onValuesChange={(changedValues, allValues) =>
               setFormFind(allValues)
-            }>
+            }
+          >
             <Form.Item name="number">
               <Input placeholder="Phone No." />
             </Form.Item>
@@ -330,7 +344,8 @@ const SalesListDrawer = () => {
             <Form.Item
               name="payStatus"
               initialValue="All"
-              rules={[{ required: true }]}>
+              rules={[{ required: true }]}
+            >
               <Select
                 showSearch
                 style={{ minWidth: "100px" }}

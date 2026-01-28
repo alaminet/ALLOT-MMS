@@ -150,6 +150,7 @@ function handlePrint(invId, orgName, orgLoc) {
 
 const PosSalesView = ({ data }) => {
   const user = useSelector((user) => user.loginSlice.login);
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const { toE164 } = usePhoneNormalize();
@@ -252,6 +253,7 @@ const PosSalesView = ({ data }) => {
 
   // update Payment
   const handlePaySubmit = async (values) => {
+    setLoading(true);
     try {
       await axios
         .post(
@@ -282,9 +284,11 @@ const PosSalesView = ({ data }) => {
           message.success(res.data.message);
           formPay.resetFields();
           setIsPayModalOpen(false);
+          setLoading(true);
         });
     } catch (error) {
       message.error(error.response?.data?.error || "Error submitting payment");
+      setLoading(true);
     }
   };
   return (
@@ -304,13 +308,15 @@ const PosSalesView = ({ data }) => {
             icon={<PrinterOutlined />}
             onClick={() =>
               handlePrint(data?.code, user?.orgName, user?.orgAddress)
-            }>
+            }
+          >
             Print
           </Button>,
           <Button type="primary" icon={<DiffOutlined />} onClick={showPayModal}>
             Take Pay
           </Button>,
-        ]}>
+        ]}
+      >
         <Card className="print-page-modal" style={{ padding: "0" }}>
           <div style={{ textAlign: "center" }}></div>
           <List
@@ -362,7 +368,8 @@ const PosSalesView = ({ data }) => {
                 layout="vertical"
                 onValuesChange={(changedValues, allValues) =>
                   handleChange(data?._id, "billing", allValues)
-                }>
+                }
+              >
                 <Form.Item name="number" style={{ marginBottom: "10px" }}>
                   <Input variant="filled" placeholder="Customer Mobile" />
                 </Form.Item>
@@ -420,7 +427,8 @@ const PosSalesView = ({ data }) => {
                             "payments.adjustment",
                             Number(value).toFixed(2),
                           ),
-                      }}>
+                      }}
+                    >
                       {Number(adjustment)?.toFixed(2)}
                     </Text>
                   </Flex>
@@ -463,18 +471,21 @@ const PosSalesView = ({ data }) => {
         open={isPayModalOpen}
         // onOk={handleOk}
         footer={false}
-        onCancel={handlePayCancel}>
+        onCancel={handlePayCancel}
+      >
         <div>
           <Form
             layout="vertical"
             form={formPay}
             name="formPay"
             onFinish={handlePaySubmit}
-            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}>
+            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}
+          >
             <Form.Item
               name="amount"
               label="Amount"
-              rules={[{ required: true, message: "Amount is required" }]}>
+              rules={[{ required: true, message: "Amount is required" }]}
+            >
               <InputNumber
                 placeholder="Amount"
                 min={0}

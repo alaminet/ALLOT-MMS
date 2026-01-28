@@ -156,7 +156,7 @@ const MoveOrderReq = () => {
       <Drawer
         title="Move Order Request"
         placement="bottom"
-        size="large"
+        size="100%"
         closable={{ "aria-label": "Close Button" }}
         onClose={onClose}
         open={open}

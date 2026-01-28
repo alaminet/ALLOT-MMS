@@ -77,14 +77,16 @@ const EditableCell = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[{ required: true, message: `${title} is required.` }]}>
+        rules={[{ required: true, message: `${title} is required.` }]}
+      >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
         style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}>
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );
@@ -155,7 +157,7 @@ const POReceiveFormView = ({
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
 
       const tableArr = res?.data?.items?.map((item, index) => {
@@ -184,7 +186,7 @@ const POReceiveFormView = ({
     // Pass modified data back to parent after deletion
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
   };
 
@@ -255,7 +257,7 @@ const POReceiveFormView = ({
               // Pass modified data back to parent
               onSelectChange(
                 newData.map((item) => item.key),
-                newData
+                newData,
               );
             }
           }}
@@ -279,7 +281,8 @@ const POReceiveFormView = ({
         dataSource?.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => handleDelete(record.key)}>
+            onConfirm={() => handleDelete(record.key)}
+          >
             <DeleteTwoTone twoToneColor="#eb2f96" />
           </Popconfirm>
         ) : null,
@@ -298,7 +301,7 @@ const POReceiveFormView = ({
     // Pass modified data back to parent
     onSelectChange(
       newData.map((item) => item.key),
-      newData
+      newData,
     );
   };
   const components = {
@@ -344,7 +347,7 @@ const POReceiveFormView = ({
         (item) =>
           typeof Number(item.reqGRNQty) !== "number" ||
           Number(item.reqGRNQty) <= 0 ||
-          Number(item.reqGRNQty) > Number(item.POQty)
+          Number(item.reqGRNQty) > Number(item.POQty),
       )
     ) {
       message.error("Please check GRN Qty for all items");
@@ -405,9 +408,9 @@ const POReceiveFormView = ({
                 Authorization: import.meta.env.VITE_SECURE_API_KEY,
                 token: user?.token,
               },
-            }
-          )
-        )
+            },
+          ),
+        ),
       );
 
       // Check if all requests were successful
@@ -454,7 +457,7 @@ const POReceiveFormView = ({
     <>
       <Drawer
         title="Make a Gate Receive Note(GRN)"
-        size="large"
+        size="100%"
         onClose={onClose}
         open={drawerOpen}
         styles={{
@@ -466,23 +469,27 @@ const POReceiveFormView = ({
           <Space>
             <Button
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Submit
             </Button>
           </Space>
-        }>
+        }
+      >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleFormSubmit}
-          initialValues={{ receivedAt: dayjs(), documentAt: dayjs() }}>
+          initialValues={{ receivedAt: dayjs(), documentAt: dayjs() }}
+        >
           <Row gutter={16}>
             <Col lg={4} xs={24}>
               <Form.Item
@@ -493,7 +500,8 @@ const POReceiveFormView = ({
                     required: true,
                   },
                 ]}
-                style={{ width: "100%" }}>
+                style={{ width: "100%" }}
+              >
                 <DatePicker
                   defaultValue={dayjs()}
                   maxDate={dayjs()}
@@ -511,7 +519,8 @@ const POReceiveFormView = ({
                     required: true,
                   },
                 ]}
-                style={{ width: "100%" }}>
+                style={{ width: "100%" }}
+              >
                 <DatePicker
                   defaultValue={dayjs()}
                   minDate={dayjs().subtract(1, "month")}
@@ -526,7 +535,8 @@ const POReceiveFormView = ({
               <Form.Item
                 label="Header Text"
                 name="headerText"
-                style={{ width: "100%" }}>
+                style={{ width: "100%" }}
+              >
                 <Input placeholder="Source Ref." maxLength={50} showCount />
               </Form.Item>
             </Col>
@@ -534,7 +544,8 @@ const POReceiveFormView = ({
               <Form.Item
                 label="Invoice No"
                 name="invoiceNo"
-                style={{ width: "100%" }}>
+                style={{ width: "100%" }}
+              >
                 <Input placeholder="Invoice Ref." maxLength={50} showCount />
               </Form.Item>
             </Col>
@@ -542,7 +553,8 @@ const POReceiveFormView = ({
               <Form.Item
                 label="BL/MUSHOK No"
                 name="TaxNo"
-                style={{ width: "100%" }}>
+                style={{ width: "100%" }}
+              >
                 <Input placeholder="BL/MUSHOK Ref." maxLength={50} showCount />
               </Form.Item>
             </Col>

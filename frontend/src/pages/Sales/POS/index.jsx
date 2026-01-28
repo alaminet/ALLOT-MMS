@@ -138,6 +138,7 @@ const POS = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const location = useLocation();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [form] = Form.useForm();
   const [queryData, setQueryData] = useState([]);
@@ -274,6 +275,7 @@ const POS = () => {
     }
   };
   const handleOrderConfirm = async () => {
+    setLoading(true);
     if (!canCreate) {
       message.warning("You are not authorized");
       return; // stop execution
@@ -376,9 +378,11 @@ const POS = () => {
             setPayment(0);
             setPaymentRef(null);
           }, 100);
+          setLoading(false);
         });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -416,7 +420,8 @@ const POS = () => {
                 flexDirection: "column",
                 height: "calc(100vh - 220px)",
                 overflowY: "scroll",
-              }}>
+              }}
+            >
               {queryData
                 ?.filter((f) =>
                   f?.label?.toLowerCase().includes(search?.toLowerCase()),
@@ -428,18 +433,21 @@ const POS = () => {
                         marginBottom: "10px",
                         borderBottom: "1px solid #0505050f",
                       }}
-                      key={i}>
+                      key={i}
+                    >
                       <Text strong style={{ display: "block" }}>
                         {item.name}, {item.UOM}
                       </Text>
                       <Row justify="space-between" align="middle" wrap={false}>
                         <Col span={14}>
                           <Text
-                            style={{ display: "block", color: "#00000073" }}>
+                            style={{ display: "block", color: "#00000073" }}
+                          >
                             SKU: {item.SKU} | Stock: {item.stock}
                           </Text>
                           <Text
-                            style={{ display: "block", color: "#00000073" }}>
+                            style={{ display: "block", color: "#00000073" }}
+                          >
                             Sale: {item.salePrice} BDT | Avg.: {item.avgPrice}{" "}
                             BDT
                           </Text>
@@ -449,7 +457,8 @@ const POS = () => {
                             <Button
                               style={{ cursor: "not-allowed" }}
                               danger
-                              type="primary">
+                              type="primary"
+                            >
                               Stock out
                             </Button>
                           ) : cartData.some((p) => p.key === item.key) ? (
@@ -458,7 +467,8 @@ const POS = () => {
                                 <Button
                                   type="link"
                                   // style={{ padding: "0 8px" }}
-                                  onClick={() => handleRemove(item.key)}>
+                                  onClick={() => handleRemove(item.key)}
+                                >
                                   <DeleteTwoTone twoToneColor="#eb2f96" />
                                 </Button>
                               </Tooltip>
@@ -481,7 +491,8 @@ const POS = () => {
                                 cartData.some((p) => p.key === item.key)
                                   ? "primary"
                                   : "default"
-                              }>
+                              }
+                            >
                               {cartData.some((p) => p.key === item.key)
                                 ? "Added"
                                 : "Cart"}
@@ -497,6 +508,7 @@ const POS = () => {
         </Col>
         <Col md={8} className="no-print">
           <Card
+            style={{ width: "100%" }}
             actions={[
               <Text strong>Total</Text>,
               <Text strong>
@@ -506,7 +518,8 @@ const POS = () => {
                 BDT
               </Text>,
               ,
-            ]}>
+            ]}
+          >
             <Text strong>Cart ({cartData.length} Items)</Text>
             {cartData?.map((item, i) => (
               <>
@@ -515,7 +528,8 @@ const POS = () => {
                     paddingBottom: "10px",
                     borderBottom: "1px solid #0505050f",
                   }}
-                  key={i}>
+                  key={i}
+                >
                   <Text strong style={{ display: "block" }}>
                     {item.name}, {item.UOM}
                   </Text>
@@ -532,7 +546,8 @@ const POS = () => {
                           value={item.discountType}
                           onChange={(type) =>
                             updateDiscountType(item.key, type)
-                          }>
+                          }
+                        >
                           <Option value="flat">=</Option>
                           <Option value="percent">%</Option>
                         </Select>
@@ -557,9 +572,11 @@ const POS = () => {
                       <Flex justify="space-between">
                         <Flex style={{ flexDirection: "column" }}>
                           <div
-                            style={{ textAlign: "right", paddingRight: "8px" }}>
+                            style={{ textAlign: "right", paddingRight: "8px" }}
+                          >
                             <strike
-                              style={{ fontSize: "10px", marginRight: "8px" }}>
+                              style={{ fontSize: "10px", marginRight: "8px" }}
+                            >
                               {item.salePrice * item.quantity !==
                                 getDiscountedPrice(item) &&
                                 `${item.salePrice * item.quantity} BDT`}
@@ -573,7 +590,8 @@ const POS = () => {
                               <Button
                                 type="link"
                                 // style={{ padding: "0 8px" }}
-                                onClick={() => handleRemove(item.key)}>
+                                onClick={() => handleRemove(item.key)}
+                              >
                                 <DeleteTwoTone twoToneColor="#eb2f96" />
                               </Button>
                             </Tooltip>
@@ -615,7 +633,8 @@ const POS = () => {
                   setAdjustment(0);
                   setPayment(0);
                   setPaymentRef(null);
-                }}>
+                }}
+              >
                 New
               </Button>,
               <Button
@@ -623,18 +642,22 @@ const POS = () => {
                 icon={<PrinterOutlined />}
                 onClick={() =>
                   handlePrint("No bill", user.orgName, user.orgAddress)
-                }>
+                }
+              >
                 Print
               </Button>,
               <SalesListDrawer />,
               <Button
+                loading={loading}
                 disabled={cartData.length > 0 ? false : true}
                 type="primary"
                 icon={<DollarOutlined />}
-                onClick={handleOrderConfirm}>
+                onClick={handleOrderConfirm}
+              >
                 Save
               </Button>,
-            ]}>
+            ]}
+          >
             <Text className="no-print" strong>
               Checkout & Confirm
             </Text>
@@ -646,7 +669,8 @@ const POS = () => {
                     style={{
                       paddingBottom: "10px",
                       borderBottom: "1px solid #0505050f",
-                    }}>
+                    }}
+                  >
                     <Flex style={{ flexFlow: "column", width: "auto" }}>
                       <Text strong>{`${item.name}`}</Text>
                       <Text style={{ color: "#00000073" }}>
@@ -656,13 +680,15 @@ const POS = () => {
                     <Flex justify="end" style={{ minWidth: "100px" }}>
                       <Flex style={{ flexDirection: "column" }}>
                         <div
-                          style={{ textAlign: "right", paddingRight: "8px" }}>
+                          style={{ textAlign: "right", paddingRight: "8px" }}
+                        >
                           <strike
                             style={{
                               fontSize: "10px",
                               marginRight: "8px",
                               display: "block",
-                            }}>
+                            }}
+                          >
                             {item.salePrice * item.quantity !==
                               getDiscountedPrice(item) &&
                               `${item.salePrice * item.quantity} BDT`}
@@ -673,9 +699,11 @@ const POS = () => {
                         </div>
                         {item?.VAT > 0 && (
                           <div
-                            style={{ textAlign: "right", paddingRight: "8px" }}>
+                            style={{ textAlign: "right", paddingRight: "8px" }}
+                          >
                             <Text
-                              style={{ fontSize: "10px", color: "#00000073" }}>
+                              style={{ fontSize: "10px", color: "#00000073" }}
+                            >
                               VAT:{" "}
                               {Number(
                                 getDiscountedPrice(item) * (item?.VAT / 100),
@@ -698,7 +726,8 @@ const POS = () => {
                     layout="vertical"
                     onValuesChange={(changedValues, allValues) =>
                       setBillingAdd(allValues)
-                    }>
+                    }
+                  >
                     <Form.Item name="number" style={{ marginBottom: "10px" }}>
                       <Input
                         variant="filled"
@@ -756,7 +785,8 @@ const POS = () => {
                           editable={{
                             icon: <EditOutlined />,
                             onChange: (value) => setAdjustment(value),
-                          }}>
+                          }}
+                        >
                           {Number(adjustment).toFixed(2)}
                         </Text>
                       </Flex>
@@ -768,7 +798,8 @@ const POS = () => {
                           editable={{
                             icon: <EditOutlined />,
                             onChange: (value) => setPayment(value),
-                          }}>
+                          }}
+                        >
                           {Number(payment).toFixed(2)}
                         </Text>
                       </Flex>
@@ -780,7 +811,8 @@ const POS = () => {
                           editable={{
                             icon: <EditOutlined />,
                             onChange: (value) => setPaymentBy(value),
-                          }}>
+                          }}
+                        >
                           {paymentBy}
                         </Text>
                       </Flex>
@@ -792,7 +824,8 @@ const POS = () => {
                           editable={{
                             icon: <EditOutlined />,
                             onChange: (value) => setPaymentRef(value),
-                          }}>
+                          }}
+                        >
                           {paymentRef}
                         </Text>
                       </Flex>

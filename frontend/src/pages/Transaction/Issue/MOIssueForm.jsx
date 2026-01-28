@@ -67,14 +67,16 @@ const EditableCell = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[{ required: true, message: `${title} is required.` }]}>
+        rules={[{ required: true, message: `${title} is required.` }]}
+      >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
         style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}>
+        onClick={toggleEdit}
+      >
         {children}
       </div>
     );
@@ -257,7 +259,8 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
         dataSource?.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => handleDelete(record.key)}>
+            onConfirm={() => handleDelete(record.key)}
+          >
             <DeleteTwoTone twoToneColor="#eb2f96" />
           </Popconfirm>
         ) : null,
@@ -422,7 +425,7 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
     <>
       <Drawer
         title="Materials Movemement Form"
-        size="large"
+        size="100%"
         onClose={onClose}
         open={drawerOpen}
         styles={{
@@ -435,23 +438,27 @@ const MOIssueForm = ({ drawerOpen, setDrawerOpen, data, onSelectChange }) => {
             <Button
               loading={loading}
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              style={{ borderRadius: "0px", padding: "10px 30px" }}
+            >
               Submit
             </Button>
           </Space>
-        }>
+        }
+      >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleFormSubmit}
-          initialValues={{}}>
+          initialValues={{}}
+        >
           <Row>
             <Col span={24}>
               <Table
