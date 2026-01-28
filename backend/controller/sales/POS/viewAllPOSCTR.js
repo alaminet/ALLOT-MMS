@@ -46,7 +46,13 @@ async function viewAllPOSCTR(req, res) {
     const items = await SalesPOS.find(query)
       .sort({ createdAt: -1 })
       .populate({
-        path: ["createdBy", "updatedBy", "createdBySU", "updatedBySU"],
+        path: [
+          "createdBy",
+          "updatedBy",
+          "createdBySU",
+          "updatedBySU",
+          "payments.payment.receBy",
+        ],
         select: "name",
       })
       .lean();

@@ -9,9 +9,12 @@ import {
   List,
   message,
   Modal,
+  Popover,
   Typography,
+  InputNumber,
 } from "antd";
 import {
+  DiffOutlined,
   DollarOutlined,
   EditOutlined,
   PlusCircleOutlined,
@@ -23,6 +26,8 @@ import { usePermission } from "../hooks/usePermission";
 import axios from "axios";
 import Barcode from "react-barcode";
 import usePhoneNormalize from "../hooks/usePhoneNormalize";
+import TakePOSPayment from "./takePOSPayment";
+import moment from "moment";
 const { Title, Text } = Typography;
 
 // 128 Bar code
@@ -33,7 +38,7 @@ function Barcode128({ value }) {
       format="CODE128" // specify Code 128
       width={2} // bar width
       height={25} // bar height
-      displayValue={true} // show text below barcode
+      displayValue={false} // show text below barcode
     />
   );
 }
@@ -42,7 +47,6 @@ function Barcode128({ value }) {
 function handlePrint(invId, orgName, orgLoc) {
   const orgAdd = Object.values(orgLoc).reverse().join(", ");
   const styleTag = document.createElement("style");
-  const value = String(invId);
   styleTag.innerHTML = `
     @media print {
       @page {
@@ -105,6 +109,7 @@ function handlePrint(invId, orgName, orgLoc) {
   printHeader.innerHTML = `
     <div style="font-weight: bold; font-size: 14px;">${orgName || "Organization"}</div>
     <div style="margin: 0 auto; font-size: 10px; width: 80%">${orgAdd || "Organization Location"}</div>
+    <div style="font-size: 12px; font-weight: bold;">Invoice: ${invId || "---"}</div>
   `;
 
   //create print footer
@@ -145,20 +150,20 @@ function handlePrint(invId, orgName, orgLoc) {
 
 const PosSalesView = ({ data }) => {
   const user = useSelector((user) => user.loginSlice.login);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const { toE164 } = usePhoneNormalize();
   const [form] = Form.useForm();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formPay] = Form.useForm();
   const [cartData, setCartData] = useState(data?.products);
+  const [payList, setPayList] = useState(data?.payments?.payment);
   const [discountAmount, setDiscountAmount] = useState(
     data?.payments?.discount,
   );
   const [adjustment, setAdjustment] = useState(data?.payments?.adjustment);
-  const payment = data?.payments?.payment?.reduce(
-    (sum, item) => sum + item.amount,
-    0,
+  const [payment, setPayment] = useState(
+    data?.payments?.payment?.reduce((sum, item) => sum + item.amount, 0),
   );
-
-  const [billingAdd, setBillingAdd] = useState(data?.billing);
 
   // User Permission Check
   const { canDoOther, canDoOwn } = usePermission();
@@ -177,6 +182,17 @@ const PosSalesView = ({ data }) => {
     setIsModalOpen(false);
   };
 
+  // Pay Modal Options
+  const showPayModal = () => {
+    setIsPayModalOpen(true);
+  };
+  const handlePayOk = () => {
+    setIsPayModalOpen(false);
+  };
+  const handlePayCancel = () => {
+    setIsPayModalOpen(false);
+  };
+
   // Discount calculation
   const getDiscountedPrice = (item) => {
     const base = item.salePrice;
@@ -192,102 +208,84 @@ const PosSalesView = ({ data }) => {
     return Math.max(0, total);
   };
 
-  const getDiscountAmount = (item) => {
-    const base = item.salePrice * item.quantity;
-    const discount = item.discount || 0;
+  let duePay = Number(
+    cartData
+      ?.reduce((sum, item) => sum + item.salePrice * item.quantity, 0)
+      ?.toFixed(0) -
+      discountAmount +
+      Number(
+        cartData
+          ?.reduce(
+            (sum, item) => sum + getDiscountedPrice(item) * (item?.VAT / 100),
+            0,
+          )
+          ?.toFixed(2),
+      ) -
+      Number(adjustment) -
+      Number(payment),
+  )?.toFixed(2);
 
-    return item.discountType === "percent"
-      ? (base * discount) / 100
-      : discount * item.quantity;
+  //   Update Functional
+  const handleChange = async (id, field, data) => {
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/update/${id}`,
+          { [field]: data },
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          },
+        )
+        .then(async (res) => {
+          if (field === "payments.adjustment") {
+            message.success(res.data.message);
+            setAdjustment(data);
+          }
+        });
+    } catch (error) {
+      message.error(error.response.data.error);
+    }
   };
 
-  const handleOrderConfirm = async () => {
-    if (!ownEdit || !othersEdit) {
-      message.warning("You are not authorized");
-      return; // stop execution
+  // update Payment
+  const handlePaySubmit = async (values) => {
+    try {
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/update-payment/${data?._id}`,
+          values,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          },
+        )
+        .then((res) => {
+          const newpay = payment + Number(values.amount);
+          setPayment(newpay);
+          // Append new payment to existing payList array
+          const newPaymentEntry = {
+            ...values,
+            amount: Number(values.amount),
+            receBy: user?.id,
+            createdAt: moment().toISOString(),
+          };
+          setPayList((prevPayList) =>
+            Array.isArray(prevPayList)
+              ? [...prevPayList, newPaymentEntry]
+              : [newPaymentEntry],
+          );
+          message.success(res.data.message);
+          formPay.resetFields();
+          setIsPayModalOpen(false);
+        });
+    } catch (error) {
+      message.error(error.response?.data?.error || "Error submitting payment");
     }
-    // try {
-    //   const dueAmount = Number(
-    //     cartData
-    //       ?.reduce((sum, item) => sum + item.salePrice * item.quantity, 0)
-    //       ?.toFixed(0) -
-    //       Number(discountAmount)?.toFixed(0) +
-    //       Number(
-    //         cartData
-    //           ?.reduce(
-    //             (sum, item) =>
-    //               sum + getDiscountedPrice(item) * (item?.VAT / 100),
-    //             0,
-    //           )
-    //           ?.toFixed(2),
-    //       ) -
-    //       Number(adjustment) -
-    //       Number(payment),
-    //   )?.toFixed(2);
-
-    //   if (dueAmount < 0) {
-    //     message.warning("Payment exceeds the total amount due.");
-    //     return; // stop execution
-    //   }
-    //   const normalNumber = toE164(billingAdd?.number);
-
-    //   if (
-    //     dueAmount > 0 &&
-    //     (!billingAdd?.address || !billingAdd?.name || !billingAdd?.number)
-    //   ) {
-    //     message.warning("Need due billing details.");
-    //     return; // stop execution
-    //   }
-    //   if (normalNumber?.length < 14) {
-    //     message.warning("Incorrect Phone number");
-    //     return; // stop execution
-    //   }
-    //   const oldpayment = data?.payments?.payment.reduce(
-    //     (sum, item) => sum + item.amount,
-    //     0,
-    //   );
-    //   const installment = {};
-    //   if (oldpayment !== Number(payment)) {
-    //     installment.receiveAmonut = Number(payment) - oldpayment;
-    //     installment.receivedBy = user?.id;
-    //   }
-
-    //   const payload = {
-    //     billing: {
-    //       number: normalNumber,
-    //       name: billingAdd.name,
-    //       address: billingAdd.address,
-    //     },
-    //     payments: {
-    //       ...data?.payments,
-    //       adjustment: Number(adjustment),
-    //       paymentBy: paymentBy,
-    //       paymentRef: paymentRef,
-    //       duePay: Number(dueAmount),
-    //     },
-    //     installment,
-    //   };
-    //   console.log(payload);
-    //   await axios
-    //     .post(
-    //       `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/update/${
-    //         data?._id
-    //       }`,
-    //       payload,
-    //       {
-    //         headers: {
-    //           Authorization: import.meta.env.VITE_SECURE_API_KEY,
-    //           token: user?.token,
-    //         },
-    //       },
-    //     )
-    //     .then((res) => {
-    //       message.success(res.data.message);
-    //       setIsModalOpen(false);
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
   return (
     <>
@@ -295,7 +293,7 @@ const PosSalesView = ({ data }) => {
         {data?.code}
       </Button>
       <Modal
-        title={`Invoce-${data?.code}`}
+        title={`Invoice-${data?.code}`}
         closable={{ "aria-label": "Custom Close Button" }}
         open={isModalOpen}
         // onOk={handleOk}
@@ -309,18 +307,12 @@ const PosSalesView = ({ data }) => {
             }>
             Print
           </Button>,
-          <Button
-            disabled={data?.products?.length > 0 ? false : true}
-            type="primary"
-            icon={<DollarOutlined />}
-            onClick={handleOrderConfirm}>
-            Update
+          <Button type="primary" icon={<DiffOutlined />} onClick={showPayModal}>
+            Take Pay
           </Button>,
         ]}>
         <Card className="print-page-modal" style={{ padding: "0" }}>
-          <div style={{ textAlign: "center" }}>
-            <Barcode128 value={String(data?.code)} />
-          </div>
+          <div style={{ textAlign: "center" }}></div>
           <List
             itemLayout="horizontal"
             dataSource={cartData}
@@ -366,30 +358,21 @@ const PosSalesView = ({ data }) => {
               <Form
                 form={form}
                 name="form"
-                initialValue={{ ...data?.billing }}
+                initialValues={{ ...data?.billing }}
                 layout="vertical"
                 onValuesChange={(changedValues, allValues) =>
-                  setBillingAdd(allValues)
+                  handleChange(data?._id, "billing", allValues)
                 }>
-                <Form.Item
-                  initialValue={data?.billing?.number}
-                  name="number"
-                  style={{ marginBottom: "10px" }}>
+                <Form.Item name="number" style={{ marginBottom: "10px" }}>
                   <Input variant="filled" placeholder="Customer Mobile" />
                 </Form.Item>
-                <Form.Item
-                  initialValue={data?.billing?.name}
-                  name="name"
-                  style={{ marginBottom: "10px" }}>
+                <Form.Item name="name" style={{ marginBottom: "10px" }}>
                   <Input variant="filled" placeholder="Name" />
                 </Form.Item>
-                <Form.Item
-                  initialValue={data?.billing?.address}
-                  name="address"
-                  style={{ marginBottom: "0px" }}>
+                <Form.Item name="address" style={{ marginBottom: "0px" }}>
                   <Input.TextArea
                     variant="filled"
-                    rows={4}
+                    rows={3}
                     placeholder="Address"
                   />
                 </Form.Item>
@@ -411,7 +394,7 @@ const PosSalesView = ({ data }) => {
                 </Flex>
                 <Flex justify="space-between">
                   <Text>Discount :</Text>
-                  <Text>{discountAmount?.toFixed(0)}</Text>
+                  <Text>{discountAmount}</Text>
                 </Flex>
                 <Flex justify="space-between">
                   <Text>VAT :</Text>
@@ -431,7 +414,12 @@ const PosSalesView = ({ data }) => {
                     <Text
                       editable={{
                         icon: <EditOutlined />,
-                        onChange: (value) => setAdjustment(value),
+                        onChange: (value) =>
+                          handleChange(
+                            data?._id,
+                            "payments.adjustment",
+                            Number(value).toFixed(2),
+                          ),
                       }}>
                       {Number(adjustment)?.toFixed(2)}
                     </Text>
@@ -445,34 +433,71 @@ const PosSalesView = ({ data }) => {
                 </Flex>
                 <Flex justify="space-between">
                   <Text strong>Due Pay :</Text>
-                  <Text strong>
-                    {Number(
-                      cartData
-                        ?.reduce(
-                          (sum, item) => sum + item.salePrice * item.quantity,
-                          0,
-                        )
-                        ?.toFixed(0) -
-                        Number(discountAmount)?.toFixed(0) +
-                        Number(
-                          cartData
-                            ?.reduce(
-                              (sum, item) =>
-                                sum +
-                                getDiscountedPrice(item) * (item?.VAT / 100),
-                              0,
-                            )
-                            ?.toFixed(2),
-                        ) -
-                        Number(adjustment) -
-                        Number(payment),
-                    )?.toFixed(2)}
-                  </Text>
+                  <Text strong>{duePay}</Text>
                 </Flex>
               </Flex>
+              <Barcode128 value={String(data?.code)} />
             </div>
           </Flex>
+          <div>
+            <Text strong>Payment History</Text>
+            {payList?.map(
+              (item, j) =>
+                item?.amount !== 0 && (
+                  <Flex key={j} gap={6}>
+                    <Text>
+                      {+j}. {moment(item?.payAt).format("DD-MM-YY hh:mm A")}
+                    </Text>
+                    <Text>{item?.amount} BDT</Text>
+                    <Text>{item?.payBy}</Text>
+                    <Text>{item?.payRef}</Text>
+                  </Flex>
+                ),
+            )}
+          </div>
         </Card>
+      </Modal>
+      <Modal
+        title={`Payment - ${data?.code}`}
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isPayModalOpen}
+        // onOk={handleOk}
+        footer={false}
+        onCancel={handlePayCancel}>
+        <div>
+          <Form
+            layout="vertical"
+            form={formPay}
+            name="formPay"
+            onFinish={handlePaySubmit}
+            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}>
+            <Form.Item
+              name="amount"
+              label="Amount"
+              rules={[{ required: true, message: "Amount is required" }]}>
+              <InputNumber
+                placeholder="Amount"
+                min={0}
+                max={duePay}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item name="payBy" label="Pay By">
+              <Input placeholder="Cash, Card, Bank" style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item name="payRef" label="Payment Ref.">
+              <Input
+                placeholder="Reference (Optional)"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button type="primary" htmlType="submit" block danger>
+                Confirm Payment
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       </Modal>
     </>
   );

@@ -3,7 +3,6 @@ const SalesPOS = require("../../../model/Sales/SalesPOS");
 async function updatePOSCTR(req, res, next) {
   const { id } = req.params;
   const updatedData = req.body;
-  console.log(updatedData);
 
   try {
     if (!id) {

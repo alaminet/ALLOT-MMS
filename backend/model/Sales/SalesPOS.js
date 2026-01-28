@@ -28,7 +28,6 @@ const salesPOSSchema = new Schema(
           },
         },
       ],
-      duePay: Number,
     },
     products: Array,
 

@@ -17,6 +17,7 @@ import {
   Form,
   Divider,
   message,
+  Space,
 } from "antd";
 
 import {
@@ -347,7 +348,6 @@ const POS = () => {
             },
           ],
           adjustment: Number(adjustment),
-          duePay: Number(dueAmount),
         },
       };
       await axios
@@ -395,6 +395,8 @@ const POS = () => {
       setDiscountAmount(totalDiscount);
     }
   }, [cartData]);
+  console.log(cartData);
+
   return (
     <>
       <Row gutter={[16, 16]}>
@@ -408,98 +410,89 @@ const POS = () => {
                 onChange={(e) => setSearch(e.target.value)}
               />
             </Flex>
-            <List
-              style={{ height: "calc(100vh - 220px)", overflowY: "scroll" }}
-              itemLayout="horizontal"
-              dataSource={queryData?.filter((item) =>
-                item?.label?.toLowerCase().includes(search?.toLowerCase()),
-              )}
-              renderItem={(item, index) => (
-                <List.Item
-                  key={index}
-                  actions={[
-                    item.stock === 0 ? (
-                      <Button
-                        style={{ cursor: "not-allowed" }}
-                        danger
-                        type="primary">
-                        Stock out
-                      </Button>
-                    ) : cartData.some((p) => p.key === item.key) ? (
-                      <Flex>
-                        <Tooltip title="Delete">
-                          <Button
-                            type="link"
-                            style={{ padding: "0 8px" }}
-                            onClick={() => handleRemove(item.key)}>
-                            <DeleteTwoTone twoToneColor="#eb2f96" />
-                          </Button>
-                        </Tooltip>
-                        <InputNumber
-                          value={getCartItem(item.key)?.quantity}
-                          controls={false}
-                          style={{ width: "110px" }}
-                          min={1}
-                          max={getCartItem(item.key)?.stock}
-                          onChange={(value) => updateQuantity(item.key, value)}
-                          addonBefore={
-                            <MinusOutlined
-                              onClick={() =>
-                                updateQuantity(
-                                  item.key,
-                                  getCartItem(item.key)?.quantity - 1,
-                                )
-                              }
-                              disabled={item.quantity <= 1}
-                            />
-                          }
-                          addonAfter={
-                            <PlusOutlined
-                              onClick={() =>
-                                updateQuantity(
-                                  item.key,
-                                  getCartItem(item.key)?.quantity + 1,
-                                )
-                              }
-                              disabled={item.quantity >= item.stock}
-                            />
-                          }
-                        />
-                      </Flex>
-                    ) : (
-                      <Button
-                        icon={<ShoppingCartOutlined />}
-                        onClick={() => handleAddToCart(item)}
-                        type={
-                          cartData.some((p) => p.key === item.key)
-                            ? "primary"
-                            : "default"
-                        }>
-                        {cartData.some((p) => p.key === item.key)
-                          ? "Added"
-                          : "Cart"}
-                      </Button>
-                    ),
-                    // <InfoCircleTwoTone />,
-                  ]}>
-                  <List.Item.Meta
-                    // avatar={
-                    //   <Avatar
-                    //     src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
-                    //   />
-                    // }
-                    title={`${item.name}, ${item.UOM}`}
-                    description={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: `SKU: ${item.SKU} | Stock: ${item.stock}<br />Sale: ${item.salePrice} BDT | Avg.: ${item.avgPrice} BDT`,
-                        }}
-                      />
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+            <Flex
+              gap={4}
+              style={{
+                flexDirection: "column",
+                height: "calc(100vh - 220px)",
+                overflowY: "scroll",
+              }}>
+              {queryData
+                ?.filter((f) =>
+                  f?.label?.toLowerCase().includes(search?.toLowerCase()),
+                )
+                .map((item, i) => (
+                  <>
+                    <div
+                      style={{
+                        marginBottom: "10px",
+                        borderBottom: "1px solid #0505050f",
+                      }}
+                      key={i}>
+                      <Text strong style={{ display: "block" }}>
+                        {item.name}, {item.UOM}
+                      </Text>
+                      <Row justify="space-between" align="middle" wrap={false}>
+                        <Col span={14}>
+                          <Text
+                            style={{ display: "block", color: "#00000073" }}>
+                            SKU: {item.SKU} | Stock: {item.stock}
+                          </Text>
+                          <Text
+                            style={{ display: "block", color: "#00000073" }}>
+                            Sale: {item.salePrice} BDT | Avg.: {item.avgPrice}{" "}
+                            BDT
+                          </Text>
+                        </Col>
+                        <Col span={10} style={{ textAlign: "right" }}>
+                          {item.stock === 0 ? (
+                            <Button
+                              style={{ cursor: "not-allowed" }}
+                              danger
+                              type="primary">
+                              Stock out
+                            </Button>
+                          ) : cartData.some((p) => p.key === item.key) ? (
+                            <Flex>
+                              <Tooltip title="Delete">
+                                <Button
+                                  type="link"
+                                  // style={{ padding: "0 8px" }}
+                                  onClick={() => handleRemove(item.key)}>
+                                  <DeleteTwoTone twoToneColor="#eb2f96" />
+                                </Button>
+                              </Tooltip>
+                              <InputNumber
+                                mode="spinner"
+                                defaultValue={1}
+                                size="small"
+                                min={1}
+                                max={getCartItem(item.key)?.stock}
+                                onChange={(value) =>
+                                  updateQuantity(item.key, value)
+                                }
+                              />
+                            </Flex>
+                          ) : (
+                            <Button
+                              icon={<ShoppingCartOutlined />}
+                              onClick={() => handleAddToCart(item)}
+                              type={
+                                cartData.some((p) => p.key === item.key)
+                                  ? "primary"
+                                  : "default"
+                              }>
+                              {cartData.some((p) => p.key === item.key)
+                                ? "Added"
+                                : "Cart"}
+                            </Button>
+                          )}
+                        </Col>
+                      </Row>
+                    </div>
+                  </>
+                ))}
+            </Flex>
           </Card>
         </Col>
         <Col md={8} className="no-print">
@@ -515,95 +508,93 @@ const POS = () => {
               ,
             ]}>
             <Text strong>Cart ({cartData.length} Items)</Text>
-            <List
-              style={{ height: "calc(100vh - 250px)", overflowY: "scroll" }}
-              itemLayout="horizontal"
-              dataSource={cartData}
-              renderItem={(item, index) => (
-                <List.Item key={index}>
-                  <Flex style={{ flexFlow: "column" }}>
-                    <Text strong>{`${item.name}, ${item.UOM}`}</Text>
-                    <Text style={{ color: "#00000073" }}>
-                      Sale: {item.salePrice} BDT | Avg.: {item.avgPrice} BDT
-                    </Text>
-                    <Flex>
-                      <InputNumber
-                        style={{ width: "100px" }}
-                        controls={false}
-                        value={item.discount}
-                        min={0}
-                        max={
-                          item.discountType === "percent" ? 100 : item.salePrice
-                        }
-                        onChange={(value) =>
-                          updateDiscountValue(item.key, value)
-                        }
-                        addonAfter={
-                          <Select
-                            value={item.discountType}
-                            onChange={(type) =>
-                              updateDiscountType(item.key, type)
-                            }>
-                            <Option value="flat">=</Option>
-                            <Option value="percent">%</Option>
-                          </Select>
-                        }
-                        defaultValue={item.discount}
-                      />
-                    </Flex>
-                  </Flex>
-                  <Flex justify="space-between">
-                    <Flex style={{ flexDirection: "column" }}>
-                      <div style={{ textAlign: "right", paddingRight: "8px" }}>
-                        <strike
-                          style={{ fontSize: "10px", marginRight: "8px" }}>
-                          {item.salePrice * item.quantity !==
-                            getDiscountedPrice(item) &&
-                            `${item.salePrice * item.quantity} BDT`}
-                        </strike>
-                        <Text strong>
-                          {getDiscountedPrice(item).toFixed(0)} BDT
-                        </Text>
-                      </div>
-                      <Flex>
-                        <Tooltip title="Delete">
-                          <Button
-                            type="link"
-                            style={{ padding: "0 8px" }}
-                            onClick={() => handleRemove(item.key)}>
-                            <DeleteTwoTone twoToneColor="#eb2f96" />
-                          </Button>
-                        </Tooltip>
+            {cartData?.map((item, i) => (
+              <>
+                <div
+                  style={{
+                    paddingBottom: "10px",
+                    borderBottom: "1px solid #0505050f",
+                  }}
+                  key={i}>
+                  <Text strong style={{ display: "block" }}>
+                    {item.name}, {item.UOM}
+                  </Text>
+                  <Row justify="space-between" align="middle" wrap={false}>
+                    <Col span={14}>
+                      <Text style={{ display: "block", color: "#00000073" }}>
+                        SKU: {item.SKU} | Stock: {item.stock}
+                      </Text>
+                      <Text style={{ display: "block", color: "#00000073" }}>
+                        Sale: {item.salePrice} BDT | Avg.: {item.avgPrice} BDT
+                      </Text>
+                      <Space.Compact block>
+                        <Select
+                          value={item.discountType}
+                          onChange={(type) =>
+                            updateDiscountType(item.key, type)
+                          }>
+                          <Option value="flat">=</Option>
+                          <Option value="percent">%</Option>
+                        </Select>
                         <InputNumber
-                          value={item.quantity}
-                          controls={false}
-                          style={{ width: "120px" }}
-                          min={1}
-                          max={item.stock}
-                          onChange={(value) => updateQuantity(item.key, value)}
-                          addonBefore={
-                            <MinusOutlined
-                              onClick={() =>
-                                updateQuantity(item.key, item.quantity - 1)
-                              }
-                              disabled={item.quantity <= 1}
-                            />
+                          style={{ width: "80px" }}
+                          controls={true}
+                          value={item.discount}
+                          min={0}
+                          max={
+                            item.discountType === "percent"
+                              ? 100
+                              : item.salePrice
                           }
-                          addonAfter={
-                            <PlusOutlined
-                              onClick={() =>
-                                updateQuantity(item.key, item.quantity + 1)
-                              }
-                              disabled={item.quantity >= item.stock}
-                            />
+                          onChange={(value) =>
+                            updateDiscountValue(item.key, value)
                           }
+                          defaultValue={item.discount}
                         />
+                      </Space.Compact>
+                    </Col>
+                    <Col span={10} style={{ textAlign: "right" }}>
+                      <Flex justify="space-between">
+                        <Flex style={{ flexDirection: "column" }}>
+                          <div
+                            style={{ textAlign: "right", paddingRight: "8px" }}>
+                            <strike
+                              style={{ fontSize: "10px", marginRight: "8px" }}>
+                              {item.salePrice * item.quantity !==
+                                getDiscountedPrice(item) &&
+                                `${item.salePrice * item.quantity} BDT`}
+                            </strike>
+                            <Text strong>
+                              {getDiscountedPrice(item).toFixed(0)} BDT
+                            </Text>
+                          </div>
+                          <Flex>
+                            <Tooltip title="Delete">
+                              <Button
+                                type="link"
+                                // style={{ padding: "0 8px" }}
+                                onClick={() => handleRemove(item.key)}>
+                                <DeleteTwoTone twoToneColor="#eb2f96" />
+                              </Button>
+                            </Tooltip>
+                            <InputNumber
+                              mode="spinner"
+                              value={item.quantity}
+                              size="small"
+                              min={1}
+                              max={item.stock}
+                              onChange={(value) =>
+                                updateQuantity(item.key, value)
+                              }
+                            />
+                          </Flex>
+                        </Flex>
                       </Flex>
-                    </Flex>
-                  </Flex>
-                </List.Item>
-              )}
-            />
+                    </Col>
+                  </Row>
+                </div>
+              </>
+            ))}
           </Card>
         </Col>
         <Col md={8}>
@@ -647,12 +638,15 @@ const POS = () => {
             <Text className="no-print" strong>
               Checkout & Confirm
             </Text>
-            <div>
-              <List
-                itemLayout="horizontal"
-                dataSource={cartData}
-                renderItem={(item, index) => (
-                  <List.Item key={index}>
+            <div style={{ marginTop: "10px" }}>
+              {cartData?.map((item, i) => (
+                <>
+                  <Flex
+                    justify="space-between"
+                    style={{
+                      paddingBottom: "10px",
+                      borderBottom: "1px solid #0505050f",
+                    }}>
                     <Flex style={{ flexFlow: "column", width: "auto" }}>
                       <Text strong>{`${item.name}`}</Text>
                       <Text style={{ color: "#00000073" }}>
@@ -664,7 +658,11 @@ const POS = () => {
                         <div
                           style={{ textAlign: "right", paddingRight: "8px" }}>
                           <strike
-                            style={{ fontSize: "10px", marginRight: "8px" }}>
+                            style={{
+                              fontSize: "10px",
+                              marginRight: "8px",
+                              display: "block",
+                            }}>
                             {item.salePrice * item.quantity !==
                               getDiscountedPrice(item) &&
                               `${item.salePrice * item.quantity} BDT`}
@@ -688,9 +686,9 @@ const POS = () => {
                         )}
                       </Flex>
                     </Flex>
-                  </List.Item>
-                )}
-              />
+                  </Flex>
+                </>
+              ))}
               <Flex gap={8} justify="space-between">
                 <div>
                   <Divider>Billing Details</Divider>

@@ -26,12 +26,14 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import PosSalesView from "./posSalesView";
+import useExcelExport from "../hooks/useExcelExport";
 const { Title, Text } = Typography;
 
 const SalesListDrawer = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [form] = Form.useForm();
   const [queryData, setQueryData] = useState([]);
+  const [formFind, setFormFind] = useState();
   const [itemList, setItemList] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -87,37 +89,64 @@ const SalesListDrawer = () => {
       title: "Billing",
       dataIndex: "billing",
       key: "billing",
-      render: (text, record) => (
-        <>
-          <p>{text?.name}</p>
-          <p>
-            {text?.number}{" "}
-            <a
-              href={`https://wa.me/${text?.number}?text=${encodeURIComponent(
-                `Hi ${text?.name},\nYour Order ${record?.action?.code} at ${moment(record?.action?.createdAt).format("DD-MMM-YY hh:mm A")}, Amount-${record?.action?.payments?.totalBill}, Due-${record?.action?.payments?.duePay}\n-${user.orgName}`,
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer">
-              <WhatsAppOutlined />
-            </a>{" "}
-            <a href={`tel:${text?.number}`}>
-              <PhoneFilled />
-            </a>
-          </p>
-          <p>{text?.address}</p>
-        </>
-      ),
+      render: (text, record) => {
+        const invoice = record?.action?.code;
+        const orderAt = moment(record?.action?.createdAt).format(
+          "DD-MMM-YY hh:mm A",
+        );
+        let billAmount = record?.action?.payments?.totalBill;
+        let payAmount = record?.action?.payments?.payment?.reduce(
+          (sum, item) => sum + item?.amount,
+          0,
+        );
+        const dueAmount = Number(billAmount) - Number(payAmount);
+        return (
+          <>
+            <p>{text?.name}</p>
+            <p>
+              {text?.number}{" "}
+              <a
+                href={`https://wa.me/${text?.number}?text=${encodeURIComponent(
+                  `Hi ${text?.name},\nYour Order ${invoice} at ${orderAt}, \nTotal Bill-${billAmount}, \n*Due-${dueAmount}*\n-${user.orgName}`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer">
+                <WhatsAppOutlined />
+              </a>{" "}
+              <a href={`tel:${text?.number}`}>
+                <PhoneFilled />
+              </a>
+            </p>
+            <p>{text?.address}</p>
+          </>
+        );
+      },
     },
     {
       title: "Payments",
       dataIndex: "payments",
       key: "payments",
-      render: (text, record) => (
-        <>
-          <p>Total Bill: {text?.totalBill}</p>
-          <p>Total Due: {text?.duePay}</p>
-        </>
-      ),
+      render: (text, record) => {
+        const paymentDone = text?.payment?.reduce(
+          (sum, item) => sum + item?.amount,
+          0,
+        );
+        return (
+          <>
+            <p>Total Bill: {text?.totalBill}</p>
+            <p>
+              Total Due:{" "}
+              {(
+                text?.totalBill +
+                text?.vat -
+                text?.discount -
+                text?.adjustment -
+                paymentDone
+              ).toFixed(2)}
+            </p>
+          </>
+        );
+      },
     },
     {
       title: "Created By",
@@ -165,6 +194,9 @@ const SalesListDrawer = () => {
             createdAt: moment(item?.createdAt).format("DD-MMM-YY h:mm A"),
             invoice: item?.code,
             products: item?.products,
+            productList: item?.products.map(
+              (prd) => prd.name + "; " + prd.quantity + " " + prd.UOM,
+            ),
             payments: item?.payments,
             billing: item?.billing,
             createdBy: item?.createdBy?.name,
@@ -201,6 +233,22 @@ const SalesListDrawer = () => {
     }
   };
 
+  // Excel Export Function
+  const handleExportExcel = useExcelExport(queryData, {
+    filename: "pos_sales",
+    sheetName: "POS Sales",
+    excludedKeys: ["key", "action", "products"], // Exclude internal fields
+    columnWidths: {
+      createdAt: 20,
+      invoice: 20,
+      productList: 50,
+      payments: 12,
+      billing: 25,
+      createdBy: 20,
+      updatedBy: 20,
+    },
+  });
+
   return (
     <>
       <Button
@@ -222,8 +270,7 @@ const SalesListDrawer = () => {
               type="primary"
               className="borderBrand"
               style={{ borderRadius: "0px" }}
-              //   onClick={handleExportExcel}
-            >
+              onClick={handleExportExcel}>
               <FileExcelOutlined />
               Excel
             </Button>
@@ -236,7 +283,14 @@ const SalesListDrawer = () => {
           </Space>
         }>
         <Flex justify="center" style={{ marginBottom: "10px" }}>
-          <Form form={form} name="find" layout="inline" onFinish={onFinish}>
+          <Form
+            form={form}
+            name="find"
+            layout="inline"
+            onFinish={onFinish}
+            onValuesChange={(changedValues, allValues) =>
+              setFormFind(allValues)
+            }>
             <Form.Item name="number">
               <Input placeholder="Phone No." />
             </Form.Item>
