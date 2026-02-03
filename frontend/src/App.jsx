@@ -66,8 +66,8 @@ import Sales from "./pages/Sales/index.jsx";
 import POS from "./pages/Sales/POS/index.jsx";
 import Ecommerce from "./pages/Sales/Ecommerce/index.jsx";
 import B2B from "./pages/Sales/B2B/index.jsx";
-import BarCodeLabelPrint from "./pages/LabelPrint/BarCodeLabelPrint.jsx";
 import LabelPrint from "./pages/LabelPrint/index.jsx";
+import BarCodeLabelPrint from "./pages/LabelPrint/barCodeLabelPrint.jsx";
 import QRCodeLabelPrint from "./pages/LabelPrint/qrCodeLabelPrint.jsx";
 
 function App() {
