@@ -205,7 +205,13 @@ const QRCodeLabelPrint = () => {
           ? SKUs?.map((item, i) => (
               <Col span={24 / colCount} key={i} style={{ textAlign: "center" }}>
                 <Flex justify="center" align="center">
-                  <QRCode value={String(item)} size={size} />
+                  <QRCode
+                    value={String(item)}
+                    size={size}
+                    bgColor="#fff"
+                    style={{ height: "auto" }}
+                    type="svg"
+                  />
                 </Flex>
                 {showCode && (
                   <Text style={{ fontSize: codeFontSize, display: "block" }}>
@@ -220,7 +226,13 @@ const QRCodeLabelPrint = () => {
           : filterItems?.map((item, i) => (
               <Col span={24 / colCount} key={i} style={{ textAlign: "center" }}>
                 <Flex justify="center" align="center">
-                  <QRCode value={String(item?.SKU)} size={size} />
+                  <QRCode
+                    value={String(item?.SKU)}
+                    size={size}
+                    bgColor="#fff"
+                    style={{ height: "auto" }}
+                    type="svg"
+                  />
                 </Flex>
                 {showCode && (
                   <Text style={{ fontSize: codeFontSize, display: "block" }}>
