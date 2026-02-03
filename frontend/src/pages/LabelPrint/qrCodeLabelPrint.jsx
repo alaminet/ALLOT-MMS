@@ -22,6 +22,7 @@ const QRCodeLabelPrint = () => {
   const [itemList, setItemList] = useState([]);
   const [SKUs, setSKUs] = useState([]);
   const [isRandom, setIsRandom] = useState(false);
+  const [isUnique, setIsUnique] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [showName, setShowName] = useState(false);
   const [size, setSize] = useState(140);
@@ -93,6 +94,9 @@ const QRCodeLabelPrint = () => {
     }
   };
   const filterItems = itemList?.filter((p) => SKUs.includes(p.SKU));
+  const matchedItems = SKUs.map((sku) =>
+    itemList.find((item) => item.SKU === sku),
+  );
   useEffect(() => {
     getItems();
   }, []);
@@ -193,7 +197,12 @@ const QRCodeLabelPrint = () => {
             <Checkbox
               checked={isRandom}
               onChange={(e) => setIsRandom(e.target.checked)}>
-              Random Label,
+              Random Label
+            </Checkbox>
+            <Checkbox
+              checked={isUnique}
+              onChange={(e) => setIsUnique(e.target.checked)}>
+              Unique Value
             </Checkbox>
           </div>
           <div>
@@ -219,7 +228,6 @@ const QRCodeLabelPrint = () => {
           </div>
         </Col>
       </Row>
-
       <Row
         style={{ width: `${pageWidth}mm` }}
         gutter={[gutters[gutterKey], vgutters[vgutterKey]]}
@@ -246,29 +254,59 @@ const QRCodeLabelPrint = () => {
                 )}
               </Col>
             ))
-          : filterItems?.map((item, i) => (
-              <Col span={24 / colCount} key={i} style={{ textAlign: "center" }}>
-                <Flex justify="center" align="center">
-                  <QRCode
-                    value={String(item?.SKU)}
-                    size={size}
-                    bgColor="#fff"
-                    style={{ height: "auto" }}
-                    type="svg"
-                  />
-                </Flex>
-                {showCode && (
-                  <Text style={{ fontSize: codeFontSize, display: "block" }}>
-                    {item?.SKU}
-                  </Text>
-                )}
-                {showName && (
-                  <EllipsisMiddle suffixCount={4}>
-                    {item?.name + "," + item?.UOM}
-                  </EllipsisMiddle>
-                )}
-              </Col>
-            ))}
+          : isUnique
+            ? filterItems?.map((item, i) => (
+                <Col
+                  span={24 / colCount}
+                  key={i}
+                  style={{ textAlign: "center" }}>
+                  <Flex justify="center" align="center">
+                    <QRCode
+                      value={String(item?.SKU)}
+                      size={size}
+                      bgColor="#fff"
+                      style={{ height: "auto" }}
+                      type="svg"
+                    />
+                  </Flex>
+                  {showCode && (
+                    <Text style={{ fontSize: codeFontSize, display: "block" }}>
+                      {item?.SKU}
+                    </Text>
+                  )}
+                  {showName && (
+                    <EllipsisMiddle suffixCount={4}>
+                      {item?.name + "," + item?.UOM}
+                    </EllipsisMiddle>
+                  )}
+                </Col>
+              ))
+            : matchedItems?.map((item, i) => (
+                <Col
+                  span={24 / colCount}
+                  key={i}
+                  style={{ textAlign: "center" }}>
+                  <Flex justify="center" align="center">
+                    <QRCode
+                      value={String(item?.SKU)}
+                      size={size}
+                      bgColor="#fff"
+                      style={{ height: "auto" }}
+                      type="svg"
+                    />
+                  </Flex>
+                  {showCode && (
+                    <Text style={{ fontSize: codeFontSize, display: "block" }}>
+                      {item?.SKU}
+                    </Text>
+                  )}
+                  {showName && (
+                    <EllipsisMiddle suffixCount={4}>
+                      {item?.name + "," + item?.UOM}
+                    </EllipsisMiddle>
+                  )}
+                </Col>
+              ))}
       </Row>
     </>
   );

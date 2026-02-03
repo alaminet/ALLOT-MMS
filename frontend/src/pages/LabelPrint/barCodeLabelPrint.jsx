@@ -22,6 +22,7 @@ const BarCodeLabelPrint = () => {
   const [itemList, setItemList] = useState([]);
   const [SKUs, setSKUs] = useState([]);
   const [isRandom, setIsRandom] = useState(false);
+  const [isUnique, setIsUnique] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [showName, setShowName] = useState(false);
   const [codeHeight, setCodeHeight] = useState(25);
@@ -120,7 +121,9 @@ const BarCodeLabelPrint = () => {
     }
   };
   const filterItems = itemList?.filter((p) => SKUs.includes(p.SKU));
-
+  const matchedItems = SKUs.map((sku) =>
+    itemList.find((item) => item.SKU === sku),
+  );
   // Pint Functionality
 
   useEffect(() => {
@@ -234,6 +237,11 @@ const BarCodeLabelPrint = () => {
               onChange={(e) => setIsRandom(e.target.checked)}>
               Random Label
             </Checkbox>
+            <Checkbox
+              checked={isUnique}
+              onChange={(e) => setIsUnique(e.target.checked)}>
+              Unique Value
+            </Checkbox>
           </div>
           <div>
             <Flex gap={4} align="center">
@@ -279,23 +287,41 @@ const BarCodeLabelPrint = () => {
                   </div>
                 </Col>
               ))
-            : filterItems?.map((item, i) => (
-                <Col span={24 / colCount} key={i}>
-                  <div
-                    style={{
-                      textAlign: "center",
-                      backgroundColor: "#fff",
-                      border: "1px solid #ebebeb",
-                    }}>
-                    {showName && (
-                      <EllipsisMiddle suffixCount={4}>
-                        {item?.name + "," + item?.UOM}
-                      </EllipsisMiddle>
-                    )}
-                    <Barcode128 value={String(item?.SKU)} />
-                  </div>
-                </Col>
-              ))}
+            : isUnique
+              ? filterItems?.map((item, i) => (
+                  <Col span={24 / colCount} key={i}>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        backgroundColor: "#fff",
+                        border: "1px solid #ebebeb",
+                      }}>
+                      {showName && (
+                        <EllipsisMiddle suffixCount={4}>
+                          {item?.name + "," + item?.UOM}
+                        </EllipsisMiddle>
+                      )}
+                      <Barcode128 value={String(item?.SKU)} />
+                    </div>
+                  </Col>
+                ))
+              : matchedItems?.map((item, i) => (
+                  <Col span={24 / colCount} key={i}>
+                    <div
+                      style={{
+                        textAlign: "center",
+                        backgroundColor: "#fff",
+                        border: "1px solid #ebebeb",
+                      }}>
+                      {showName && (
+                        <EllipsisMiddle suffixCount={4}>
+                          {item?.name + "," + item?.UOM}
+                        </EllipsisMiddle>
+                      )}
+                      <Barcode128 value={String(item?.SKU)} />
+                    </div>
+                  </Col>
+                ))}
         </Row>
       </div>
     </>
