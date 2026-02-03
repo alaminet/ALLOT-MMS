@@ -50,14 +50,14 @@ const SalesListDrawer = () => {
       title: "SL",
       dataIndex: "sl",
       key: "sl",
-      width: 80,
+      width: 50,
       render: (text, record, index) => index + 1,
     },
     {
       title: "Tnx. Date",
       dataIndex: "createdAt",
       key: "createdAt",
-      width: 200,
+      width: 180,
     },
     {
       title: "Invoice",
@@ -78,6 +78,7 @@ const SalesListDrawer = () => {
       title: "Products",
       dataIndex: "products",
       key: "products",
+      width: 350,
       render: (text, record) =>
         text.map((prod, index) => (
           <p key={index}>
@@ -89,6 +90,7 @@ const SalesListDrawer = () => {
       title: "Billing",
       dataIndex: "billing",
       key: "billing",
+      width: 200,
       render: (text, record) => {
         const invoice = record?.action?.code;
         const orderAt = moment(record?.action?.createdAt).format(
@@ -103,22 +105,21 @@ const SalesListDrawer = () => {
         return (
           <>
             <p>{text?.name}</p>
-            <p>
-              {text?.number}{" "}
+            <p>{text?.number} </p>
+            <p>{text?.address}</p>
+            <Flex gap={8}>
               <a
                 href={`https://wa.me/${text?.number}?text=${encodeURIComponent(
                   `Hi ${text?.name},\nYour Order ${invoice} at ${orderAt}, \nTotal Bill-${billAmount}, \n*Due-${dueAmount}*\n-${user.orgName}`,
                 )}`}
                 target="_blank"
-                rel="noopener noreferrer"
-              >
-                <WhatsAppOutlined />
-              </a>{" "}
-              <a href={`tel:${text?.number}`}>
-                <PhoneFilled />
+                rel="noopener noreferrer">
+                <Button type="primary" icon={<WhatsAppOutlined />} />
               </a>
-            </p>
-            <p>{text?.address}</p>
+              <a href={`tel:${text?.number}`}>
+                <Button type="primary" icon={<PhoneFilled />} />
+              </a>
+            </Flex>
           </>
         );
       },
@@ -127,6 +128,7 @@ const SalesListDrawer = () => {
       title: "Payments",
       dataIndex: "payments",
       key: "payments",
+      width: 180,
       render: (text, record) => {
         const paymentDone = text?.payment?.reduce(
           (sum, item) => sum + item?.amount,
@@ -263,8 +265,7 @@ const SalesListDrawer = () => {
       <Button
         type="default"
         onClick={() => onOpen(true)}
-        icon={<UnorderedListOutlined />}
-      >
+        icon={<UnorderedListOutlined />}>
         Orders
       </Button>
       <Drawer
@@ -280,21 +281,18 @@ const SalesListDrawer = () => {
               type="primary"
               className="borderBrand"
               style={{ borderRadius: "0px" }}
-              onClick={handleExportExcel}
-            >
+              onClick={handleExportExcel}>
               <FileExcelOutlined />
               Excel
             </Button>
             <Button
               danger
               onClick={() => setOpen(false)}
-              style={{ borderRadius: "0px" }}
-            >
+              style={{ borderRadius: "0px" }}>
               Close
             </Button>
           </Space>
-        }
-      >
+        }>
         <Flex justify="center" style={{ marginBottom: "10px" }}>
           <Form
             form={form}
@@ -303,8 +301,7 @@ const SalesListDrawer = () => {
             onFinish={onFinish}
             onValuesChange={(changedValues, allValues) =>
               setFormFind(allValues)
-            }
-          >
+            }>
             <Form.Item name="number">
               <Input placeholder="Phone No." />
             </Form.Item>
@@ -344,8 +341,7 @@ const SalesListDrawer = () => {
             <Form.Item
               name="payStatus"
               initialValue="All"
-              rules={[{ required: true }]}
-            >
+              rules={[{ required: true }]}>
               <Select
                 showSearch
                 style={{ minWidth: "100px" }}

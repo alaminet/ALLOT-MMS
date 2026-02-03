@@ -8,7 +8,7 @@
 @media print {
   /* Page setup */
   @page {
-    size: A4 landscape;
+    size: A4 portrait;
   }
 
   /* Reset and color fidelity */
@@ -95,7 +95,8 @@ p {
   color: var(--color-Brand) !important;
 }
 
-.form-input-borderless .ant-input-affix-wrapper {
+.form-input-borderless .ant-input-affix-wrapper,
+.form-input-borderless .ant-select {
   border-radius: 1px !important;
   padding: 16px !important;
   border-color: var(--color-Brand) !important;
@@ -106,7 +107,7 @@ p {
   border-color: var(--color-Brand) !important;
 }
 .form-input-borderless .ant-select-clear {
-  top: 90% !important;
+  top: 50% !important;
   right: 7% !important;
   color: var(--color-Brand) !important;
 }
@@ -132,7 +133,11 @@ p {
 .borderlessInput .ant-input-affix-wrapper input {
   padding: 6px 0px !important;
 }
-
+.borderlessInput .ant-select-in-form-item {
+  border-radius: 1px !important;
+  padding: 10px !important;
+  border-color: var(--color-Brand) !important;
+}
 .borderlessInput .ant-select-selection-search input {
   padding: 0px !important;
 }

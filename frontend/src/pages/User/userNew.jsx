@@ -97,7 +97,7 @@ const UserNew = () => {
           autoComplete="off"
           className="form-input-borderless">
           <Flex justify="center">
-            <Form.Item style={{ maxWidth: 350 }}>
+            <Form.Item style={{ maxWidth: 450 }}>
               <Form.Item
                 name="name"
                 rules={[

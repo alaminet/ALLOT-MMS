@@ -6,7 +6,7 @@ function BarCodeListScanUI() {
 
   return (
     <div>
-      <video ref={videoRef} style={{ width: "100%" }} />
+      <video ref={videoRef} style={{ width: "20%" }} />
       <h3>Scanned Codes:</h3>
       <ul>
         {codes.map((c, i) => (

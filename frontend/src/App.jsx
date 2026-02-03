@@ -66,6 +66,9 @@ import Sales from "./pages/Sales/index.jsx";
 import POS from "./pages/Sales/POS/index.jsx";
 import Ecommerce from "./pages/Sales/Ecommerce/index.jsx";
 import B2B from "./pages/Sales/B2B/index.jsx";
+import BarCodeLabelPrint from "./pages/LabelPrint/BarCodeLabelPrint.jsx";
+import LabelPrint from "./pages/LabelPrint/index.jsx";
+import QRCodeLabelPrint from "./pages/LabelPrint/qrCodeLabelPrint.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -177,6 +180,10 @@ function App() {
                 <Route path="update" element={<ItemDetailsUpdate />}></Route>
                 <Route path="logs" element={<LogActivites />} />
               </Route>
+            </Route>
+            <Route path="label" element={<LabelPrint />}>
+              <Route path="barcode" element={<BarCodeLabelPrint />} />
+              <Route path="qrcode" element={<QRCodeLabelPrint />} />
             </Route>
           </Route>
         </Route>

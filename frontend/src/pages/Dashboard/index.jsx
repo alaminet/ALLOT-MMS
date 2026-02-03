@@ -13,7 +13,12 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { ArrowDownOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import {
+  ArrowDownOutlined,
+  BarcodeOutlined,
+  PlusCircleOutlined,
+  ProductOutlined,
+} from "@ant-design/icons";
 import BarChart from "./barChart";
 import LineChart from "./lineChart";
 import WaterWaveChart from "./waterWaveChart";
@@ -164,6 +169,14 @@ const Dashboard = () => {
             style={{
               marginBottom: "10px",
             }}>
+            <Button
+              onClick={() => navigate("/label")}
+              icon={<BarcodeOutlined />}
+              type="primary"
+              className="borderBrand"
+              style={{ borderRadius: "0px" }}>
+              Code Print
+            </Button>
             <StockCheckModal />
             <MoveOrderReq />
           </Flex>

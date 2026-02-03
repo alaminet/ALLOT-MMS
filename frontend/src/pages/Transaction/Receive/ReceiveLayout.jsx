@@ -52,7 +52,7 @@ const ReceiveLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       // console.log(res.data);
 
@@ -107,7 +107,7 @@ const ReceiveLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         label: item?.name,
@@ -138,7 +138,7 @@ const ReceiveLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
 
       const tableArr = res?.data?.items?.map((item, index) => {
@@ -231,7 +231,7 @@ const ReceiveLayout = () => {
                         (item) => ({
                           label: item,
                           value: item,
-                        })
+                        }),
                       )}
                       placeholder="Transaction Type"
                     />
@@ -344,62 +344,64 @@ const ReceiveLayout = () => {
                                 ]}>
                                 <AutoComplete
                                   options={filteredOptions}
-                                  onSearch={(searchText) => {
-                                    const filtered = itemList
-                                      .filter((item) =>
-                                        item.find
-                                          .toLowerCase()
-                                          .includes(searchText.toLowerCase())
-                                      )
-                                      .map((item) => ({
-                                        label: item.label,
-                                        value: item.label,
-                                      }));
-                                    setFilteredOptions(filtered);
+                                  showSearch={{
+                                    onSearch: (searchText) => {
+                                      const filtered = itemList
+                                        .filter((item) =>
+                                          item.find
+                                            .toLowerCase()
+                                            .includes(searchText.toLowerCase()),
+                                        )
+                                        .map((item) => ({
+                                          label: item.label,
+                                          value: item.label,
+                                        }));
+                                      setFilteredOptions(filtered);
+                                    },
                                   }}
                                   onSelect={(value) => {
                                     const matched = itemList.find(
-                                      (i) => i.label === value
+                                      (i) => i.label === value,
                                     );
                                     if (matched) {
                                       form.setFieldValue(
                                         ["itemDetails", name, "UOM"],
-                                        matched.UOM
+                                        matched.UOM,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
-                                        matched.code
+                                        matched.code,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
-                                        matched.price
+                                        matched.price,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "SKU"],
-                                        matched.SKU
+                                        matched.SKU,
                                       );
                                     }
                                   }}
                                   onChange={(value) => {
                                     const matched = itemList.find(
-                                      (i) => i.label === value
+                                      (i) => i.label === value,
                                     );
                                     if (!matched) {
                                       form.setFieldValue(
                                         ["itemDetails", name, "UOM"],
-                                        ""
+                                        "",
                                       ); // clear UOM for manual input
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
-                                        ""
+                                        "",
                                       ); // clear code for manual input
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
-                                        ""
+                                        "",
                                       ); // clear unitPrice for manual input
                                       form.setFieldValue(
                                         ["itemDetails", name, "SKU"],
-                                        ""
+                                        "",
                                       ); // clear unitPrice for manual input
                                     }
                                   }}
@@ -445,7 +447,7 @@ const ReceiveLayout = () => {
                                       value > 0
                                         ? Promise.resolve()
                                         : Promise.reject(
-                                            new Error("Greater then 0")
+                                            new Error("Greater then 0"),
                                           ),
                                   },
                                 ]}>
@@ -466,19 +468,19 @@ const ReceiveLayout = () => {
                                 ]}>
                                 <Select
                                   allowClear
-                                  showSearch
+                                  showSearch={{
+                                    filterOption: (input, option) =>
+                                      (option?.label ?? "")
+                                        .toLowerCase()
+                                        .includes(input.toLowerCase()),
+                                  }}
                                   options={
                                     costCenter?.filter(
                                       (item) =>
-                                        item.modelName === "StoreLocation"
+                                        item.modelName === "StoreLocation",
                                     )[0]?.data
                                   }
                                   placeholder="Location"
-                                  filterOption={(input, option) =>
-                                    (option?.label ?? "")
-                                      .toLowerCase()
-                                      .includes(input.toLowerCase())
-                                  }
                                 />
                               </Form.Item>
                             </Col>

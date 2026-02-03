@@ -47,7 +47,7 @@ const IssueLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
 
       // Build notification content safely
@@ -111,7 +111,7 @@ const IssueLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         ...item,
@@ -136,7 +136,7 @@ const IssueLayout = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
 
       const tableArr = res?.data?.items?.map((item, index) => {
@@ -247,15 +247,15 @@ const IssueLayout = () => {
                       allowClear
                       options={
                         itemDetails?.filter(
-                          (item) => item.modelName === "CostCenter"
+                          (item) => item.modelName === "CostCenter",
                         )[0]?.data
                       }
-                      showSearch
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
                       placeholder="Cost Center"
                     />
                   </Form.Item>
@@ -329,77 +329,77 @@ const IssueLayout = () => {
                                   ]}>
                                   <Select
                                     allowClear
-                                    showSearch
+                                    showSearch={{
+                                      filterOption: (input, option) =>
+                                        (option?.find ?? "")
+                                          .toLowerCase()
+                                          .includes(input.toLowerCase()),
+                                    }}
                                     placeholder="Item Name"
                                     options={itemList?.map((item) => ({
                                       label: item.name,
                                       value: item.name,
                                       find: item.name + "_" + item.SKU,
                                     }))}
-                                    filterOption={(input, option) =>
-                                      (option?.find ?? "")
-                                        .toLowerCase()
-                                        .includes(input.toLowerCase())
-                                    }
                                     onSelect={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.name === value
+                                        (i) => i.name === value,
                                       );
                                       if (matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          matched.UOM.code
+                                          matched.UOM.code,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          matched.code
+                                          matched.code,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "issuePrice"],
-                                          matched.avgPrice
+                                          matched.avgPrice,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          matched.SKU
+                                          matched.SKU,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "stockList"],
-                                          matched.stock
+                                          matched.stock,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "location"],
-                                          matched.stock?.[0]?.location || ""
+                                          matched.stock?.[0]?.location || "",
                                         );
                                       }
                                     }}
                                     onChange={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.name === value
+                                        (i) => i.name === value,
                                       );
                                       if (!matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          ""
+                                          "",
                                         ); // clear UOM for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          ""
+                                          "",
                                         ); // clear code for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "issuePrice"],
-                                          ""
+                                          "",
                                         ); // clear issuePrice for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          ""
+                                          "",
                                         ); // clear SKU for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "location"],
-                                          ""
+                                          "",
                                         ); // clear location for manual input
                                         form.setFieldValue(
                                           ["itemDetails", name, "stockList"],
-                                          ""
+                                          "",
                                         ); // clear stockList for manual input
                                       }
                                     }}
@@ -468,12 +468,12 @@ const IssueLayout = () => {
                                           options={locationOptions}
                                           placeholder="Location"
                                           allowClear
-                                          showSearch
-                                          filterOption={(input, option) =>
-                                            (option?.label ?? "")
-                                              .toLowerCase()
-                                              .includes(input.toLowerCase())
-                                          }
+                                          showSearch={{
+                                            filterOption: (input, option) =>
+                                              (option?.label ?? "")
+                                                .toLowerCase()
+                                                .includes(input.toLowerCase()),
+                                          }}
                                         />
                                       </Form.Item>
                                     );
@@ -491,7 +491,7 @@ const IssueLayout = () => {
                                         value > 0
                                           ? Promise.resolve()
                                           : Promise.reject(
-                                              new Error("Greater then 0")
+                                              new Error("Greater then 0"),
                                             ),
                                     },
                                   ]}>

@@ -38,7 +38,7 @@ const UserUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -65,7 +65,7 @@ const UserUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
@@ -103,7 +103,7 @@ const UserUpdate = () => {
           autoComplete="off"
           className="form-input-borderless">
           <Flex justify="center">
-            <Form.Item style={{ minWidth: 350 }}>
+            <Form.Item style={{ minWidth: 450 }}>
               <Form.Item
                 hidden
                 name="id"
@@ -146,7 +146,7 @@ const UserUpdate = () => {
                   allowClear
                   options={
                     costCenter?.filter(
-                      (item) => item.modelName === "CostCenter"
+                      (item) => item.modelName === "CostCenter",
                     )[0]?.data
                   }
                   placeholder="Cost Center"

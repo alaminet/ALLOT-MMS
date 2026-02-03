@@ -42,7 +42,7 @@ const PurchaseRequisitiion = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -74,7 +74,7 @@ const PurchaseRequisitiion = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         label: item?.name,
@@ -86,7 +86,7 @@ const PurchaseRequisitiion = () => {
         price: item?.avgPrice,
         onHandQty: item?.stock?.reduce(
           (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-          0
+          0,
         ),
         spec: item?.discription,
       }));
@@ -110,7 +110,7 @@ const PurchaseRequisitiion = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
@@ -248,7 +248,7 @@ const PurchaseRequisitiion = () => {
                           allowClear
                           options={
                             itemDetails?.filter(
-                              (item) => item.modelName === "CostCenter"
+                              (item) => item.modelName === "CostCenter",
                             )[0]?.data
                           }
                           placeholder="Cost Center"
@@ -331,78 +331,80 @@ const PurchaseRequisitiion = () => {
                                 ]}>
                                 <AutoComplete
                                   options={filteredOptions}
-                                  onSearch={(searchText) => {
-                                    const filtered = itemList
-                                      .filter((item) =>
-                                        item.search
-                                          .toLowerCase()
-                                          .includes(searchText.toLowerCase())
-                                      )
-                                      .map((item) => ({
-                                        label: item.label + "-" + item.SKU,
-                                        value: item.label,
-                                      }));
-                                    setFilteredOptions(filtered);
+                                  showSearch={{
+                                    onSearch: (searchText) => {
+                                      const filtered = itemList
+                                        .filter((item) =>
+                                          item.search
+                                            .toLowerCase()
+                                            .includes(searchText.toLowerCase()),
+                                        )
+                                        .map((item) => ({
+                                          label: item.label + "-" + item.SKU,
+                                          value: item.label,
+                                        }));
+                                      setFilteredOptions(filtered);
+                                    },
                                   }}
                                   onSelect={(value) => {
                                     const matched = itemList.find(
-                                      (i) => i.label === value
+                                      (i) => i.label === value,
                                     );
                                     if (matched) {
                                       form.setFieldValue(
                                         ["itemDetails", name, "UOM"],
-                                        matched.UOM
+                                        matched.UOM,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
-                                        matched.value
+                                        matched.value,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "SKU"],
-                                        matched.SKU
+                                        matched.SKU,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
-                                        matched.price
+                                        matched.price,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "onHandQty"],
-                                        matched.onHandQty
+                                        matched.onHandQty,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "spec"],
-                                        matched.spec
+                                        matched.spec,
                                       );
                                     }
                                   }}
                                   onChange={(value) => {
                                     const matched = itemList.find(
-                                      (i) => i.label === value
+                                      (i) => i.label === value,
                                     );
                                     if (!matched) {
                                       form.setFieldValue(
                                         ["itemDetails", name, "UOM"],
-                                        null
+                                        null,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "code"],
-                                        null
+                                        null,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "SKU"],
-                                        null
+                                        null,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "unitPrice"],
-                                        null
+                                        null,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "onHandQty"],
-                                        null
+                                        null,
                                       );
                                       form.setFieldValue(
                                         ["itemDetails", name, "spec"],
-                                        null
+                                        null,
                                       );
                                     }
                                   }}

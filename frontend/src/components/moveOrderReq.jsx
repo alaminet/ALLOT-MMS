@@ -221,12 +221,12 @@ const MoveOrderReq = () => {
                           (item) => item.modelName === "CostCenter",
                         )[0]?.data
                       }
-                      showSearch
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
+                      showSearch={{
+                        filterOption: (input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase()),
+                      }}
                       placeholder="Cost Center"
                     />
                   </Form.Item>
@@ -275,18 +275,18 @@ const MoveOrderReq = () => {
                                   ]}>
                                   <Select
                                     allowClear
-                                    showSearch
+                                    showSearch={{
+                                      filterOption: (input, option) =>
+                                        (option?.find ?? "")
+                                          .toLowerCase()
+                                          .includes(input.toLowerCase()),
+                                    }}
                                     placeholder="Item Name"
                                     options={itemList?.map((item) => ({
                                       label: item.name,
                                       value: item.name,
                                       find: item.name + "_" + item.SKU,
                                     }))}
-                                    filterOption={(input, option) =>
-                                      (option?.find ?? "")
-                                        .toLowerCase()
-                                        .includes(input.toLowerCase())
-                                    }
                                     onSelect={(value) => {
                                       const matched = itemList.find(
                                         (i) => i.name === value,
