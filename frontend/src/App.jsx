@@ -69,6 +69,9 @@ import B2B from "./pages/Sales/B2B/index.jsx";
 import LabelPrint from "./pages/LabelPrint/index.jsx";
 import BarCodeLabelPrint from "./pages/LabelPrint/barCodeLabelPrint.jsx";
 import QRCodeLabelPrint from "./pages/LabelPrint/qrCodeLabelPrint.jsx";
+import NewB2BInvoice from "./pages/Sales/B2B/newB2BInvoice.jsx";
+import ListB2BInvoice from "./pages/Sales/B2B/listB2BInvoice.jsx";
+import CustomerB2BInvoic from "./pages/Sales/B2B/customerB2BInvoic.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -146,10 +149,9 @@ function App() {
             {/* Sales Routes */}
             <Route path="" element={<Sales />}>
               <Route path="B2B" element={<B2B />}>
-                <Route path="" element={<PurchaseReqViewTable />} />
-                <Route path="new" element={<PurchaseRequisitiion />} />
-                <Route path="update" element={<PurchaseRequisitiionUpdate />} />
-                <Route path="print" element={<PurchaseReqPrintView />} />
+                <Route path="new" element={<NewB2BInvoice />} />
+                <Route path="invoice" element={<ListB2BInvoice />} />
+                <Route path="customer" element={<CustomerB2BInvoic />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="ecommerce" element={<Ecommerce />}>

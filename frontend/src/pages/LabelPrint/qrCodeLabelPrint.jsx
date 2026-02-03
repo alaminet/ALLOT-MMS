@@ -240,7 +240,12 @@ const QRCodeLabelPrint = () => {
                     value={String(item)}
                     size={size}
                     bgColor="#fff"
-                    style={{ height: "auto" }}
+                    style={{
+                      height: "auto",
+                      padding: "4px",
+                      margin: "0",
+                      borderRadius: "1px",
+                    }}
                     type="svg"
                   />
                 </Flex>
@@ -265,7 +270,12 @@ const QRCodeLabelPrint = () => {
                       value={String(item?.SKU)}
                       size={size}
                       bgColor="#fff"
-                      style={{ height: "auto" }}
+                      style={{
+                        height: "auto",
+                        padding: "4px",
+                        margin: "0",
+                        borderRadius: "1px",
+                      }}
                       type="svg"
                     />
                   </Flex>
@@ -291,7 +301,12 @@ const QRCodeLabelPrint = () => {
                       value={String(item?.SKU)}
                       size={size}
                       bgColor="#fff"
-                      style={{ height: "auto" }}
+                      style={{
+                        height: "auto",
+                        padding: "4px",
+                        margin: "0",
+                        borderRadius: "1px",
+                      }}
                       type="svg"
                     />
                   </Flex>

@@ -4,7 +4,6 @@ import { Card, Flex } from "antd";
 import barcode_scanner from "../../assets/images/barcode-reader.png";
 import qrcode_scanner from "../../assets/images/qr-code.png";
 import BreadCrumbCustom from "../../components/breadCrumbCustom";
-
 const { Meta } = Card;
 
 const LabelPrint = () => {
