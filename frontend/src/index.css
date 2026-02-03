@@ -31,12 +31,17 @@
   /* Printable container */
   .print-page {
     box-sizing: border-box;
-    position: fixed;
+    position: absolute;
     top: 0 !important;
     left: 0 !important;
     padding: 0 !important;
     page-break-after: always;
   }
+
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+
   .print-page .ant-table-cell {
     font-size: 10px;
   }

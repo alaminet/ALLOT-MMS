@@ -10,9 +10,11 @@ import {
   Typography,
   Slider,
   QRCode,
+  Button,
 } from "antd";
 import Barcode from "react-barcode";
 import TextArea from "antd/es/input/TextArea";
+import { PrinterOutlined } from "@ant-design/icons";
 const { Text } = Typography;
 
 const QRCodeLabelPrint = () => {
@@ -23,8 +25,7 @@ const QRCodeLabelPrint = () => {
   const [showCode, setShowCode] = useState(false);
   const [showName, setShowName] = useState(false);
   const [size, setSize] = useState(140);
-  const [codeHeight, setCodeHeight] = useState(25);
-  const [codeWidth, setCodeWidth] = useState(2);
+  const [pageWidth, setPageWidth] = useState(210);
   const [codeFontSize, setCodeFontSize] = useState(12);
   const [nameFontSize, setNameFontSize] = useState(12);
   const [gutterKey, setGutterKey] = useState(1);
@@ -195,10 +196,32 @@ const QRCodeLabelPrint = () => {
               Random Label,
             </Checkbox>
           </div>
+          <div>
+            <Flex gap={4} align="center">
+              <div>
+                <label>Page Width </label>
+                <InputNumber
+                  style={{ width: "60px" }}
+                  size="small"
+                  value={pageWidth}
+                  onChange={(e) => setPageWidth(e)}
+                />
+              </div>
+              <label>mm</label>
+              <Button
+                size="small"
+                onClick={() => window.print()}
+                icon={<PrinterOutlined />}
+                type="primary">
+                Print
+              </Button>
+            </Flex>
+          </div>
         </Col>
       </Row>
 
       <Row
+        style={{ width: `${pageWidth}mm` }}
         gutter={[gutters[gutterKey], vgutters[vgutterKey]]}
         className="print-page">
         {isRandom

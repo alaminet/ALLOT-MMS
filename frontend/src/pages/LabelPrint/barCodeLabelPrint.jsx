@@ -9,9 +9,12 @@ import {
   Row,
   Typography,
   Slider,
+  Button,
 } from "antd";
 import Barcode from "react-barcode";
 import TextArea from "antd/es/input/TextArea";
+import { PrinterOutlined } from "@ant-design/icons";
+import html2canvas from "html2canvas";
 const { Text } = Typography;
 
 const BarCodeLabelPrint = () => {
@@ -25,6 +28,7 @@ const BarCodeLabelPrint = () => {
   const [codeWidth, setCodeWidth] = useState(2);
   const [codeFontSize, setCodeFontSize] = useState(12);
   const [nameFontSize, setNameFontSize] = useState(12);
+  const [pageWidth, setPageWidth] = useState(210);
   const [gutterKey, setGutterKey] = useState(1);
   const [vgutterKey, setVgutterKey] = useState(1);
   const [colCountKey, setColCountKey] = useState(0);
@@ -84,7 +88,7 @@ const BarCodeLabelPrint = () => {
     const suffix = children.slice(-suffixCount).trim();
     return (
       <Text
-        style={{ maxWidth: "100%", fontSize: nameFontSize }}
+        style={{ maxWidth: "100%", fontSize: nameFontSize, display: "block" }}
         ellipsis={{ suffix }}>
         {start}
       </Text>
@@ -116,6 +120,9 @@ const BarCodeLabelPrint = () => {
     }
   };
   const filterItems = itemList?.filter((p) => SKUs.includes(p.SKU));
+
+  // Pint Functionality
+
   useEffect(() => {
     getItems();
   }, []);
@@ -225,49 +232,72 @@ const BarCodeLabelPrint = () => {
             <Checkbox
               checked={isRandom}
               onChange={(e) => setIsRandom(e.target.checked)}>
-              Random Label,
+              Random Label
             </Checkbox>
+          </div>
+          <div>
+            <Flex gap={4} align="center">
+              <div>
+                <label>Page Width </label>
+                <InputNumber
+                  style={{ width: "60px" }}
+                  size="small"
+                  value={pageWidth}
+                  onChange={(e) => setPageWidth(e)}
+                />
+                <label>mm</label>
+              </div>
+              <Button
+                size="small"
+                onClick={() => window.print()}
+                icon={<PrinterOutlined />}
+                type="primary">
+                Print
+              </Button>
+            </Flex>
           </div>
         </Col>
       </Row>
-
-      <Row
-        gutter={[gutters[gutterKey], vgutters[vgutterKey]]}
-        className="print-page">
-        {isRandom
-          ? SKUs?.map((item, i) => (
-              <Col span={24 / colCount} key={i}>
-                <div
-                  style={{
-                    textAlign: "center",
-                    backgroundColor: "#fff",
-                    border: "1px solid #cfcfcf",
-                  }}>
-                  {showName && (
-                    <EllipsisMiddle suffixCount={4}>{item}</EllipsisMiddle>
-                  )}
-                  <Barcode128 value={String(item)} />
-                </div>
-              </Col>
-            ))
-          : filterItems?.map((item, i) => (
-              <Col span={24 / colCount} key={i}>
-                <div
-                  style={{
-                    textAlign: "center",
-                    backgroundColor: "#fff",
-                    border: "1px solid #cfcfcf",
-                  }}>
-                  {showName && (
-                    <EllipsisMiddle suffixCount={4}>
-                      {item?.name + "," + item?.UOM}
-                    </EllipsisMiddle>
-                  )}
-                  <Barcode128 value={String(item?.SKU)} />
-                </div>
-              </Col>
-            ))}
-      </Row>
+      <div>
+        <Row
+          style={{ width: `${pageWidth}mm` }}
+          gutter={[gutters[gutterKey], vgutters[vgutterKey]]}
+          className="print-page">
+          {isRandom
+            ? SKUs?.map((item, i) => (
+                <Col span={24 / colCount} key={i}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      backgroundColor: "#fff",
+                      border: "1px solid #ebebeb",
+                    }}>
+                    {showName && (
+                      <EllipsisMiddle suffixCount={4}>{item}</EllipsisMiddle>
+                    )}
+                    <Barcode128 value={String(item)} />
+                  </div>
+                </Col>
+              ))
+            : filterItems?.map((item, i) => (
+                <Col span={24 / colCount} key={i}>
+                  <div
+                    style={{
+                      textAlign: "center",
+                      backgroundColor: "#fff",
+                      border: "1px solid #ebebeb",
+                    }}>
+                    {showName && (
+                      <EllipsisMiddle suffixCount={4}>
+                        {item?.name + "," + item?.UOM}
+                      </EllipsisMiddle>
+                    )}
+                    <Barcode128 value={String(item?.SKU)} />
+                  </div>
+                </Col>
+              ))}
+        </Row>
+      </div>
     </>
   );
 };
