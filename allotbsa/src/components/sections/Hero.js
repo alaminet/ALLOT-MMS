@@ -9,7 +9,7 @@ const Hero = () => {
     <>
       <section>
         <Row justify="space-between" gutter={[16, 16]}>
-          <Col md={12}>
+          <Col lg={12} xs={24}>
             <Title style={{ color: "#247f93", fontSize: "60px" }}>
               ওয়্যারহাউজ আটোমেশনে ব্যবহার করুন - ALLOT
             </Title>
@@ -48,7 +48,7 @@ const Hero = () => {
               </Link>
             </Flex>
           </Col>
-          <Col md={12}>right</Col>
+          <Col lg={12} xs={24}>right</Col>
         </Row>
       </section>
     </>

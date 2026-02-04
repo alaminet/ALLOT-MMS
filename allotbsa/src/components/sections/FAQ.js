@@ -84,7 +84,7 @@ const FAQ = () => {
     <>
       <section>
         <Row justify="center">
-          <Col span={6}>
+          <Col lg={8} md={12} xs={24}>
             <Title
               level={2}
               style={{
@@ -106,7 +106,7 @@ const FAQ = () => {
           </Col>
         </Row>
         <Row justify="center" style={{ paddingTop: "50px" }}>
-          <Col span={12}>
+          <Col md={12} xs={24}>
             <Collapse
               expandIcon={({ isActive }) => (
                 <CaretRightOutlined rotate={isActive ? 90 : 0} />

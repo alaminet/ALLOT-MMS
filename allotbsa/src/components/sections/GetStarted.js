@@ -14,7 +14,7 @@ const GetStarted = () => {
     <>
       <section>
         <Row justify="center">
-          <Col span={6}>
+          <Col lg={8} md={12} xs={24}>
             <Title
               level={2}
               style={{
@@ -36,7 +36,7 @@ const GetStarted = () => {
           </Col>
         </Row>
         <Row justify="center" style={{ marginTop: "50px" }}>
-          <Col span={12}>
+          <Col lg={10} ld={12} xs={24}>
             <Card hoverable>
               <Form
                 name="getStarted"

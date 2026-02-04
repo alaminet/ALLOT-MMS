@@ -134,9 +134,9 @@ const PricePlan = () => {
   ];
   return (
     <>
-      <section style={{ padding: "50px 0" }}>
+      <section>
         <Row justify="center">
-          <Col span={6}>
+          <Col lg={8} md={12} xs={24}>
             <Title
               level={2}
               style={{
@@ -159,7 +159,7 @@ const PricePlan = () => {
         </Row>
         <Row gutter={[16, 16]} style={{ paddingTop: "50px" }}>
           {planItem.map((item, i) => (
-            <Col span={6} key={i}>
+            <Col lg={8} md={12} key={i} xs={24}>
               <Card
                 hoverable
                 title={item?.cardTitle}

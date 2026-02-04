@@ -2,6 +2,7 @@ import { Noto_Sans_Bengali, Poppins } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "./globals.css";
+import LayoutBasic from "@/components/LayoutBasic";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -33,7 +34,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${poppins.variable} ${notoSansBengali.variable}`}>
         <ConfigProvider theme={customTheme}>
-          <AntdRegistry>{children}</AntdRegistry>
+          <AntdRegistry>
+            <LayoutBasic>{children}</LayoutBasic>
+          </AntdRegistry>
         </ConfigProvider>
       </body>
     </html>
