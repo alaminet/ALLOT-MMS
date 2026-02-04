@@ -1,7 +1,7 @@
+import React from "react";
 import { Button, Col, Flex, Row } from "antd";
 import Title from "antd/es/typography/Title";
 import Text from "antd/es/typography/Text";
-import React from "react";
 import Link from "next/link";
 
 const Hero = () => {
@@ -48,7 +48,26 @@ const Hero = () => {
               </Link>
             </Flex>
           </Col>
-          <Col lg={12} xs={24}>right</Col>
+          <Col
+            lg={12}
+            xs={24}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <img
+              src="Images/banner-hero-one.png"
+              alt="Allot hero"
+              style={{
+                objectFit: "cover",
+                width: "650px",
+                height: "400px",
+                padding: "20px",
+              }}
+            />
+          </Col>
         </Row>
       </section>
     </>
