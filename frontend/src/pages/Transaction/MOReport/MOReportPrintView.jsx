@@ -63,7 +63,7 @@ const MOReportPrintView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           setQueryData(res?.data?.items || null);
@@ -156,7 +156,7 @@ const MOReportPrintView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -272,16 +272,16 @@ const MOReportPrintView = () => {
                 summary={() => {
                   const totalQty = queryData?.itemDetails.reduce(
                     (sum, item) => sum + (item?.reqQty || 0),
-                    0
+                    0,
                   );
                   const totalTnxQty = queryData?.itemDetails.reduce(
                     (sum, item) => sum + (item?.issueQty || 0),
-                    0
+                    0,
                   );
                   const totalValue = queryData?.itemDetails.reduce(
                     (sum, item) =>
                       sum + (item?.code?.avgPrice || 0) * (item?.reqQty || 0),
-                    0
+                    0,
                   );
 
                   return (
@@ -366,9 +366,9 @@ const MOReportPrintView = () => {
                         maximumFractionDigits: 2,
                       }).format(
                         record?.code?.stock.reduce(
-                          (sum, item) => sum + (item.onHandQty || 0),
-                          0
-                        )
+                          (sum, item) => sum + (item?.onHandQty || 0),
+                          0,
+                        ),
                       )
                     }
                   />

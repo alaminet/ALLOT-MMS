@@ -118,17 +118,15 @@ const InventoryViewTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
-          console.log(res?.data?.items);
-
           // message.success(res.data.message);
           const tableArr = res?.data?.items?.flatMap((item) => {
             const onHandStock =
               item?.stock?.reduce(
                 (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-                0
+                0,
               ) || 0;
             if (onHandStock > 0) {
               return {
@@ -142,17 +140,17 @@ const InventoryViewTable = () => {
                 recQty:
                   item?.stock?.reduce(
                     (sum, stock) => sum + (Number(stock?.recQty) || 0),
-                    0
+                    0,
                   ) || 0,
                 issueQty:
                   item?.stock?.reduce(
                     (sum, stock) => sum + (Number(stock?.issueQty) || 0),
-                    0
+                    0,
                   ) || 0,
                 onHandQty:
                   item?.stock?.reduce(
                     (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-                    0
+                    0,
                   ) || 0,
                 safetyStock: item?.safetyStock || 0,
                 group: item?.group?.name,
@@ -170,24 +168,27 @@ const InventoryViewTable = () => {
   };
 
   // Excel Export Function
-  const handleExportExcel = useExcelExport(queryData, {
-    filename: "stock_report",
-    sheetName: "Stock Report",
-    excludedKeys: ["key", "action", "access"], // Exclude internal fields
-    columnWidths: {
-      code: 15,
-      SKU: 15,
-      name: 30,
-      UOM: 10,
-      avgPrice: 10,
-      lastPrice: 10,
-      location: 20,
-      locQty: 10,
-      safetyStock: 10,
-      group: 20,
-      type: 20,
+  const handleExportExcel = useExcelExport(
+    queryData?.filter((item) => item && item !== false),
+    {
+      filename: "stock_report",
+      sheetName: "Stock Report",
+      excludedKeys: ["key", "action", "access"], // Exclude internal fields
+      columnWidths: {
+        // code: 15,
+        SKU: 15,
+        name: 30,
+        UOM: 10,
+        avgPrice: 10,
+        lastPrice: 10,
+        location: 20,
+        locQty: 10,
+        safetyStock: 10,
+        group: 20,
+        type: 20,
+      },
     },
-  });
+  );
 
   useEffect(() => {
     getTableData();
@@ -245,7 +246,7 @@ const InventoryViewTable = () => {
       <Table
         columns={columns}
         dataSource={queryData?.filter((item) =>
-          item?.name?.toLowerCase().includes(search?.toLowerCase())
+          item?.name?.toLowerCase().includes(search?.toLowerCase()),
         )}
         // title={() => "Header"}
         sticky

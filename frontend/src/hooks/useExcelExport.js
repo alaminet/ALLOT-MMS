@@ -60,14 +60,14 @@ const useExcelExport = (data, options = {}) => {
       };
 
       // Set column widths
-      headerKeys.forEach((key, index) => {
-        const column = worksheet.getColumn(index + 1);
+      headerKeys?.forEach((key, index) => {
+        const column = worksheet?.getColumn(index + 1);
         column.width = columnWidths[key] || 15; // Default width 15
       });
 
       // Add data rows
       data.forEach((item, rowIndex) => {
-        const rowData = headerKeys.map((key) => {
+        const rowData = headerKeys?.map((key) => {
           const value = item[key];
 
           // Handle different data types

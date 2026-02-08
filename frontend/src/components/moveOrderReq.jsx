@@ -41,6 +41,7 @@ const MoveOrderReq = () => {
 
   // Form submission
   const onFinish = async (values) => {
+    setLoading(true);
     const formData = {
       ...values,
       requestedBy: {
@@ -52,7 +53,7 @@ const MoveOrderReq = () => {
       createdBy: user?.id,
       // costCenter: user?.costCenter,
     };
-    setLoading(true);
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/transaction/move-order/new`,
@@ -339,6 +340,14 @@ const MoveOrderReq = () => {
                                       }
                                     }}
                                   />
+                                </Form.Item>
+                              </Col>
+                              <Col xs={0} sm={0}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "code"]}
+                                  hidden>
+                                  <Input disabled />
                                 </Form.Item>
                               </Col>
                               <Col xs={0} sm={4}>

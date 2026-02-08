@@ -41,7 +41,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           setQueryData(res?.data?.items);
@@ -76,7 +76,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       dataIndex: "code",
       key: "code",
       responsive: ["lg"],
-      render: (_, record) => <span>{_?.avgPrice?.toFixed(2)}</span>,
+      render: (_, record) => <span>{_?.avgPrice?.toFixed(2) || 0}</span>,
     },
     {
       title: "Req. Qty",
@@ -90,7 +90,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       render: (_, record) => {
         const itemPrice = record?.code?.avgPrice;
         const itemReq = record?.reqQty;
-        return <span>{Number(itemPrice * itemReq).toFixed(2)}</span>;
+        return <span>{Number(itemPrice * itemReq || 0).toFixed(2)}</span>;
       },
     },
     {
@@ -100,8 +100,8 @@ const MoveOrderDrawer = ({ title, MOid }) => {
       responsive: ["lg"],
       render: (_, record) => {
         const totalOnHand = _?.stock.reduce(
-          (sum, item) => sum + (item.onHandQty || 0),
-          0
+          (sum, item) => sum + (item?.onHandQty || 0),
+          0,
         );
         return <span>{totalOnHand}</span>;
       },
@@ -177,7 +177,7 @@ const MoveOrderDrawer = ({ title, MOid }) => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -271,12 +271,12 @@ const MoveOrderDrawer = ({ title, MOid }) => {
           summary={() => {
             const totalQty = queryData?.itemDetails?.reduce(
               (sum, item) => sum + (item?.reqQty || 0),
-              0
+              0,
             );
             const totalValue = queryData?.itemDetails?.reduce(
               (sum, item) =>
                 sum + (item?.code?.avgPrice || 0) * (item?.reqQty || 0),
-              0
+              0,
             );
             return (
               <>
