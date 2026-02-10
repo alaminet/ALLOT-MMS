@@ -72,7 +72,12 @@ const EditableCell = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[{ required: true, message: `${title} is required.` }]}
+        rules={[
+          {
+            required: dataIndex === "SKU" ? true : false,
+            message: `${title} is required.`,
+          },
+        ]}
       >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
@@ -156,7 +161,7 @@ const PurchaseOrderReviewForm = ({
     {
       title: "SKU",
       dataIndex: "SKU",
-      editable: true,
+      // editable: true,
       width: 150,
     },
     {
@@ -545,7 +550,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
             <Col span={8}>
               <Form.Item
                 name="requiredDoc"
-                label="Documents Requied For Billing"
+                label="Documents Required for Billing"
                 initialValue={webSettings?.terms?.POReqDoc}
               >
                 <Input.TextArea
@@ -567,10 +572,10 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item name="paymentMode" label="Supplier Payment Methode">
+              <Form.Item name="paymentMode" label="Supplier Payment Method">
                 <Input.TextArea
                   rows={5}
-                  placeholder="Payment methode details..."
+                  placeholder="Payment Method details..."
                 />
               </Form.Item>
             </Col>
