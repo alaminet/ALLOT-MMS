@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -29,6 +29,7 @@ import usePhoneNormalize from "../hooks/usePhoneNormalize";
 import TakePOSPayment from "./takePOSPayment";
 import moment from "moment";
 const { Title, Text } = Typography;
+import html2canvas from "html2canvas";
 
 // 128 Bar code
 function Barcode128({ value }) {
@@ -57,6 +58,9 @@ function handlePrint(invId, orgName, orgLoc) {
       body {
         margin: 0 !important;
       }
+        .no-print{
+        display: none !important;
+        }
       *{
        font-size: 10px !important;
        }
@@ -149,6 +153,7 @@ function handlePrint(invId, orgName, orgLoc) {
 }
 
 const PosSalesView = ({ data }) => {
+  const printRef = useRef();
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -171,6 +176,44 @@ const PosSalesView = ({ data }) => {
 
   const ownEdit = canDoOwn("POS", "edit");
   const othersEdit = canDoOther("POS", "edit");
+
+  // Print Action
+  // const handlePrint = async () => {
+  //   if (!printRef.current) return;
+
+  //   // Capture the Row content as canvas
+  //   const canvas = await html2canvas(printRef.current, {
+  //     scale: 2, // sharper image
+  //     useCORS: true,
+  //     backgroundColor: "#fff",
+  //   });
+
+  //   const imgData = canvas.toDataURL("image/png");
+
+  //   // Open a new tab
+  //   const printWindow = window.open("", "_blank", "width=80");
+
+  //   // Write HTML into the new tab
+  //   printWindow.document.write(`
+  //   <html>
+  //     <head>
+  //       <title>Print Labels</title>
+  //       <style>
+  //         @page {  margin: 10mm; }
+  //         body { text-align: center; }
+  //         img { max-width: 100%; height: auto; }
+  //       </style>
+  //     </head>
+  //     <body>
+  //       <img src="${imgData}" />
+  //     </body>
+  //   </html>
+  // `);
+
+  //   printWindow.document.close();
+  //   printWindow.focus();
+  //   printWindow.print();
+  // };
 
   // Modal Options
   const showModal = () => {
@@ -304,20 +347,26 @@ const PosSalesView = ({ data }) => {
         onCancel={handleCancel}
         footer={[
           <Button
+            className="no-print"
             disabled={data?.products?.length > 0 ? false : true}
             icon={<PrinterOutlined />}
             onClick={() =>
               handlePrint(data?.code, user?.orgName, user?.orgAddress)
-            }
-          >
+            }>
             Print
           </Button>,
-          <Button type="primary" icon={<DiffOutlined />} onClick={showPayModal}>
+          <Button
+            className="no-print"
+            type="primary"
+            icon={<DiffOutlined />}
+            onClick={showPayModal}>
             Take Pay
           </Button>,
-        ]}
-      >
-        <Card className="print-page-modal" style={{ padding: "0" }}>
+        ]}>
+        <Card
+          ref={printRef}
+          className="print-page-modal"
+          style={{ padding: "0" }}>
           <div style={{ textAlign: "center" }}></div>
           <List
             itemLayout="horizontal"
@@ -368,8 +417,7 @@ const PosSalesView = ({ data }) => {
                 layout="vertical"
                 onValuesChange={(changedValues, allValues) =>
                   handleChange(data?._id, "billing", allValues)
-                }
-              >
+                }>
                 <Form.Item name="number" style={{ marginBottom: "10px" }}>
                   <Input variant="filled" placeholder="Customer Mobile" />
                 </Form.Item>
@@ -427,8 +475,7 @@ const PosSalesView = ({ data }) => {
                             "payments.adjustment",
                             Number(value).toFixed(2),
                           ),
-                      }}
-                    >
+                      }}>
                       {Number(adjustment)?.toFixed(2)}
                     </Text>
                   </Flex>
@@ -471,21 +518,18 @@ const PosSalesView = ({ data }) => {
         open={isPayModalOpen}
         // onOk={handleOk}
         footer={false}
-        onCancel={handlePayCancel}
-      >
+        onCancel={handlePayCancel}>
         <div>
           <Form
             layout="vertical"
             form={formPay}
             name="formPay"
             onFinish={handlePaySubmit}
-            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}
-          >
+            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}>
             <Form.Item
               name="amount"
               label="Amount"
-              rules={[{ required: true, message: "Amount is required" }]}
-            >
+              rules={[{ required: true, message: "Amount is required" }]}>
               <InputNumber
                 placeholder="Amount"
                 min={0}

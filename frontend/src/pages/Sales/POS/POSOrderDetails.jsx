@@ -285,7 +285,7 @@ const POSOrderDetails = () => {
 
   return (
     <>
-      <div>
+      <div className="no-print">
         <Flex justify="space-between" style={{ margin: "10px 0" }}>
           <Form
             form={form}
@@ -303,7 +303,7 @@ const POSOrderDetails = () => {
             </Form.Item>
             <Form.Item name="startDate" initialValue={dayjs()}>
               <DatePicker
-                style={{ width: "130px" }}
+                style={{ minWidth: "130px" }}
                 placeholder="Start Date"
                 disabledDate={(current) => {
                   const endDate = form.getFieldValue("endDate");
@@ -318,7 +318,7 @@ const POSOrderDetails = () => {
             </Form.Item>
             <Form.Item name="endDate" initialValue={dayjs()}>
               <DatePicker
-                style={{ width: "130px" }}
+                style={{ minWidth: "130px" }}
                 placeholder="End Date"
                 disabledDate={(current) => {
                   const startDate = form.getFieldValue("startDate");
@@ -359,7 +359,7 @@ const POSOrderDetails = () => {
               <Select
                 showSearch
                 allowClear
-                style={{ minWidth: "300px" }}
+                style={{ minWidth: "280px" }}
                 placeholder="SKU"
                 optionFilterProp="label"
                 options={itemList}
