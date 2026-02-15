@@ -28,11 +28,38 @@ async function viewAllPOSCTR(req, res) {
       }
     }
 
-    if (data?.payStatus === "due") {
-      query["payments.duePay"] = { $gt: 0 };
-    }
-    if (data?.payStatus === "paid") {
-      query["payments.duePay"] = { $eq: 0 };
+    // payment status filtering: need to compare sum(payments.payment.amount) vs payments.totalBill
+    let aggregateMatchIds = null;
+    if (data?.payStatus === "due" || data?.payStatus === "paid") {
+      // build match stage from current query
+      const matchStage = { $match: query };
+
+      // compute paidAmount and dueAmount
+      const addFieldsStage = {
+        $addFields: {
+          paidAmount: { $sum: "$payments.payment.amount" },
+        },
+      };
+      const addDueStage = {
+        $addFields: {
+          dueAmount: { $subtract: ["$payments.totalBill", "$paidAmount"] },
+        },
+      };
+
+      // select documents depending on payStatus
+      const dueMatch = { $match: { dueAmount: { $gt: 0 } } };
+      const paidMatch = { $match: { dueAmount: { $lte: 0 } } };
+
+      const pipeline = [matchStage, addFieldsStage, addDueStage];
+      pipeline.push(data?.payStatus === "due" ? dueMatch : paidMatch);
+      const aggRes = await SalesPOS.aggregate(pipeline).project({ _id: 1 });
+      aggregateMatchIds = aggRes.map((d) => d._id);
+      // if no ids matched, respond with 404 early
+      if (!aggregateMatchIds || aggregateMatchIds.length === 0) {
+        return res.status(404).send({ error: "No data found" });
+      }
+      // restrict subsequent find to these ids
+      query["_id"] = { $in: aggregateMatchIds };
     }
     if (data?.SKU) {
       query["products.SKU"] = data?.SKU;
@@ -43,6 +70,7 @@ async function viewAllPOSCTR(req, res) {
     if (data?.code) {
       query["code"] = data?.code;
     }
+
     const items = await SalesPOS.find(query)
       .sort({ createdAt: -1 })
       .populate({

@@ -72,6 +72,8 @@ import QRCodeLabelPrint from "./pages/LabelPrint/qrCodeLabelPrint.jsx";
 import NewB2BInvoice from "./pages/Sales/B2B/newB2BInvoice.jsx";
 import ListB2BInvoice from "./pages/Sales/B2B/listB2BInvoice.jsx";
 import CustomerB2BInvoic from "./pages/Sales/B2B/customerB2BInvoic.jsx";
+import POSOrderDetails from "./pages/Sales/POS/POSOrderDetails.jsx";
+import POSOrderCart from "./pages/Sales/POS/POSOrderCart.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -162,7 +164,8 @@ function App() {
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="POS" element={<POS />}>
-                <Route path="" element={<PurchaseReportView />} />
+                <Route path="new" element={<POSOrderCart />} />
+                <Route path="orders" element={<POSOrderDetails />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
             </Route>
