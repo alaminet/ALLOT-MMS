@@ -27,6 +27,8 @@ import {
 import { Link } from "react-router-dom";
 import PosSalesView from "../../../components/posSalesView";
 import useExcelExport from "../../../hooks/useExcelExport";
+import { usePermission } from "../../../hooks/usePermission";
+import NotAuth from "../../notAuth";
 const { Title, Text } = Typography;
 
 const POSOrderDetails = () => {
@@ -36,6 +38,14 @@ const POSOrderDetails = () => {
   const [formFind, setFormFind] = useState();
   const [itemList, setItemList] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // User Permission Check
+  const { canViewPage, canDoOther, canDoOwn } = usePermission();
+  if (!canViewPage("POS")) {
+    return <NotAuth />;
+  }
+  const ownView = canDoOwn("POS", "view");
+  const othersView = canDoOther("POS", "view");
 
   // Table Column
   const columns = [
@@ -167,6 +177,19 @@ const POSOrderDetails = () => {
   // Table data get form
   const onFinish = async (values) => {
     setLoading(true);
+    const scope =
+      ownView && othersView
+        ? "all"
+        : ownView
+          ? "own"
+          : othersView
+            ? "others"
+            : null;
+    if (!scope) {
+      setLoading(false);
+      message.warning("You are not authorized");
+      return; // stop execution
+    }
     setQueryData([]);
     const findData = {};
     findData.startDate = moment(
@@ -263,17 +286,6 @@ const POSOrderDetails = () => {
   return (
     <>
       <div>
-        <Flex justify="end">
-          <Button
-            disabled={queryData?.length > 0 ? false : true}
-            type="primary"
-            className="borderBrand"
-            style={{ borderRadius: "0px" }}
-            onClick={handleExportExcel}>
-            <FileExcelOutlined />
-            Excel
-          </Button>
-        </Flex>
         <Flex justify="space-between" style={{ margin: "10px 0" }}>
           <Form
             form={form}
@@ -360,27 +372,42 @@ const POSOrderDetails = () => {
             </Form.Item>
           </Form>
         </Flex>
-        <Table
-          bordered
-          columns={columns}
-          dataSource={queryData}
-          // title={() => "Header"}
-          sticky
-          pagination={{
-            showSizeChanger: true,
-            pageSizeOptions: [
-              "10",
-              "20",
-              "50",
-              queryData?.length?.toString() || "100",
-            ],
-            // showTotal: (total) => `Total ${total} items`,
-            defaultPageSize: 10,
-          }}
-          scroll={{
-            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
-          }}
-        />
+        {queryData.length > 0 ? (
+          <>
+            <Flex justify="end" style={{ marginBottom: "10px" }}>
+              <Button
+                disabled={queryData?.length > 0 ? false : true}
+                type="primary"
+                className="borderBrand"
+                style={{ borderRadius: "0px" }}
+                onClick={handleExportExcel}>
+                <FileExcelOutlined />
+                Excel
+              </Button>
+            </Flex>
+            <Table
+              bordered
+              columns={columns}
+              dataSource={queryData}
+              // title={() => "Header"}
+              sticky
+              pagination={{
+                showSizeChanger: true,
+                pageSizeOptions: [
+                  "10",
+                  "20",
+                  "50",
+                  queryData?.length?.toString() || "100",
+                ],
+                // showTotal: (total) => `Total ${total} items`,
+                defaultPageSize: 10,
+              }}
+              scroll={{
+                x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+              }}
+            />
+          </>
+        ) : null}
       </div>
     </>
   );
