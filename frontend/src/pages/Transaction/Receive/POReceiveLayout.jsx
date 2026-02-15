@@ -51,7 +51,7 @@ const POReceiveLayout = () => {
         (code) => ({
           text: code,
           value: code,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.SKU === value,
       filterSearch: true,
@@ -87,7 +87,7 @@ const POReceiveLayout = () => {
   const onSelectChange = (newSelectedRowKeys, modifiedRows) => {
     setSelectedRowKeys(newSelectedRowKeys);
     const selectedRows = queryData?.filter((row) =>
-      newSelectedRowKeys.includes(row.key)
+      newSelectedRowKeys.includes(row.key),
     );
     setSelectedRowData(selectedRows);
 
@@ -125,7 +125,7 @@ const POReceiveLayout = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // message.success(res?.data?.message);
@@ -158,17 +158,15 @@ const POReceiveLayout = () => {
                   PRLineId: list?.PRLineId,
                   PRRef: list?.PRRef,
                   createdAt: moment(item?.createdAt).format(
-                    "MMM DD, YYYY h:mm A"
+                    "MMM DD, YYYY h:mm A",
                   ),
                   updatedAt: moment(item?.updatedAt).format(
-                    "MMM DD, YYYY h:mm A"
+                    "MMM DD, YYYY h:mm A",
                   ),
                   POId: item?._id,
-                }
-            )
+                },
+            ),
           );
-          console.log(tableArr);
-
           setQueryData(tableArr);
         });
     } catch (error) {
@@ -209,7 +207,7 @@ const POReceiveLayout = () => {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item.name?.toLowerCase().includes(search?.toLowerCase())
+              item.name?.toLowerCase().includes(search?.toLowerCase()),
             )}
             // title={() => "Header"}
             sticky

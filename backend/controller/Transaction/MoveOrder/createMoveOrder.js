@@ -3,6 +3,7 @@ const TrnxMoveOrder = require("../../../model/transaction/trnxMoveOrder");
 async function createMoveOrder(req, res, next) {
   const data = req.body;
 
+
   try {
     if (!data.itemDetails || data.itemDetails.length == 0) {
       return res.status(400).send({ error: "Item is required" });

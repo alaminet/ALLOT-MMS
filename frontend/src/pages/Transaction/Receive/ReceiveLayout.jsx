@@ -36,13 +36,13 @@ const ReceiveLayout = () => {
 
   // Form submission
   const onFinish = async (values) => {
+    setLoading(true);
     const formData = {
       ...values,
       documentAt: values.documentAt.$d,
       receivedAt: values.receivedAt.$d,
       createdBy: user?.id,
     };
-    setLoading(true);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/transaction/receive/new`,
@@ -411,7 +411,15 @@ const ReceiveLayout = () => {
                             </Col>
                             <Col span={3}>
                               <Form.Item {...restField} name={[name, "SKU"]}>
-                                <Input disabled placeholder="SKU/Code" />
+                                <Input disabled placeholder="SKU" />
+                              </Form.Item>
+                            </Col>
+                            <Col span={0}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "code"]}
+                                hidden>
+                                <Input disabled placeholder="code" />
                               </Form.Item>
                             </Col>
                             <Col span={2}>

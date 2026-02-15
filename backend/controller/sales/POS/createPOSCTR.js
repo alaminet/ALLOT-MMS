@@ -24,8 +24,9 @@ async function createPOSCTR(req, res, next) {
       createdAt: { $gte: startOfMonth, $lte: endOfNow },
     });
     if (itemExistCount + 1 > orgPackage?.limit?.POS) {
-      return res.status(400).send({ error: "Package limit exceeded" });
+      return res.status(403).send({ error: "Package limit exceeded" });
     }
+
     if (!data.products) {
       return res.status(400).send({ error: "Products is required" });
     } else {
