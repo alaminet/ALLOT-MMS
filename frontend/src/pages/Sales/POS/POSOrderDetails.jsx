@@ -43,6 +43,27 @@ const POSOrderDetails = () => {
   const [itemList, setItemList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const paymentDone =
+    queryData?.reduce(
+      (s, item) =>
+        s +
+        (item?.payments?.payment?.reduce(
+          (sum, p) => sum + (p?.amount || 0),
+          0,
+        ) || 0),
+      0,
+    ) || 0;
+  const totalBill =
+    queryData?.reduce(
+      (s, item) =>
+        s +
+        (item?.payments?.totalBill +
+          item?.payments?.vat -
+          item?.payments?.discount -
+          item?.payments?.adjustment || 0),
+      0,
+    ) || 0;
+
   // User Permission Check
   const { canViewPage, canDoOther, canDoOwn } = usePermission();
   if (!canViewPage("POS")) {
@@ -624,7 +645,17 @@ const POSOrderDetails = () => {
         </Flex>
         {queryData.length > 0 ? (
           <>
-            <Flex justify="end" style={{ marginBottom: "10px" }}>
+            <Flex justify="end" gap={6} style={{ marginBottom: "10px" }}>
+              <Button
+                disabled={queryData?.length > 0 ? false : true}
+                type="dashed"
+                className="borderBrand"
+                style={{ borderRadius: "0px" }}>
+                Total: {totalBill.toFixed(2)}; Paid: {paymentDone.toFixed(2)};
+                <span style={{ color: "#db0000" }}>
+                  Due: {(totalBill - paymentDone).toFixed(2)}
+                </span>
+              </Button>
               <Button
                 disabled={queryData?.length > 0 ? false : true}
                 type="primary"
@@ -635,9 +666,10 @@ const POSOrderDetails = () => {
                 Excel
               </Button>
               <Button
-                disabled={queryData?.length > 0 ? false : true}
+                disabled={selectedRows.length === 0 ? true : false}
+                className="borderBrand"
                 type="default"
-                style={{ marginLeft: 8 }}
+                style={{ borderRadius: "0px" }}
                 onClick={() => handlePrintSelected()}>
                 Print
               </Button>
