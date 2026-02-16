@@ -14,7 +14,7 @@ import {
   Input,
   message,
   Select,
-  Space,
+  Grid,
   Typography,
   Table,
 } from "antd";
@@ -32,9 +32,11 @@ import NotAuth from "../../notAuth";
 import Barcode from "react-barcode";
 import ReactDOM from "react-dom/client";
 const { Title, Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const POSOrderDetails = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const screens = useBreakpoint();
   const [form] = Form.useForm();
   const [queryData, setQueryData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -561,20 +563,29 @@ const POSOrderDetails = () => {
           <Form
             form={form}
             name="find"
-            layout="inline"
+            layout={screens.xs ? "inline" : "inline"}
             onFinish={onFinish}
             onValuesChange={(changedValues, allValues) =>
               setFormFind(allValues)
             }>
-            <Form.Item name="number">
-              <Input placeholder="Phone No." />
+            <Form.Item
+              name="number"
+              style={{ width: screens.xs ? "100%" : "auto" }}>
+              <Input
+                placeholder="Phone No."
+                style={{ width: screens.xs ? "100%" : "auto" }}
+              />
             </Form.Item>
-            <Form.Item name="code">
-              <Input placeholder="Order No." />
+            <Form.Item
+              name="code"
+              style={{ width: screens.xs ? "100%" : "auto" }}>
+              <Input
+                placeholder="Order No."
+                style={{ width: screens.xs ? "100%" : "auto" }}
+              />
             </Form.Item>
             <Form.Item name="startDate" initialValue={dayjs()}>
               <DatePicker
-                style={{ minWidth: "130px" }}
                 placeholder="Start Date"
                 disabledDate={(current) => {
                   const endDate = form.getFieldValue("endDate");
@@ -589,7 +600,6 @@ const POSOrderDetails = () => {
             </Form.Item>
             <Form.Item name="endDate" initialValue={dayjs()}>
               <DatePicker
-                style={{ minWidth: "130px" }}
                 placeholder="End Date"
                 disabledDate={(current) => {
                   const startDate = form.getFieldValue("startDate");
@@ -605,10 +615,11 @@ const POSOrderDetails = () => {
             <Form.Item
               name="payStatus"
               initialValue="All"
-              rules={[{ required: true }]}>
+              rules={[{ required: true }]}
+              style={{ width: screens.xs ? "100%" : "auto" }}>
               <Select
                 showSearch
-                style={{ minWidth: "100px" }}
+                style={{ width: screens.xs ? "100%" : "100px" }}
                 placeholder="Transaction Type"
                 options={[
                   {
@@ -626,11 +637,13 @@ const POSOrderDetails = () => {
                 ]}
               />
             </Form.Item>
-            <Form.Item name="SKU">
+            <Form.Item
+              name="SKU"
+              style={{ width: screens.xs ? "100%" : "auto" }}>
               <Select
                 showSearch
                 allowClear
-                style={{ minWidth: "260px" }}
+                style={{ width: screens.xs ? "100%" : "250px" }}
                 placeholder="SKU"
                 optionFilterProp="label"
                 options={itemList}
@@ -645,7 +658,10 @@ const POSOrderDetails = () => {
         </Flex>
         {queryData.length > 0 ? (
           <>
-            <Flex justify="end" gap={6} style={{ marginBottom: "10px" }}>
+            <Flex
+              justify="end"
+              gap={6}
+              style={{ marginBottom: "10px", flexWrap: "wrap" }}>
               <Button
                 disabled={queryData?.length > 0 ? false : true}
                 type="dashed"
