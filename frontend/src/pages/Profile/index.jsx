@@ -41,7 +41,7 @@ const Profile = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -59,7 +59,7 @@ const Profile = () => {
   return (
     <>
       <Row justify="center" align="middle">
-        <Col span={8}>
+        <Col md={8} xs={24}>
           <Form
             form={form}
             name="form"

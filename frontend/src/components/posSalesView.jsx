@@ -368,45 +368,52 @@ const PosSalesView = ({ data }) => {
           className="print-page-modal"
           style={{ padding: "0" }}>
           <div style={{ textAlign: "center" }}></div>
-          <List
-            itemLayout="horizontal"
-            dataSource={cartData}
-            renderItem={(item, index) => (
-              <List.Item key={index}>
-                <Flex style={{ flexFlow: "column", width: "auto" }}>
-                  <Text strong>{`${item?.name}`}</Text>
-                  <Text style={{ color: "#00000073" }}>
-                    {`SKU: ${item?.SKU} | Cart: ${item?.quantity} ${item?.UOM}`}
-                  </Text>
-                </Flex>
-                <Flex justify="end" style={{ minWidth: "100px" }}>
-                  <Flex style={{ flexDirection: "column" }}>
+          {cartData?.map((item, i) => (
+            <Flex
+              key={i}
+              justify="space-between"
+              style={{
+                paddingBottom: "10px",
+                borderBottom: "1px solid #0505050f",
+              }}>
+              <Flex style={{ flexFlow: "column", width: "auto" }}>
+                <Text strong>{`${item.name}`}</Text>
+                <Text style={{ color: "#00000073" }}>
+                  {`SKU: ${item.SKU} | Cart: ${item.quantity} ${item.UOM}`}
+                </Text>
+              </Flex>
+              <Flex justify="end" style={{ minWidth: "100px" }}>
+                <Flex style={{ flexDirection: "column" }}>
+                  <div style={{ textAlign: "right", paddingRight: "8px" }}>
+                    <strike
+                      style={{
+                        fontSize: "10px",
+                        marginRight: "8px",
+                        display: "block",
+                      }}>
+                      {item.salePrice * item.quantity !==
+                        getDiscountedPrice(item) &&
+                        `${item.salePrice * item.quantity} BDT`}
+                    </strike>
+                    <Text strong>
+                      {getDiscountedPrice(item).toFixed(0)} BDT
+                    </Text>
+                  </div>
+                  {item?.VAT > 0 && (
                     <div style={{ textAlign: "right", paddingRight: "8px" }}>
-                      <strike style={{ fontSize: "10px", marginRight: "8px" }}>
-                        {item?.salePrice * item?.quantity !==
-                          getDiscountedPrice(item) &&
-                          `${item?.salePrice * item?.quantity} BDT`}
-                      </strike>
-                      <Text strong>
-                        {getDiscountedPrice(item)?.toFixed(0)} BDT
+                      <Text style={{ fontSize: "10px", color: "#00000073" }}>
+                        VAT:{" "}
+                        {Number(
+                          getDiscountedPrice(item) * (item?.VAT / 100),
+                        ).toFixed(2)}{" "}
+                        BDT
                       </Text>
                     </div>
-                    {item?.VAT > 0 && (
-                      <div style={{ textAlign: "right", paddingRight: "8px" }}>
-                        <Text style={{ fontSize: "10px", color: "#00000073" }}>
-                          VAT:{" "}
-                          {Number(
-                            getDiscountedPrice(item) * (item?.VAT / 100),
-                          )?.toFixed(2)}{" "}
-                          BDT
-                        </Text>
-                      </div>
-                    )}
-                  </Flex>
+                  )}
                 </Flex>
-              </List.Item>
-            )}
-          />
+              </Flex>
+            </Flex>
+          ))}
           <Flex gap={8} justify="space-between">
             <div>
               <Divider>Billing Details</Divider>
