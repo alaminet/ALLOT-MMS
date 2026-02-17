@@ -73,8 +73,18 @@ const EditableCell = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[{ required: true, message: `${title} is required.` }]}>
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        rules={[
+          {
+            required: dataIndex === "SKU" ? true : false,
+            message: `${title} is required.`,
+          },
+        ]}>
+        <Input
+          ref={inputRef}
+          onPressEnter={save}
+          onBlur={save}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
     ) : (
       <div
@@ -110,7 +120,7 @@ const PurchaseOrderUpdate = ({ drawerOpen, setDrawerOpen, data }) => {
                 Authorization: import.meta.env.VITE_SECURE_API_KEY,
                 token: user.token,
               },
-            }
+            },
           );
           if (response.data) {
             setDataSource(response.data?.items);
@@ -170,38 +180,38 @@ const PurchaseOrderUpdate = ({ drawerOpen, setDrawerOpen, data }) => {
     {
       title: "SKU",
       dataIndex: "SKU",
-      editable: true,
+      // editable: true,
       width: 150,
     },
     {
       title: "name",
       dataIndex: "name",
-      width: "25%",
+      width: 400,
     },
     {
       title: "Specification",
       dataIndex: "spec",
       editable: true,
-      width: "20%",
+      width: 400,
     },
     {
       title: "PO Qty",
       dataIndex: "POQty",
       //   editable: true,
-      width: 100,
+      width: 200,
     },
 
     {
       title: "PO Price",
       dataIndex: "POPrice",
       editable: true,
-      width: 100,
+      width: 200,
     },
     {
       title: "% of VAT",
       dataIndex: "reqPOVAT",
       editable: true,
-      width: 100,
+      width: 150,
       render: (text) => (
         <Input style={{ padding: 0 }} variant="borderless" value={text} />
       ),
@@ -210,6 +220,7 @@ const PurchaseOrderUpdate = ({ drawerOpen, setDrawerOpen, data }) => {
       title: "PO Remarks",
       dataIndex: "remarks",
       editable: true,
+      width: 300,
       render: (text) => (
         <Input style={{ padding: 0 }} variant="borderless" value={text} />
       ),
@@ -299,7 +310,7 @@ const PurchaseOrderUpdate = ({ drawerOpen, setDrawerOpen, data }) => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user?.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -382,7 +393,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
     <>
       <Drawer
         title="Update Purchase Order(PO)"
-       size="100%"
+        size="100%"
         onClose={onClose}
         open={drawerOpen}
         styles={{
@@ -392,11 +403,16 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
         }}
         extra={
           <Space>
-            <Button onClick={onClose} style={{ borderRadius: "0px", padding: "10px 30px" }}>Cancel</Button>
+            <Button
+              onClick={onClose}
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              Cancel
+            </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
-              type="primary" style={{ borderRadius: "0px", padding: "10px 30px" }}>
+              type="primary"
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Submit
             </Button>
           </Space>
@@ -410,13 +426,17 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 bordered
                 dataSource={dataSource?.itemDetails}
                 columns={columns}
+                pagination={false}
+                scroll={{
+                  x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+                }}
               />
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={8}>
+          <Row gutter={16} style={{ marginTop: "20px" }}>
+            <Col md={8} xs={24}>
               <Row gutter={[16, 16]}>
-                <Col span={18}>
+                <Col md={18} xs={16}>
                   <Form.Item
                     name="supplier"
                     label="Supplier"
@@ -431,7 +451,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                     />
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col md={6} xs={8}>
                   <Form.Item name="type" label="PO Type" style={{ margin: 0 }}>
                     <Select
                       showSearch
@@ -447,7 +467,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 </Col>
                 {selectSupplier && (
                   <>
-                    <Col span={20}>
+                    <Col md={20} xs={24}>
                       <div>
                         <Title style={{ margin: "10px 0 0 0" }} level={5}>
                           Supplier Details
@@ -470,7 +490,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 )}
               </Row>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="status" label="PO Status">
                 <Select
                   style={{ width: "100%" }}
@@ -490,7 +510,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="delveryTerms"
                 label="Delivery Terms"
@@ -503,7 +523,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
             </Col>
           </Row>
           <Row gutter={[16, 16]}>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="deliveryLocation"
                 label="Delivery Location"
@@ -514,7 +534,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="billingLocation"
                 label="Bill Submission"
@@ -525,7 +545,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="requiredDoc"
                 label="Documents Requied For Billing"
@@ -536,7 +556,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="paymentTerms"
                 label="Payment Terms"
@@ -547,7 +567,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="paymentMode" label="Payment Methode">
                 <Input.TextArea
                   rows={5}
@@ -555,7 +575,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="POCurrency" label="PO Currency">
                 <Input placeholder="BDT/USD/..." />
               </Form.Item>
