@@ -71,31 +71,27 @@ const PurchaseOrderReqTable = () => {
       title: "Req. Qty",
       dataIndex: "reqQty",
       key: "reqQty",
-      responsive: ["md"],
+      // responsive: ["md"],
     },
     {
       title: "PO Qty",
       dataIndex: "POQty",
       key: "POQty",
-      responsive: ["md"],
     },
     {
       title: "Received Qty",
       dataIndex: "recQty",
       key: "recQty",
-      responsive: ["md"],
     },
     {
       title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
-      responsive: ["md"],
     },
     {
       title: "Req. Dept.",
       dataIndex: "reqDpt",
       key: "reqDpt",
-      responsive: ["md"],
     },
   ];
 
@@ -103,7 +99,7 @@ const PurchaseOrderReqTable = () => {
   const onSelectChange = (newSelectedRowKeys, modifiedRows) => {
     setSelectedRowKeys(newSelectedRowKeys);
     const selectedRows = queryData?.filter((row) =>
-      newSelectedRowKeys.includes(row.key)
+      newSelectedRowKeys.includes(row.key),
     );
     setSelectedRowData(selectedRows);
 
@@ -142,7 +138,7 @@ const PurchaseOrderReqTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // message.success(res?.data?.message);
@@ -168,14 +164,14 @@ const PurchaseOrderReqTable = () => {
                   reqDpt: item?.costCenter?.name,
                   status: item?.status,
                   createdAt: moment(item?.createdAt).format(
-                    "MMM DD, YYYY h:mm A"
+                    "MMM DD, YYYY h:mm A",
                   ),
                   updatedAt: moment(item?.updatedAt).format(
-                    "MMM DD, YYYY h:mm A"
+                    "MMM DD, YYYY h:mm A",
                   ),
                   PRId: item?._id,
-                }
-            )
+                },
+            ),
           );
           setQueryData(tableArr);
         });
@@ -217,7 +213,7 @@ const PurchaseOrderReqTable = () => {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item.name?.toLowerCase().includes(search?.toLowerCase())
+              item.name?.toLowerCase().includes(search?.toLowerCase()),
             )}
             // title={() => "Header"}
             sticky

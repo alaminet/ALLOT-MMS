@@ -105,37 +105,32 @@ const PurchaseOrderViewTable = () => {
       title: "PO Price",
       dataIndex: "POPrice",
       key: "POPrice",
-      responsive: ["md"],
+      // responsive: ["md"],
     },
     {
       title: "PO Qty",
       dataIndex: "POQty",
       key: "POQty",
-      responsive: ["md"],
     },
     {
       title: "PO Value",
       dataIndex: "POValue",
       key: "POValue",
-      responsive: ["md"],
     },
     {
       title: "GRN Qty",
       dataIndex: "GRNQty",
       key: "GRNQty",
-      responsive: ["md"],
     },
     {
       title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
-      responsive: ["md"],
     },
     {
       title: "Supplier",
       dataIndex: "Supplier",
       key: "Supplier",
-      responsive: ["md"],
     },
     {
       title: "Action",
@@ -264,10 +259,10 @@ const PurchaseOrderViewTable = () => {
       ownView && othersView
         ? "all"
         : ownView
-        ? "own"
-        : othersView
-        ? "others"
-        : null;
+          ? "own"
+          : othersView
+            ? "others"
+            : null;
     if (!scope) {
       setQueryData([]);
       message.warning("You are not authorized");
@@ -285,7 +280,7 @@ const PurchaseOrderViewTable = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           message.success(res.data.message);
@@ -310,7 +305,7 @@ const PurchaseOrderViewTable = () => {
               access: item,
               action: item?._id,
               GRNAvl: item?.itemDetails.some((itm) => itm.GRNQty > 0),
-            }))
+            })),
           );
           setQueryData(tableArr);
         });
@@ -336,7 +331,7 @@ const PurchaseOrderViewTable = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       getTableData();
@@ -380,7 +375,7 @@ const PurchaseOrderViewTable = () => {
           <Table
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item.name?.toLowerCase().includes(search?.toLowerCase())
+              item.name?.toLowerCase().includes(search?.toLowerCase()),
             )}
             // title={() => "Header"}
             sticky

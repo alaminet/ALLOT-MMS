@@ -77,16 +77,19 @@ const EditableCell = ({
             required: dataIndex === "SKU" ? true : false,
             message: `${title} is required.`,
           },
-        ]}
-      >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        ]}>
+        <Input
+          ref={inputRef}
+          onPressEnter={save}
+          onBlur={save}
+          style={{ width: "100%" }}
+        />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
         style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}
-      >
+        onClick={toggleEdit}>
         {children}
       </div>
     );
@@ -167,13 +170,13 @@ const PurchaseOrderReviewForm = ({
     {
       title: "name",
       dataIndex: "name",
-      width: "25%",
+      width: 400,
     },
     {
       title: "Specification",
       dataIndex: "spec",
       editable: true,
-      width: "20%",
+      width: 400,
     },
     {
       title: "Req.Qty",
@@ -189,19 +192,19 @@ const PurchaseOrderReviewForm = ({
       title: "PO Qty",
       dataIndex: "reqPOQty",
       editable: true,
-      width: 100,
+      width: 200,
     },
     {
       title: "PO Price",
       dataIndex: "reqPOPrice",
       editable: true,
-      width: 100,
+      width: 200,
     },
     {
       title: "% of VAT",
       dataIndex: "reqPOVAT",
       editable: true,
-      width: 150,
+      width: 200,
       render: (text) => (
         <Input
           style={{ padding: 0, width: "100%" }}
@@ -213,6 +216,7 @@ const PurchaseOrderReviewForm = ({
     {
       title: "PO Remarks",
       dataIndex: "PORemarks",
+      width: 300,
       editable: true,
       render: (text) => (
         <Input style={{ padding: 0 }} variant="borderless" value={text} />
@@ -227,8 +231,7 @@ const PurchaseOrderReviewForm = ({
         dataSource?.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
-            onConfirm={() => handleDelete(record.key)}
-          >
+            onConfirm={() => handleDelete(record.key)}>
             <DeleteTwoTone twoToneColor="#eb2f96" />
           </Popconfirm>
         ) : null,
@@ -412,21 +415,18 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
           <Space>
             <Button
               onClick={onClose}
-              style={{ borderRadius: "0px", padding: "10px 30px" }}
-            >
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Cancel
             </Button>
             <Button
               loading={loading}
               onClick={() => form.submit()}
               type="primary"
-              style={{ borderRadius: "0px", padding: "10px 30px" }}
-            >
+              style={{ borderRadius: "0px", padding: "10px 30px" }}>
               Submit
             </Button>
           </Space>
-        }
-      >
+        }>
         <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
           <Row>
             <Col span={24}>
@@ -436,18 +436,21 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 bordered
                 dataSource={dataSource}
                 columns={columns}
+                pagination={false}
+                scroll={{
+                  x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+                }}
               />
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={8}>
+          <Row gutter={16} style={{ marginTop: "20px" }}>
+            <Col md={8} xs={24}>
               <Row gutter={[16, 16]}>
-                <Col span={18}>
+                <Col md={18} xs={16}>
                   <Form.Item
                     name="supplier"
                     label="Supplier"
-                    style={{ margin: 0 }}
-                  >
+                    style={{ margin: 0 }}>
                     <Select
                       showSearch
                       allowClear
@@ -458,7 +461,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                     />
                   </Form.Item>
                 </Col>
-                <Col span={6}>
+                <Col md={6} xs={8}>
                   <Form.Item name="type" label="PO Type" style={{ margin: 0 }}>
                     <Select
                       showSearch
@@ -474,7 +477,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 </Col>
                 {selectSupplier && (
                   <>
-                    <Col span={20}>
+                    <Col md={20} xs={24}>
                       <div>
                         <Title style={{ margin: "10px 0 0 0" }} level={5}>
                           Supplier Details
@@ -497,7 +500,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 )}
               </Row>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="note" label="PO Note">
                 <Input.TextArea
                   rows={7}
@@ -507,12 +510,11 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
             </Col>
             {webSettings && (
               <>
-                <Col span={8}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     name="delveryTerms"
                     label="Delivery Terms"
-                    initialValue={webSettings?.terms?.deliveryTerms}
-                  >
+                    initialValue={webSettings?.terms?.deliveryTerms}>
                     <Input.TextArea
                       rows={7}
                       placeholder="Please enter Delivery Terms..."
@@ -523,55 +525,51 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
             )}
           </Row>
           <Row gutter={[16, 16]}>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="deliveryLocation"
                 label="Delivery Location"
-                initialValue={webSettings?.terms?.deliveryLocation}
-              >
+                initialValue={webSettings?.terms?.deliveryLocation}>
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="billingLocation"
                 label="Bill Submission"
-                initialValue={webSettings?.terms?.billSubmission}
-              >
+                initialValue={webSettings?.terms?.billSubmission}>
                 <Input.TextArea
                   rows={5}
                   placeholder="Please enter Delivery Location..."
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="requiredDoc"
                 label="Documents Required for Billing"
-                initialValue={webSettings?.terms?.POReqDoc}
-              >
+                initialValue={webSettings?.terms?.POReqDoc}>
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item
                 name="paymentTerms"
                 label="Payment Terms"
-                initialValue={webSettings?.terms?.paymentTerms}
-              >
+                initialValue={webSettings?.terms?.paymentTerms}>
                 <Input.TextArea
                   rows={5}
                   placeholder="List of required documents during bill submission..."
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="paymentMode" label="Supplier Payment Method">
                 <Input.TextArea
                   rows={5}
@@ -579,7 +577,7 @@ Swift Code: ${selectSupplier.paymentInfo.swift || ""}`,
                 />
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col md={8} xs={24}>
               <Form.Item name="POCurrency" label="PO Currency">
                 <Input placeholder="BDT/USD/..." />
               </Form.Item>
