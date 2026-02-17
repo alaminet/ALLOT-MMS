@@ -9,19 +9,21 @@ import {
   Input,
   message,
   Row,
-  Space,
+  Grid,
   AutoComplete,
   Select,
   Typography,
 } from "antd";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MinusCircleOutlined } from "@ant-design/icons";
+import { DeleteTwoTone, MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const PurchaseRequisitiionUpdate = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const screens = useBreakpoint();
   const { refData } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
@@ -45,7 +47,7 @@ const PurchaseRequisitiionUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -74,7 +76,7 @@ const PurchaseRequisitiionUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         label: item?.name,
@@ -85,7 +87,7 @@ const PurchaseRequisitiionUpdate = () => {
         price: item?.avgPrice,
         onHandQty: item?.stock?.reduce(
           (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-          0
+          0,
         ),
         spec: item?.discription,
       }));
@@ -109,7 +111,7 @@ const PurchaseRequisitiionUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => {
         item.data = item?.data?.map((i) => ({
@@ -199,7 +201,9 @@ const PurchaseRequisitiionUpdate = () => {
                   <Form.Item
                     label="Requester Details"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["requestedBy", "name"]}
                         noStyle
@@ -246,7 +250,7 @@ const PurchaseRequisitiionUpdate = () => {
                           allowClear
                           options={
                             itemInfo?.filter(
-                              (item) => item.modelName === "CostCenter"
+                              (item) => item.modelName === "CostCenter",
                             )[0]?.data
                           }
                           placeholder="Cost Center"
@@ -263,7 +267,9 @@ const PurchaseRequisitiionUpdate = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row justify="space-between">
+                        <Row
+                          justify="space-between"
+                          style={{ display: screens.xs ? "none" : "flex" }}>
                           <Col span={4} style={{ fontWeight: "600" }}>
                             Name<span style={{ color: "red" }}>*</span>
                           </Col>
@@ -301,24 +307,34 @@ const PurchaseRequisitiionUpdate = () => {
                           const isDisabled = itemData?.POQty > 0;
 
                           return (
-                            <Row key={key} justify="space-between" align="top">
-                              <Col span={4}>
+                            <Row
+                              key={key}
+                              justify="space-between"
+                              align="top"
+                              style={{
+                                borderBottom: screens.xs
+                                  ? "2px dotted black"
+                                  : "none",
+                                marginBottom: screens.xs ? "10px" : "0",
+                              }}>
+                              <Col md={4} xs={24}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Name" : null}
                                   name={[name, "name"]}
-                                  help={
-                                    form.getFieldValue([
-                                      "itemDetails",
-                                      name,
-                                      "SKU",
-                                    ])
-                                      ? `SKU: ${form.getFieldValue([
-                                          "itemDetails",
-                                          name,
-                                          "SKU",
-                                        ])}`
-                                      : ""
-                                  }
+                                  // help={
+                                  //   form.getFieldValue([
+                                  //     "itemDetails",
+                                  //     name,
+                                  //     "SKU",
+                                  //   ])
+                                  //     ? `SKU: ${form.getFieldValue([
+                                  //         "itemDetails",
+                                  //         name,
+                                  //         "SKU",
+                                  //       ])}`
+                                  //     : ""
+                                  // }
                                   rules={[
                                     {
                                       required: true,
@@ -333,7 +349,7 @@ const PurchaseRequisitiionUpdate = () => {
                                         .filter((item) =>
                                           item.label
                                             .toLowerCase()
-                                            .includes(searchText.toLowerCase())
+                                            .includes(searchText.toLowerCase()),
                                         )
                                         .map((item) => ({
                                           label: item.label + "-" + item.SKU,
@@ -343,63 +359,63 @@ const PurchaseRequisitiionUpdate = () => {
                                     }}
                                     onSelect={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.label === value
+                                        (i) => i.label === value,
                                       );
                                       if (matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          matched.UOM
+                                          matched.UOM,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          matched.value
+                                          matched.value,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          matched.SKU
+                                          matched.SKU,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "unitPrice"],
-                                          matched.price
+                                          matched.price,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "onHandQty"],
-                                          matched.onHandQty
+                                          matched.onHandQty,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "spec"],
-                                          matched.spec
+                                          matched.spec,
                                         );
                                       }
                                     }}
                                     onChange={(value) => {
                                       const matched = itemList.find(
-                                        (i) => i.label === value
+                                        (i) => i.label === value,
                                       );
                                       if (!matched) {
                                         form.setFieldValue(
                                           ["itemDetails", name, "UOM"],
-                                          null
+                                          null,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "SKU"],
-                                          null
+                                          null,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "code"],
-                                          null
+                                          null,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "unitPrice"],
-                                          null
+                                          null,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "onHandQty"],
-                                          null
+                                          null,
                                         );
                                         form.setFieldValue(
                                           ["itemDetails", name, "spec"],
-                                          null
+                                          null,
                                         );
                                       }
                                     }}
@@ -413,36 +429,44 @@ const PurchaseRequisitiionUpdate = () => {
                                   <Input placeholder="Code" />
                                 </Form.Item>
                               </Col>
-                              <Col span={3}>
-                                <Form.Item {...restField} name={[name, "SKU"]}>
+                              <Col md={3} xs={24}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "SKU"]}
+                                  label={screens.xs ? "SKU" : null}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="SKU/Code"
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={3}>
-                                <Form.Item {...restField} name={[name, "spec"]}>
+                              <Col md={3} xs={24}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "spec"]}
+                                  label={screens.xs ? "Specification" : null}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="Specification"
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={12}>
                                 <Form.Item
                                   {...restField}
-                                  name={[name, "brand"]}>
+                                  name={[name, "brand"]}
+                                  label={screens.xs ? "Brand" : null}>
                                   <Input
                                     disabled={isDisabled}
                                     placeholder="Brand"
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={12}>
                                 <Form.Item
                                   {...restField}
                                   name={[name, "UOM"]}
+                                  label={screens.xs ? "UOM" : null}
                                   rules={[
                                     {
                                       required: true,
@@ -455,9 +479,10 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={12}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Unit Price" : null}
                                   name={[name, "unitPrice"]}>
                                   <Input
                                     disabled={isDisabled}
@@ -465,9 +490,10 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={12}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "On Hand" : null}
                                   name={[name, "onHandQty"]}>
                                   <Input
                                     disabled={isDisabled}
@@ -475,9 +501,10 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={24}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Req. Qty" : null}
                                   name={[name, "reqQty"]}
                                   rules={[
                                     {
@@ -491,10 +518,10 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-
-                              <Col span={3}>
+                              <Col md={3} xs={20}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Remarks" : null}
                                   name={[name, "remarks"]}>
                                   <Input
                                     disabled={isDisabled}
@@ -502,16 +529,19 @@ const PurchaseRequisitiionUpdate = () => {
                                   />
                                 </Form.Item>
                               </Col>
-
                               <Col
-                                span={1}
+                                md={1}
+                                xs={4}
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
                                   height: "42px",
                                   justifyContent: "center",
+                                  marginTop: screens.xs ? "35px" : "0",
+                                  fontSize: "30px",
                                 }}>
-                                <MinusCircleOutlined
+                                <DeleteTwoTone
+                                  twoToneColor={"red"}
                                   style={{
                                     cursor: isDisabled
                                       ? "not-allowed"

@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Button, Flex, Input } from "antd";
+import { Button, Flex, Input, Grid } from "antd";
 import { useSelector } from "react-redux";
 import { FilterOutlined, InfoCircleTwoTone } from "@ant-design/icons";
 import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import BreadCrumbCustom from "../../../components/breadCrumbCustom";
 const { Search } = Input;
+const { useBreakpoint } = Grid;
 
 const PurchaseRequisition = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const location = useLocation();
+  const screens = useBreakpoint();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   // User Permission Check
@@ -27,7 +29,9 @@ const PurchaseRequisition = () => {
     <>
       {lastSegment !== "print" && (
         <>
-          <Flex justify="space-between">
+          <Flex
+            justify="space-between"
+            style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
             <BreadCrumbCustom />
 
             {lastSegment !== "new" && (

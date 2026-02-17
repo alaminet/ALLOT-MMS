@@ -17,6 +17,7 @@ import {
 import { useSelector } from "react-redux";
 import { DeleteTwoTone, MinusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import TextArea from "antd/es/input/TextArea";
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
@@ -325,19 +326,20 @@ const PurchaseRequisitiion = () => {
                                 {...restField}
                                 name={[name, "name"]}
                                 label={screens.xs ? "Name" : null}
-                                help={
-                                  form.getFieldValue([
-                                    "itemDetails",
-                                    name,
-                                    "SKU",
-                                  ])
-                                    ? `SKU: ${form.getFieldValue([
-                                        "itemDetails",
-                                        name,
-                                        "SKU",
-                                      ])}`
-                                    : ""
-                                }
+                                className="no-padding"
+                                // help={
+                                //   form.getFieldValue([
+                                //     "itemDetails",
+                                //     name,
+                                //     "SKU",
+                                //   ])
+                                //     ? `SKU: ${form.getFieldValue([
+                                //         "itemDetails",
+                                //         name,
+                                //         "SKU",
+                                //       ])}`
+                                //     : ""
+                                // }
                                 rules={[
                                   {
                                     required: true,
@@ -415,8 +417,9 @@ const PurchaseRequisitiion = () => {
                                       );
                                     }
                                   }}
-                                  placeholder="Item Name/SKU"
-                                />
+                                  placeholder="Item Name/SKU">
+                                  <TextArea rows={1} />
+                                </AutoComplete>
                               </Form.Item>
                               <Form.Item
                                 hidden
@@ -438,7 +441,10 @@ const PurchaseRequisitiion = () => {
                                 {...restField}
                                 name={[name, "spec"]}
                                 label={screens.xs ? "Specification" : null}>
-                                <Input placeholder="Specification" />
+                                <TextArea
+                                  rows={1}
+                                  placeholder="Specification"
+                                />
                               </Form.Item>
                             </Col>
                             <Col md={2} xs={12}>
@@ -508,8 +514,8 @@ const PurchaseRequisitiion = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 height: "42px",
-                                marginTop: screens.xs ? "35px" : "0",
                                 justifyContent: "center",
+                                marginTop: screens.xs ? "35px" : "0",
                                 fontSize: "30px",
                               }}>
                               <DeleteTwoTone
