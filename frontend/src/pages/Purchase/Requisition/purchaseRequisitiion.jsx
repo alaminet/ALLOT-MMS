@@ -7,7 +7,7 @@ import {
   Flex,
   Form,
   Input,
-  Space,
+  Grid,
   Row,
   Select,
   Typography,
@@ -15,13 +15,15 @@ import {
   message,
 } from "antd";
 import { useSelector } from "react-redux";
-import { MinusCircleOutlined } from "@ant-design/icons";
+import { DeleteTwoTone, MinusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const PurchaseRequisitiion = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const navigate = useNavigate();
+  const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredOptions, setFilteredOptions] = useState([]);
@@ -83,7 +85,7 @@ const PurchaseRequisitiion = () => {
         code: item?.code,
         SKU: item?.SKU,
         UOM: item?.UOM?.code,
-        price: item?.avgPrice,
+        price: item?.avgPrice.toFixed(2) || 0,
         onHandQty: item?.stock?.reduce(
           (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
           0,
@@ -139,7 +141,7 @@ const PurchaseRequisitiion = () => {
         <Form
           form={form}
           name="new"
-          layout="vertical"
+          layout={screens.xs ? "horizontal" : "vertical"}
           initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -197,7 +199,9 @@ const PurchaseRequisitiion = () => {
                   <Form.Item
                     label="Requester Details"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["requestedBy", "name"]}
                         initialValue={user.name}
@@ -273,6 +277,7 @@ const PurchaseRequisitiion = () => {
                             zIndex: 1000,
                             background: "#fff",
                             padding: "8px 0",
+                            display: screens.xs ? "none" : "flex",
                           }}>
                           <Col span={4} style={{ fontWeight: "600" }}>
                             Name <span style={{ color: "red" }}>*</span>
@@ -305,11 +310,21 @@ const PurchaseRequisitiion = () => {
                           <Col span={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
-                          <Row key={key} justify="space-between" align="top">
-                            <Col span={4}>
+                          <Row
+                            key={key}
+                            justify="space-between"
+                            align="top"
+                            style={{
+                              borderBottom: screens.xs
+                                ? "2px dotted black"
+                                : "none",
+                              marginBottom: screens.xs ? "10px" : "0",
+                            }}>
+                            <Col md={4} xs={24}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "name"]}
+                                label={screens.xs ? "Name" : null}
                                 help={
                                   form.getFieldValue([
                                     "itemDetails",
@@ -371,10 +386,6 @@ const PurchaseRequisitiion = () => {
                                         ["itemDetails", name, "onHandQty"],
                                         matched.onHandQty,
                                       );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "spec"],
-                                        matched.spec,
-                                      );
                                     }
                                   }}
                                   onChange={(value) => {
@@ -402,10 +413,6 @@ const PurchaseRequisitiion = () => {
                                         ["itemDetails", name, "onHandQty"],
                                         null,
                                       );
-                                      form.setFieldValue(
-                                        ["itemDetails", name, "spec"],
-                                        null,
-                                      );
                                     }
                                   }}
                                   placeholder="Item Name/SKU"
@@ -418,25 +425,35 @@ const PurchaseRequisitiion = () => {
                                 <Input placeholder="Code" />
                               </Form.Item>
                             </Col>
-                            <Col span={3}>
-                              <Form.Item {...restField} name={[name, "SKU"]}>
+                            <Col md={3} xs={24}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "SKU"]}
+                                label={screens.xs ? "SKU" : null}>
                                 <Input placeholder="SKU/Code" />
                               </Form.Item>
                             </Col>
-                            <Col span={3}>
-                              <Form.Item {...restField} name={[name, "spec"]}>
+                            <Col md={3} xs={24}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "spec"]}
+                                label={screens.xs ? "Specification" : null}>
                                 <Input placeholder="Specification" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
-                              <Form.Item {...restField} name={[name, "brand"]}>
+                            <Col md={2} xs={12}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "brand"]}
+                                label={screens.xs ? "Brand" : null}>
                                 <Input placeholder="Brand" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={12}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "UOM"]}
+                                label={screens.xs ? "UOM" : null}
                                 rules={[
                                   {
                                     required: true,
@@ -446,24 +463,27 @@ const PurchaseRequisitiion = () => {
                                 <Input placeholder="UOM" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={12}>
                               <Form.Item
                                 {...restField}
-                                name={[name, "unitPrice"]}>
+                                name={[name, "unitPrice"]}
+                                label={screens.xs ? "Price" : null}>
                                 <Input placeholder="Price" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={12}>
                               <Form.Item
                                 {...restField}
-                                name={[name, "onHandQty"]}>
+                                name={[name, "onHandQty"]}
+                                label={screens.xs ? "On Hand" : null}>
                                 <Input placeholder="On Hand" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={24}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "reqQty"]}
+                                label={screens.xs ? "Req. Qty" : null}
                                 rules={[
                                   {
                                     required: true,
@@ -473,24 +493,27 @@ const PurchaseRequisitiion = () => {
                                 <Input placeholder="Req. Qty" />
                               </Form.Item>
                             </Col>
-
-                            <Col span={3}>
+                            <Col md={3} xs={20}>
                               <Form.Item
                                 {...restField}
-                                name={[name, "remarks"]}>
+                                name={[name, "remarks"]}
+                                label={screens.xs ? "Remarks" : null}>
                                 <Input placeholder="Remarks" />
                               </Form.Item>
                             </Col>
-
                             <Col
-                              span={1}
+                              md={1}
+                              xs={4}
                               style={{
                                 display: "flex",
                                 alignItems: "center",
                                 height: "42px",
+                                marginTop: screens.xs ? "35px" : "0",
                                 justifyContent: "center",
+                                fontSize: "30px",
                               }}>
-                              <MinusCircleOutlined
+                              <DeleteTwoTone
+                                twoToneColor={"red"}
                                 onClick={() => remove(name)}
                               />
                             </Col>
