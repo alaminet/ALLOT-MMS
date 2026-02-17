@@ -3,7 +3,7 @@ function computeAvgPrice(
   location,
   newQty,
   newPrice,
-  existingAvgPrice = 0
+  existingAvgPrice = 0,
 ) {
   const existingPrice = Number(existingAvgPrice || 0);
   const parsedNewQty = Number(newQty || 0);
@@ -12,7 +12,7 @@ function computeAvgPrice(
   // Sum all on-hand quantity across locations BEFORE the update
   const totalOnHandBefore = (stock || []).reduce(
     (sum, s) => sum + Number(s.onHandQty || 0),
-    0
+    0,
   );
 
   // Compute values according to weighted-average logic
@@ -44,10 +44,10 @@ function computeAvgPrice(
 
   let avgPrice;
   if (remainingQty > 0) {
-    avgPrice = remainingValue / remainingQty;
+    avgPrice = Number((remainingValue / remainingQty).toFixed(2));
   } else {
     // No stock left — set avgPrice to last known issue price
-    avgPrice = parsedNewPrice;
+    avgPrice = Number(parsedNewPrice.toFixed(2));
   }
 
   return { avgPrice, updatedStock: stock };

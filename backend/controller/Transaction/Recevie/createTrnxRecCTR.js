@@ -17,7 +17,7 @@ async function createTrnxRecCTR(req, res, next) {
       23,
       59,
       59,
-      999
+      999,
     );
     const itemExistCount = await TrnxReceive.countDocuments({
       orgId: orgId,
@@ -162,7 +162,7 @@ async function createTrnxRecCTR(req, res, next) {
 
           // Find existing stock entry by location
           const index = item.stock.findIndex(
-            (s) => s.location === element.location
+            (s) => s.location === element.location,
           );
 
           let existingQty = 0;
@@ -194,9 +194,11 @@ async function createTrnxRecCTR(req, res, next) {
           const existingValue = existingQty * existingPrice;
           const newValue = newQty * newPrice;
           item.avgPrice =
-            totalQty > 0 ? (existingValue + newValue) / totalQty : newPrice;
+            totalQty > 0
+              ? Number(((existingValue + newValue) / totalQty).toFixed(2))
+              : Number(newPrice.toFixed(2));
 
-          item.lastPrice = newPrice;
+          item.lastPrice = Number(newPrice.toFixed(2));
 
           await item.save();
 
@@ -245,13 +247,13 @@ async function createTrnxRecCTR(req, res, next) {
 
       // Compute summary counts and overall status
       const successCount = responseSteps.filter(
-        (s) => s.status === "success"
+        (s) => s.status === "success",
       ).length;
       const failedCount = responseSteps.filter(
-        (s) => s.status === "failed"
+        (s) => s.status === "failed",
       ).length;
       const skippedCount = responseSteps.filter(
-        (s) => s.status === "skipped"
+        (s) => s.status === "skipped",
       ).length;
 
       let overallStatus = "completed";
