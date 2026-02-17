@@ -11,17 +11,21 @@ import {
   Row,
   Select,
   Typography,
+  Grid,
 } from "antd";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const SupplierUpdate = () => {
   const location = useLocation();
+  const screens = useBreakpoint();
   const { refData } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  console.log(refData);
 
   // Form submission
   const onFinish = async (values) => {
@@ -39,7 +43,7 @@ const SupplierUpdate = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -65,11 +69,6 @@ const SupplierUpdate = () => {
           layout="vertical"
           initialValues={{
             ...refData,
-            phone: refData.phone?.[0] || {},
-            email: refData.email?.[0] || {},
-            taxInfo: refData.taxInfo?.[0] || {},
-            officeAddress: refData.officeAddress?.[0] || {},
-            paymentInfo: refData.paymentInfo?.[0] || {},
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
@@ -133,7 +132,9 @@ const SupplierUpdate = () => {
                   <Form.Item
                     label="Phone Numbers"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["phone", "office"]}
                         noStyle
@@ -166,7 +167,9 @@ const SupplierUpdate = () => {
                   <Form.Item
                     label="Email Address"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["email", "office"]}
                         noStyle
@@ -199,7 +202,9 @@ const SupplierUpdate = () => {
                   <Form.Item
                     label="Tax Information"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["taxInfo", "name"]}
                         noStyle
@@ -240,7 +245,9 @@ const SupplierUpdate = () => {
                   <Form.Item
                     label="Office Address"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["officeAddress", "street"]}
                         noStyle
@@ -292,7 +299,12 @@ const SupplierUpdate = () => {
                   <Form.Item
                     label="Payment Information"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16} style={{ marginBottom: "35px" }}>
+                    <Flex
+                      gap={16}
+                      style={{
+                        marginBottom: "35px",
+                        flexFlow: screens.xs ? "wrap" : "nowrap",
+                      }}>
                       <Form.Item
                         name={["paymentInfo", "name"]}
                         noStyle
@@ -327,7 +339,9 @@ const SupplierUpdate = () => {
                         <Input placeholder="Bank name" />
                       </Form.Item>
                     </Flex>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["paymentInfo", "branch"]}
                         noStyle

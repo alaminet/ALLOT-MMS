@@ -72,19 +72,19 @@ const SupplierViewTable = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      responsive: ["md"],
+      width: 300,
+      // responsive: ["md"],
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      responsive: ["md"],
+      width: 250,
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      responsive: ["md"],
       width: 80,
     },
 

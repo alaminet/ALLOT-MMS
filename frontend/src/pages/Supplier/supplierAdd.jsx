@@ -11,14 +11,17 @@ import {
   Row,
   Select,
   Typography,
+  Grid,
 } from "antd";
 import { useSelector } from "react-redux";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 
 const SupplierAdd = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const screens = useBreakpoint();
 
   // Form submission
   const onFinish = async (values) => {
@@ -33,7 +36,7 @@ const SupplierAdd = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user?.token,
           },
-        }
+        },
       );
       message.success(res.data.message);
       setLoading(false);
@@ -120,7 +123,9 @@ const SupplierAdd = () => {
                   <Form.Item
                     label="Phone Numbers"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex
+                      gap={16}
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["phone", "office"]}
                         noStyle
@@ -153,7 +158,7 @@ const SupplierAdd = () => {
                   <Form.Item
                     label="Email Address"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex gap={16} style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["email", "office"]}
                         noStyle
@@ -186,7 +191,7 @@ const SupplierAdd = () => {
                   <Form.Item
                     label="Tax Information"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex gap={16} style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["taxInfo", "name"]}
                         noStyle
@@ -227,7 +232,7 @@ const SupplierAdd = () => {
                   <Form.Item
                     label="Office Address"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16}>
+                    <Flex gap={16} style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["officeAddress", "street"]}
                         noStyle
@@ -279,7 +284,7 @@ const SupplierAdd = () => {
                   <Form.Item
                     label="Payment Information"
                     style={{ marginBottom: "35px" }}>
-                    <Flex gap={16} style={{ marginBottom: "35px" }}>
+                    <Flex gap={16} style={{ marginBottom: "35px" ,flexWrap: screens.xs ? "wrap" : "nowrap"}} >
                       <Form.Item
                         name={["paymentInfo", "name"]}
                         noStyle
@@ -314,7 +319,7 @@ const SupplierAdd = () => {
                         <Input placeholder="Bank name" />
                       </Form.Item>
                     </Flex>
-                    <Flex gap={16}>
+                    <Flex gap={16} style={{flexWrap: screens.xs ? "wrap" : "nowrap"}}>
                       <Form.Item
                         name={["paymentInfo", "branch"]}
                         noStyle
