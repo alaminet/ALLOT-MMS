@@ -708,7 +708,7 @@ const POSOrderCart = () => {
               ))}
               <Flex gap={8} justify="space-between">
                 <div>
-                  Flex <Divider>Billing Details</Divider>
+                  <Divider>Billing Details</Divider>
                   <Form
                     form={form}
                     name="form"

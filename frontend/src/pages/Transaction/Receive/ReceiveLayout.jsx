@@ -7,7 +7,7 @@ import {
   DatePicker,
   Form,
   Input,
-  Space,
+  Grid,
   Row,
   Select,
   Typography,
@@ -20,6 +20,7 @@ import {
 import { useSelector } from "react-redux";
 import { MinusCircleOutlined } from "@ant-design/icons";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -27,6 +28,7 @@ dayjs.extend(customParseFormat);
 const dateFormat = "YYYY-MM-DD";
 const ReceiveLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const screens = useBreakpoint();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
@@ -308,32 +310,43 @@ const ReceiveLayout = () => {
                     {(fields, { add, remove }) => (
                       <>
                         <Row justify="space-between">
-                          <Col span={7} style={{ fontWeight: "600" }}>
+                          <Col md={7} xs={0} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
-                          <Col span={3} style={{ fontWeight: "600" }}>
+                          <Col md={3} xs={0} style={{ fontWeight: "600" }}>
                             Part/SKU
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
+                          <Col md={2} xs={0} style={{ fontWeight: "600" }}>
                             UOM
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
+                          <Col md={2} xs={0} style={{ fontWeight: "600" }}>
                             Unit Price
                           </Col>
-                          <Col span={2} style={{ fontWeight: "600" }}>
+                          <Col md={2} xs={0} style={{ fontWeight: "600" }}>
                             Rec. Qty
                           </Col>
-                          <Col span={3} style={{ fontWeight: "600" }}>
+                          <Col md={3} xs={0} style={{ fontWeight: "600" }}>
                             Location
                           </Col>
-                          <Col span={4} style={{ fontWeight: "600" }}>
+                          <Col md={4} xs={0} style={{ fontWeight: "600" }}>
                             Remarks
                           </Col>
-                          <Col span={1} style={{ fontWeight: "600" }}></Col>
+                          <Col
+                            md={1}
+                            xs={0}
+                            style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
-                          <Row key={key} justify="space-between">
-                            <Col span={7}>
+                          <Row
+                            key={key}
+                            justify="space-between"
+                            style={{
+                              borderBottom: screens.xs
+                                ? "2px dotted black"
+                                : "none",
+                              marginBottom: screens.xs ? "10px" : "0",
+                            }}>
+                            <Col md={7} xs={24}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "name"]}
@@ -409,7 +422,7 @@ const ReceiveLayout = () => {
                                 />
                               </Form.Item>
                             </Col>
-                            <Col span={3}>
+                            <Col md={3} xs={16}>
                               <Form.Item {...restField} name={[name, "SKU"]}>
                                 <Input disabled placeholder="SKU" />
                               </Form.Item>
@@ -422,7 +435,7 @@ const ReceiveLayout = () => {
                                 <Input disabled placeholder="code" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={8}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "UOM"]}
@@ -434,7 +447,7 @@ const ReceiveLayout = () => {
                                 <Input placeholder="UOM" />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={12}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "unitPrice"]}>
@@ -444,7 +457,7 @@ const ReceiveLayout = () => {
                                 />
                               </Form.Item>
                             </Col>
-                            <Col span={2}>
+                            <Col md={2} xs={12}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "receiveQty"]}
@@ -465,7 +478,7 @@ const ReceiveLayout = () => {
                                 />
                               </Form.Item>
                             </Col>
-                            <Col span={3}>
+                            <Col md={3} xs={24}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "location"]}
@@ -492,7 +505,7 @@ const ReceiveLayout = () => {
                                 />
                               </Form.Item>
                             </Col>
-                            <Col span={4}>
+                            <Col md={4} xs={20}>
                               <Form.Item
                                 {...restField}
                                 name={[name, "remarks"]}>
@@ -500,7 +513,8 @@ const ReceiveLayout = () => {
                               </Form.Item>
                             </Col>
                             <Col
-                              span={1}
+                              md={1}
+                              xs={4}
                               style={{
                                 display: "flex",
                                 alignItems: "center",
