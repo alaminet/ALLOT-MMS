@@ -192,13 +192,13 @@ const POReceiveFormView = ({
     {
       title: "SKU",
       dataIndex: "SKU",
-      editable: true,
+      // editable: true,
       width: 150,
     },
     {
       title: "name",
       dataIndex: "name",
-      width: "25%",
+      width: 300,
     },
     {
       title: "UOM",
@@ -219,13 +219,13 @@ const POReceiveFormView = ({
       title: "GRN Price",
       dataIndex: "reqPOPrice",
       editable: true,
-      width: 100,
+      width: 150,
     },
     {
       title: "GRN Qty",
       dataIndex: "reqGRNQty",
       editable: true,
-      width: 100,
+      width: 150,
     },
     {
       title: "Receive Location",
@@ -267,7 +267,7 @@ const POReceiveFormView = ({
       title: "GRN Remarks",
       dataIndex: "GRNRemarks",
       editable: true,
-      width: 200,
+      width: 250,
       render: (text) => <Input variant="borderless" value={text} />,
     },
     {

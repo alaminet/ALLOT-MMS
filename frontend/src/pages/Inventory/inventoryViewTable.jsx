@@ -44,7 +44,7 @@ const InventoryViewTable = () => {
       responsive: ["lg"],
     },
     {
-      title: "Code",
+      title: "SKU",
       dataIndex: "SKU",
       key: "SKU",
 

@@ -66,7 +66,6 @@ const InventoryListView = () => {
       key: "sl",
       width: 80,
       render: (text, record, index) => index + 1,
-      responsive: ["lg"],
     },
 
     {
@@ -74,7 +73,7 @@ const InventoryListView = () => {
       dataIndex: "SKU",
       key: "SKU",
       width: 150,
-      responsive: ["lg"],
+
       onCell: (record) => ({
         rowSpan: record.rowSpan,
       }),
@@ -88,7 +87,7 @@ const InventoryListView = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      responsive: ["lg"],
+
       onCell: (record) => ({
         rowSpan: record.rowSpan,
       }),
@@ -98,27 +97,24 @@ const InventoryListView = () => {
       dataIndex: "UOM",
       key: "UOM",
       width: 100,
-      responsive: ["lg"],
     },
     {
       title: "Location",
       dataIndex: "location",
       key: "location",
-      responsive: ["lg"],
     },
     {
       title: "On-Hand Qty",
       dataIndex: "locQty",
       key: "locQty",
       width: 150,
-      responsive: ["lg"],
     },
     {
       title: "Closing Qty",
       dataIndex: "onHandQty",
       key: "onHandQty",
       width: 150,
-      responsive: ["lg"],
+
       onCell: (record) => ({
         rowSpan: record.rowSpan,
       }),
@@ -136,7 +132,7 @@ const InventoryListView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // message.success(res.data.message);
@@ -156,15 +152,15 @@ const InventoryListView = () => {
                   onHandQty:
                     item?.stock?.reduce(
                       (sum, stock) => sum + (Number(stock?.onHandQty) || 0),
-                      0
+                      0,
                     ) || 0,
                   safetyStock: item?.safetyStock || 0,
                   group: item?.group?.name,
                   type: item?.type?.name,
                   access: item,
                   action: item?._id,
-                }
-            )
+                },
+            ),
           );
           setQueryData(tableArr);
         });
@@ -193,7 +189,7 @@ const InventoryListView = () => {
         group: 20,
         type: 20,
       },
-    }
+    },
   );
 
   useEffect(() => {
@@ -255,7 +251,7 @@ const InventoryListView = () => {
         columns={columns}
         dataSource={processedData
           ?.filter((item) =>
-            item?.name?.toLowerCase().includes(search?.toLowerCase())
+            item?.name?.toLowerCase().includes(search?.toLowerCase()),
           )
           .sort((a, b) => a.name.localeCompare(b.name))} //.sort((a, b) => a.code.localeCompare(b.code))
         // title={() => "Header"}
