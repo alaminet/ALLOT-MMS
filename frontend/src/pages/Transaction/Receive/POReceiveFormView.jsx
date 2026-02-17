@@ -555,6 +555,10 @@ const POReceiveFormView = ({
                 bordered
                 dataSource={dataSource}
                 columns={columns}
+                pagination={false}
+                scroll={{
+                  x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+                }}
               />
             </Col>
           </Row>

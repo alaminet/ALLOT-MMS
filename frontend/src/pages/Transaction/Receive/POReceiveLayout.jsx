@@ -66,20 +66,17 @@ const POReceiveLayout = () => {
       title: "PO Qty",
       dataIndex: "POQty",
       key: "POQty",
-      responsive: ["md"],
     },
     {
       title: "GRN Qty",
       dataIndex: "GRNQty",
       key: "GRNQty",
-      responsive: ["md"],
     },
 
     {
       title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
-      responsive: ["md"],
     },
   ];
 
