@@ -188,7 +188,7 @@ const MoveOrderReq = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Referance"
                     name="reference"
@@ -201,7 +201,7 @@ const MoveOrderReq = () => {
                   </Form.Item>
                 </Col>
 
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Header Text"
                     name="headerText"
@@ -209,7 +209,7 @@ const MoveOrderReq = () => {
                     <Input placeholder="Header Text" maxLength={50} showCount />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Deptartment"
                     name="costCenter"
@@ -240,7 +240,9 @@ const MoveOrderReq = () => {
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row justify="space-between">
+                        <Row
+                          justify="space-between"
+                          style={{ display: screens.xs ? "none" : "flex" }}>
                           <Col xs={9} sm={7} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
@@ -262,163 +264,180 @@ const MoveOrderReq = () => {
                           <Col xs={1} style={{ fontWeight: "600" }}></Col>
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
-                          <>
-                            <Row key={key} justify="space-between" align="top">
-                              <Col xs={9} sm={7}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "name"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Enter name",
-                                    },
-                                  ]}>
-                                  <Select
-                                    allowClear
-                                    showSearch={{
-                                      filterOption: (input, option) =>
-                                        (option?.find ?? "")
-                                          .toLowerCase()
-                                          .includes(input.toLowerCase()),
-                                    }}
-                                    placeholder="Item Name"
-                                    options={itemList?.map((item) => ({
-                                      label: item.name,
-                                      value: item.name,
-                                      find: item.name + "_" + item.SKU,
-                                    }))}
-                                    onSelect={(value) => {
-                                      const matched = itemList.find(
-                                        (i) => i.name === value,
+                          <Row
+                            key={key}
+                            justify="space-between"
+                            align="top"
+                            style={{
+                              borderBottom: screens.xs
+                                ? "2px dotted black"
+                                : "none",
+                              marginBottom: screens.xs ? "10px" : "0",
+                            }}>
+                            <Col xs={24} md={7}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "Name" : null}
+                                name={[name, "name"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Enter name",
+                                  },
+                                ]}>
+                                <Select
+                                  allowClear
+                                  showSearch={{
+                                    filterOption: (input, option) =>
+                                      (option?.find ?? "")
+                                        .toLowerCase()
+                                        .includes(input.toLowerCase()),
+                                  }}
+                                  placeholder="Item Name"
+                                  options={itemList?.map((item) => ({
+                                    label: item.name,
+                                    value: item.name,
+                                    find: item.name + "_" + item.SKU,
+                                  }))}
+                                  onSelect={(value) => {
+                                    const matched = itemList.find(
+                                      (i) => i.name === value,
+                                    );
+                                    if (matched) {
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "UOM"],
+                                        matched.UOM.code,
                                       );
-                                      if (matched) {
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "UOM"],
-                                          matched.UOM.code,
-                                        );
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "code"],
-                                          matched._id,
-                                        );
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "code"],
+                                        matched._id,
+                                      );
 
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "SKU"],
-                                          matched.SKU,
-                                        );
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "onHand"],
-                                          matched.stock?.reduce(
-                                            (sum, acc) =>
-                                              sum + (acc.onHandQty || 0),
-                                            0,
-                                          ),
-                                        );
-                                      }
-                                    }}
-                                    onChange={(value) => {
-                                      const matched = itemList.find(
-                                        (i) => i.name === value,
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "SKU"],
+                                        matched.SKU,
                                       );
-                                      if (!matched) {
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "UOM"],
-                                          "",
-                                        ); // clear UOM for manual input
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "code"],
-                                          "",
-                                        ); // clear code for manual input
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "SKU"],
-                                          "",
-                                        ); // clear SKU for manual input
-                                        form.setFieldValue(
-                                          ["itemDetails", name, "onHand"],
-                                          "",
-                                        ); // clear onHand for manual input
-                                      }
-                                    }}
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={0} sm={0}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "code"]}
-                                  hidden>
-                                  <Input disabled />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={0} sm={4}>
-                                <Form.Item {...restField} name={[name, "SKU"]}>
-                                  <Input disabled placeholder="SKU/Code" />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={4} sm={2}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "UOM"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Enter UOM",
-                                    },
-                                  ]}>
-                                  <Input disabled placeholder="UOM" />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={0} sm={3}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "onHand"]}>
-                                  <Input disabled placeholder="On-Hand" />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={4} sm={3}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "reqQty"]}
-                                  rules={[
-                                    {
-                                      type: "number",
-                                      validator: (_, value) =>
-                                        value > 0
-                                          ? Promise.resolve()
-                                          : Promise.reject(
-                                              new Error("Greater then 0"),
-                                            ),
-                                    },
-                                  ]}>
-                                  <InputNumber
-                                    placeholder="Req. Qty"
-                                    style={{ width: "100%" }}
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col xs={4} sm={4}>
-                                <Form.Item
-                                  {...restField}
-                                  name={[name, "remarks"]}>
-                                  <Input placeholder="Remarks" />
-                                </Form.Item>
-                              </Col>
-                              <Col
-                                xs={1}
-                                sm={1}
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  height: "42px",
-                                  justifyContent: "center",
-                                }}>
-                                <DeleteTwoTone
-                                  twoToneColor="#eb2f96"
-                                  onClick={() => remove(name)}
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "onHand"],
+                                        matched.stock?.reduce(
+                                          (sum, acc) =>
+                                            sum + (acc.onHandQty || 0),
+                                          0,
+                                        ),
+                                      );
+                                    }
+                                  }}
+                                  onChange={(value) => {
+                                    const matched = itemList.find(
+                                      (i) => i.name === value,
+                                    );
+                                    if (!matched) {
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "UOM"],
+                                        "",
+                                      ); // clear UOM for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "code"],
+                                        "",
+                                      ); // clear code for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "SKU"],
+                                        "",
+                                      ); // clear SKU for manual input
+                                      form.setFieldValue(
+                                        ["itemDetails", name, "onHand"],
+                                        "",
+                                      ); // clear onHand for manual input
+                                    }
+                                  }}
                                 />
-                              </Col>
-                            </Row>
-                          </>
+                              </Form.Item>
+                            </Col>
+                            <Col xs={0} md={0}>
+                              <Form.Item
+                                {...restField}
+                                name={[name, "code"]}
+                                hidden>
+                                <Input disabled />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={10} md={4}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "SKU" : null}
+                                name={[name, "SKU"]}>
+                                <Input disabled placeholder="SKU" />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={6} md={2}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "UOM" : null}
+                                name={[name, "UOM"]}
+                                rules={[
+                                  {
+                                    required: true,
+                                    message: "Enter UOM",
+                                  },
+                                ]}>
+                                <Input disabled placeholder="UOM" />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={8} md={3}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "On Hand" : null}
+                                name={[name, "onHand"]}>
+                                <Input disabled placeholder="On-Hand" />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={24} md={3}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "Req. Qty" : null}
+                                name={[name, "reqQty"]}
+                                rules={[
+                                  {
+                                    type: "number",
+                                    validator: (_, value) =>
+                                      value > 0
+                                        ? Promise.resolve()
+                                        : Promise.reject(
+                                            new Error("Greater then 0"),
+                                          ),
+                                  },
+                                ]}>
+                                <InputNumber
+                                  placeholder="Req. Qty"
+                                  style={{ width: "100%" }}
+                                />
+                              </Form.Item>
+                            </Col>
+                            <Col xs={20} md={4}>
+                              <Form.Item
+                                {...restField}
+                                label={screens.xs ? "Remarks" : null}
+                                name={[name, "remarks"]}>
+                                <Input placeholder="Remarks" />
+                              </Form.Item>
+                            </Col>
+                            <Col
+                              xs={4}
+                              md={1}
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                height: "42px",
+                                justifyContent: "center",
+                                marginTop: screens.xs ? "35px" : "0",
+                                fontSize: "30px",
+                              }}>
+                              <DeleteTwoTone
+                                twoToneColor="#eb2f96"
+                                onClick={() => remove(name)}
+                              />
+                            </Col>
+                          </Row>
                         ))}
                         <Form.Item>
                           <Button

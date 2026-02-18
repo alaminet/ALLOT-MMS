@@ -62,7 +62,6 @@ const ItemViewTable = () => {
       title: "SKU",
       dataIndex: "SKU",
       key: "SKU",
-      responsive: ["md"],
       filters: [...new Set(queryData?.map((item) => item.SKU))].map((flt) => ({
         text: flt,
         value: flt,
@@ -80,13 +79,11 @@ const ItemViewTable = () => {
       title: "UOM",
       dataIndex: "UOM",
       key: "UOM",
-      responsive: ["md"],
     },
     {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      responsive: ["md"],
       filters: [...new Set(queryData?.map((item) => item.type))].map((flt) => ({
         text: flt,
         value: flt,
@@ -98,7 +95,6 @@ const ItemViewTable = () => {
       title: "Group",
       dataIndex: "group",
       key: "group",
-      responsive: ["md"],
       filters: [...new Set(queryData?.map((item) => item.group))].map(
         (flt) => ({
           text: flt,
@@ -112,20 +108,17 @@ const ItemViewTable = () => {
       title: "Last Price",
       dataIndex: "lastPrice",
       key: "lastPrice",
-      responsive: ["md"],
     },
 
     {
       title: "Avg. Price",
       dataIndex: "avgPrice",
       key: "avgPrice",
-      responsive: ["md"],
     },
     {
       title: "Safety Stock",
       dataIndex: "safetyStock",
       key: "safetyStock",
-      responsive: ["md"],
     },
     {
       title: "Action",
