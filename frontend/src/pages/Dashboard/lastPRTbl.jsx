@@ -19,7 +19,7 @@ const LastPRTbl = ({ tableData }) => {
       ?.filter((detail) => detail.isDeleted === false)
       .reduce(
         (sum, detail) => sum + (detail.reqQty || 0) * (detail.unitPrice || 0),
-        0
+        0,
       )
       .toFixed(0),
   }));
@@ -50,8 +50,7 @@ const LastPRTbl = ({ tableData }) => {
                 refData: record.id,
               },
             })
-          }
-        >
+          }>
           {text}
         </Button>
       ),
@@ -78,11 +77,17 @@ const LastPRTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title"
-      >
+        className="colorLink form-title">
         Latest PR
       </Title>
-      <Table columns={columns} dataSource={dataArr} pagination={false} />
+      <Table
+        columns={columns}
+        dataSource={dataArr}
+        pagination={false}
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
+      />
     </>
   );
 };

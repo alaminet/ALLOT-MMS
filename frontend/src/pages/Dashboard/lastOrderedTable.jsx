@@ -56,8 +56,7 @@ const LastOrderedTbl = ({ tableData }) => {
     <>
       <Title
         style={{ textAlign: "left", margin: "0" }}
-        className="colorLink form-title"
-      >
+        className="colorLink form-title">
         Latest Move orders
       </Title>
       <Table
@@ -71,6 +70,9 @@ const LastOrderedTbl = ({ tableData }) => {
           return b.order - a.order; // then by PRno descending
         })}
         pagination={false}
+        scroll={{
+          x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+        }}
       />
     </>
   );

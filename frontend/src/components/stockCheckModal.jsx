@@ -52,7 +52,7 @@ const StockCheckModal = () => {
                   <p key={i} style={{ display: "block" }}>
                     {`${st?.location} (${st?.onHandQty})`}
                   </p>
-                )
+                ),
             )
           : null,
     },
@@ -74,7 +74,7 @@ const StockCheckModal = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       const tableArr = res?.data?.items?.map((item, index) => ({
         key: index + 1,
@@ -117,10 +117,13 @@ const StockCheckModal = () => {
         <Table
           columns={columns}
           bordered
+          scroll={{
+            x: columns.reduce((sum, col) => sum + (col.width || 150), 0),
+          }}
           dataSource={
             search !== "" &&
             itemList.filter((item) =>
-              item?.search?.toLowerCase().includes(search?.toLowerCase())
+              item?.search?.toLowerCase().includes(search?.toLowerCase()),
             )
           }
         />
