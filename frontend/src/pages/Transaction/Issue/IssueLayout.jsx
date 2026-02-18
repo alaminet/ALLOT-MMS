@@ -13,10 +13,12 @@ import {
   message,
   InputNumber,
   notification,
+  Grid,
 } from "antd";
 const { Title } = Typography;
+const { useBreakpoint } = Grid;
 import { useSelector } from "react-redux";
-import { MinusCircleOutlined } from "@ant-design/icons";
+import { DeleteTwoTone, MinusCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
@@ -24,6 +26,7 @@ const dateFormat = "YYYY-MM-DD";
 
 const IssueLayout = () => {
   const user = useSelector((user) => user.loginSlice.login);
+  const screens = useBreakpoint();
   const [loading, setLoading] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [itemDetails, setItemDetails] = useState();
@@ -175,7 +178,7 @@ const IssueLayout = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Row gutter={16}>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Document Date"
                     name="documentAt"
@@ -193,7 +196,7 @@ const IssueLayout = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Issue Date"
                     name="issuedAt"
@@ -212,7 +215,7 @@ const IssueLayout = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Transaction Type"
                     name="tnxType"
@@ -233,7 +236,7 @@ const IssueLayout = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     name="costCenter"
                     // initialValue={user.costCenter}
@@ -260,8 +263,7 @@ const IssueLayout = () => {
                     />
                   </Form.Item>
                 </Col>
-
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Referance"
                     name="reference"
@@ -273,8 +275,7 @@ const IssueLayout = () => {
                     />
                   </Form.Item>
                 </Col>
-
-                <Col lg={8} xs={24}>
+                <Col md={8} xs={24}>
                   <Form.Item
                     label="Header Text"
                     name="headerText"
@@ -283,14 +284,16 @@ const IssueLayout = () => {
                   </Form.Item>
                 </Col>
               </Row>
-              <div lg={24} xs={24}>
+              <div md={24} xs={24}>
                 <Form.Item
                   label="Item Details"
                   style={{ marginBottom: "35px" }}>
                   <Form.List name="itemDetails" style={{ display: "flex" }}>
                     {(fields, { add, remove }) => (
                       <>
-                        <Row justify="space-between">
+                        <Row
+                          justify="space-between"
+                          style={{ display: screens.xs ? "none" : "flex" }}>
                           <Col span={6} style={{ fontWeight: "600" }}>
                             Name
                           </Col>
@@ -316,10 +319,20 @@ const IssueLayout = () => {
                         </Row>
                         {fields.map(({ key, name, ...restField }) => (
                           <>
-                            <Row key={key} justify="space-between" align="top">
-                              <Col span={6}>
+                            <Row
+                              key={key}
+                              justify="space-between"
+                              align="top"
+                              style={{
+                                borderBottom: screens.xs
+                                  ? "2px dotted black"
+                                  : "none",
+                                marginBottom: screens.xs ? "10px" : "0",
+                              }}>
+                              <Col md={6} xs={24}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Name" : null}
                                   name={[name, "name"]}
                                   rules={[
                                     {
@@ -406,14 +419,18 @@ const IssueLayout = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={3}>
-                                <Form.Item {...restField} name={[name, "SKU"]}>
+                              <Col md={3} xs={10}>
+                                <Form.Item
+                                  {...restField}
+                                  name={[name, "SKU"]}
+                                  label={screens.xs ? "SKU" : null}>
                                   <Input disabled placeholder="SKU/Code" />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={6}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "UOM" : null}
                                   name={[name, "UOM"]}
                                   rules={[
                                     {
@@ -424,9 +441,10 @@ const IssueLayout = () => {
                                   <Input disabled placeholder="UOM" />
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={8}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Unit Price" : null}
                                   name={[name, "issuePrice"]}>
                                   <InputNumber
                                     placeholder="Price"
@@ -434,7 +452,7 @@ const IssueLayout = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={4}>
+                              <Col md={4} xs={14}>
                                 <Form.Item
                                   shouldUpdate={(prev, curr) =>
                                     prev.itemDetails?.[name]?.stockList !==
@@ -457,6 +475,7 @@ const IssueLayout = () => {
                                     return (
                                       <Form.Item
                                         {...restField}
+                                        label={screens.xs ? "Location" : null}
                                         name={[name, "location"]}
                                         rules={[
                                           {
@@ -480,9 +499,10 @@ const IssueLayout = () => {
                                   }}
                                 </Form.Item>
                               </Col>
-                              <Col span={2}>
+                              <Col md={2} xs={10}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Issue Qty" : null}
                                   name={[name, "issueQty"]}
                                   rules={[
                                     {
@@ -501,22 +521,27 @@ const IssueLayout = () => {
                                   />
                                 </Form.Item>
                               </Col>
-                              <Col span={4}>
+                              <Col md={4} xs={20}>
                                 <Form.Item
                                   {...restField}
+                                  label={screens.xs ? "Remarks" : null}
                                   name={[name, "remarks"]}>
                                   <Input placeholder="Remarks" />
                                 </Form.Item>
                               </Col>
                               <Col
-                                span={1}
+                                md={1}
+                                xs={4}
                                 style={{
                                   display: "flex",
                                   alignItems: "center",
                                   height: "42px",
                                   justifyContent: "center",
+                                  marginTop: screens.xs ? "35px" : "0",
+                                  fontSize: "30px",
                                 }}>
-                                <MinusCircleOutlined
+                                <DeleteTwoTone
+                                  twoToneColor={"red"}
                                   onClick={() => remove(name)}
                                 />
                               </Col>

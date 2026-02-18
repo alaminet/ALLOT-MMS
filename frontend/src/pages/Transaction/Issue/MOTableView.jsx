@@ -57,7 +57,7 @@ const MOTableView = () => {
         (code) => ({
           text: code,
           value: code,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.reference === value,
       filterSearch: true,
@@ -71,7 +71,7 @@ const MOTableView = () => {
         (code) => ({
           text: code,
           value: code,
-        })
+        }),
       ),
       onFilter: (value, record) => record?.SKU === value,
       filterSearch: true,
@@ -86,25 +86,21 @@ const MOTableView = () => {
       title: "MO Qty",
       dataIndex: "reqQty",
       key: "reqQty",
-      responsive: ["md"],
     },
     {
       title: "Issue Qty",
       dataIndex: "issuedQty",
       key: "issuedQty",
-      responsive: ["md"],
     },
     {
       title: "Req. Dept.",
       dataIndex: "costCenter",
       key: "costCenter",
-      responsive: ["md"],
     },
     {
       title: "Req. By",
       dataIndex: "reqBy",
       key: "reqBy",
-      responsive: ["md"],
     },
   ];
 
@@ -112,7 +108,7 @@ const MOTableView = () => {
   const onSelectChange = (newSelectedRowKeys, modifiedRows) => {
     setSelectedRowKeys(newSelectedRowKeys);
     const selectedRows = queryData?.filter((row) =>
-      newSelectedRowKeys.includes(row.key)
+      newSelectedRowKeys.includes(row.key),
     );
     setSelectedRowData(selectedRows);
 
@@ -155,7 +151,7 @@ const MOTableView = () => {
               Authorization: import.meta.env.VITE_SECURE_API_KEY,
               token: user.token,
             },
-          }
+          },
         )
         .then((res) => {
           // message.success(res?.data?.message);
@@ -172,7 +168,7 @@ const MOTableView = () => {
                   reqQty: list?.reqQty,
                   issuedQty: list?.issueQty,
                   issueQty: list?.reqQty - list?.issueQty,
-                  issuePrice: list?.code?.avgPrice,
+                  issuePrice: Number(list?.code?.avgPrice).toFixed(2),
                   remarks: list?.remarks,
                   stock: list?.code?.stock,
                   reference: item?.reference,
@@ -180,12 +176,12 @@ const MOTableView = () => {
                   costCenter: item?.costCenter?.name,
                   reqBy: item?.requestedBy?.name,
                   createdAt: moment(item?.createdAt).format(
-                    "MMM DD, YYYY h:mm A"
+                    "MMM DD, YYYY h:mm A",
                   ),
                   MOid: item?._id,
                   MOLineid: list?._id,
-                }
-            )
+                },
+            ),
           );
 
           setQueryData(tableArr);
@@ -239,7 +235,7 @@ const MOTableView = () => {
             rowSelection={rowSelection}
             columns={columns}
             dataSource={queryData?.filter((item) =>
-              item?.name?.toLowerCase().includes(search?.toLowerCase())
+              item?.name?.toLowerCase().includes(search?.toLowerCase()),
             )}
             // title={() => "Header"}
             sticky
