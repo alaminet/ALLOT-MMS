@@ -71,9 +71,11 @@ import BarCodeLabelPrint from "./pages/LabelPrint/barCodeLabelPrint.jsx";
 import QRCodeLabelPrint from "./pages/LabelPrint/qrCodeLabelPrint.jsx";
 import NewB2BInvoice from "./pages/Sales/B2B/newB2BInvoice.jsx";
 import ListB2BInvoice from "./pages/Sales/B2B/listB2BInvoice.jsx";
-import CustomerB2BInvoic from "./pages/Sales/B2B/customerB2BInvoic.jsx";
 import POSOrderDetails from "./pages/Sales/POS/POSOrderDetails.jsx";
 import POSOrderCart from "./pages/Sales/POS/POSOrderCart.jsx";
+import TableB2BCustomer from "./pages/Sales/B2B/TableB2BCustomer.jsx";
+import AddB2BCustomer from "./pages/Sales/B2B/addB2BCustomer.jsx";
+import UpdateB2BCustomer from "./pages/Sales/B2B/updateB2BCustomer.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -153,7 +155,9 @@ function App() {
               <Route path="B2B" element={<B2B />}>
                 <Route path="new" element={<NewB2BInvoice />} />
                 <Route path="invoice" element={<ListB2BInvoice />} />
-                <Route path="customer" element={<CustomerB2BInvoic />} />
+                <Route path="customer" element={<TableB2BCustomer />} />
+                <Route path="customer/new" element={<AddB2BCustomer />} />
+                <Route path="customer/update" element={<UpdateB2BCustomer />} />
                 <Route path="logs" element={<LogActivites />} />
               </Route>
               <Route path="ecommerce" element={<Ecommerce />}>

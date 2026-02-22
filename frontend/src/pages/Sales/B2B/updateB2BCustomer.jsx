@@ -14,13 +14,14 @@ import {
   Grid,
 } from "antd";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
-const SupplierUpdate = () => {
+const UpdateB2BCustomer = () => {
   const location = useLocation();
   const screens = useBreakpoint();
+  const navigate = useNavigate();
   const { refData } = location.state || {};
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const SupplierUpdate = () => {
     };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/update/${refData._id}`,
+        `${import.meta.env.VITE_API_URL}/api/sales/SalesB2B/customer-update/${refData._id}`,
         formData,
         {
           headers: {
@@ -46,6 +47,7 @@ const SupplierUpdate = () => {
       );
       message.success(res.data.message);
       setLoading(false);
+      navigate("/B2B/customer");
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);
@@ -58,7 +60,7 @@ const SupplierUpdate = () => {
   return (
     <>
       <Title style={{ textAlign: "left" }} className="colorLink form-title">
-        Update Existing Supplier
+        Update Existing Customer
       </Title>
 
       <Card>
@@ -78,7 +80,7 @@ const SupplierUpdate = () => {
               <Row justify="space-between" gutter={16}>
                 <Col lg={12} xs={24}>
                   <Form.Item
-                    label="Supplier Name"
+                    label="Customer Name"
                     name="name"
                     rules={[
                       {
@@ -87,7 +89,7 @@ const SupplierUpdate = () => {
                     ]}
                     style={{ width: "100%" }}>
                     <Input
-                      placeholder="Supplier Name"
+                      placeholder="Customer Name"
                       maxLength={50}
                       showCount
                     />
@@ -123,7 +125,7 @@ const SupplierUpdate = () => {
                         { name: "Local", value: "Local" },
                         { name: "Import", value: "Import" },
                       ]}
-                      placeholder="Supplier Type"
+                      placeholder="Customer Type"
                     />
                   </Form.Item>
                 </Col>
@@ -388,7 +390,7 @@ const SupplierUpdate = () => {
                       loading={loading}
                       block
                       style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Update Supplier
+                      Update Customer
                     </Button>
                   </Form.Item>
                 </Col>
@@ -401,4 +403,4 @@ const SupplierUpdate = () => {
   );
 };
 
-export default SupplierUpdate;
+export default UpdateB2BCustomer;

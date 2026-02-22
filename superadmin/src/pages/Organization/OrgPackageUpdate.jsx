@@ -72,6 +72,7 @@ const OrgPackageUpdate = () => {
     { label: "Move Order report", value: "mo-report" },
     { label: "Sales", value: "sales" },
     { label: "B2B", value: "B2B" },
+    { label: "B2BCustomer", value: "B2BCustomer" },
     { label: "E-Commerce", value: "ecommerce" },
     { label: "POS", value: "POS" },
     { label: "Item master", value: "master" },
@@ -421,6 +422,23 @@ const OrgPackageUpdate = () => {
                         initialValue={0}>
                         <InputNumber
                           placeholder="Sales/POS Limit"
+                          style={{ width: "100%" }}
+                        />
+                      </Form.Item>
+                    </Flex>
+                  </Form.Item>
+                </Col>
+                <Col lg={6} xs={24}>
+                  <Form.Item
+                    label="Sales/B2B Customer Limit"
+                    style={{ marginBottom: "35px" }}>
+                    <Flex gap={16}>
+                      <Form.Item
+                        name={["limit", "B2BCustomer"]}
+                        noStyle
+                        initialValue={0}>
+                        <InputNumber
+                          placeholder="Sales/B2B Customer Limit"
                           style={{ width: "100%" }}
                         />
                       </Form.Item>

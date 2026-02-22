@@ -1,0 +1,34 @@
+const B2BCustomer = require("../../../model/Sales/B2BCustomer");
+
+async function viewB2BCustomerCTR(req, res) {
+  const data = req.body;
+  try {
+    const query = {
+      isDeleted: false,
+      orgId: req.orgId,
+    };
+    if (data.scope === "own") {
+      query["createdBy"] = req.actionBy;
+    } else if (data.scope === "others") {
+      query["createdBy"] = { $ne: req.actionBy };
+    }
+    const items = await B2BCustomer.find(query)
+      .sort({ createdAt: -1 })
+      .populate({
+        path: ["createdBy", "updatedBy"],
+        select: "name",
+      })
+      .lean();
+    if (items.length === 0) {
+      return res.status(404).send({ error: "No data found" });
+    }
+    res.status(200).send({
+      message: "Data retrieved",
+      items: items,
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message || "Error retrieving" });
+  }
+}
+
+module.exports = viewB2BCustomerCTR;

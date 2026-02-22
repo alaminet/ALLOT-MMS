@@ -14,28 +14,22 @@ import {
   Grid,
 } from "antd";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
-const SupplierUpdate = () => {
-  const location = useLocation();
-  const screens = useBreakpoint();
-  const { refData } = location.state || {};
+const AddB2BCustomer = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+  const screens = useBreakpoint();
 
   // Form submission
   const onFinish = async (values) => {
     setLoading(true);
-    const formData = {
-      ...values,
-      updatedBy: user?.id,
-    };
+    const formData = { ...values, createdBy: user?.id };
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/update/${refData._id}`,
+        `${import.meta.env.VITE_API_URL}/api/sales/SalesB2B/customer-new`,
         formData,
         {
           headers: {
@@ -46,6 +40,7 @@ const SupplierUpdate = () => {
       );
       message.success(res.data.message);
       setLoading(false);
+      form.resetFields();
     } catch (error) {
       setLoading(false);
       message.error(error.response.data.error);
@@ -57,18 +52,15 @@ const SupplierUpdate = () => {
 
   return (
     <>
-      <Title style={{ textAlign: "left" }} className="colorLink form-title">
-        Update Existing Supplier
+      <Title style={{ textAlign: "center" }} className="colorLink form-title">
+        Add New Customer
       </Title>
-
       <Card>
         <Form
           form={form}
           name="new"
           layout="vertical"
-          initialValues={{
-            ...refData,
-          }}
+          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -78,7 +70,7 @@ const SupplierUpdate = () => {
               <Row justify="space-between" gutter={16}>
                 <Col lg={12} xs={24}>
                   <Form.Item
-                    label="Supplier Name"
+                    label="Customer Name"
                     name="name"
                     rules={[
                       {
@@ -87,7 +79,7 @@ const SupplierUpdate = () => {
                     ]}
                     style={{ width: "100%" }}>
                     <Input
-                      placeholder="Supplier Name"
+                      placeholder="Customer Name"
                       maxLength={50}
                       showCount
                     />
@@ -123,7 +115,7 @@ const SupplierUpdate = () => {
                         { name: "Local", value: "Local" },
                         { name: "Import", value: "Import" },
                       ]}
-                      placeholder="Supplier Type"
+                      placeholder="Customer Type"
                     />
                   </Form.Item>
                 </Col>
@@ -133,7 +125,7 @@ const SupplierUpdate = () => {
                     style={{ marginBottom: "35px" }}>
                     <Flex
                       gap={16}
-                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["phone", "office"]}
                         noStyle
@@ -168,7 +160,7 @@ const SupplierUpdate = () => {
                     style={{ marginBottom: "35px" }}>
                     <Flex
                       gap={16}
-                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["email", "office"]}
                         noStyle
@@ -203,7 +195,7 @@ const SupplierUpdate = () => {
                     style={{ marginBottom: "35px" }}>
                     <Flex
                       gap={16}
-                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["taxInfo", "name"]}
                         noStyle
@@ -246,7 +238,7 @@ const SupplierUpdate = () => {
                     style={{ marginBottom: "35px" }}>
                     <Flex
                       gap={16}
-                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["officeAddress", "street"]}
                         noStyle
@@ -302,7 +294,7 @@ const SupplierUpdate = () => {
                       gap={16}
                       style={{
                         marginBottom: "35px",
-                        flexFlow: screens.xs ? "wrap" : "nowrap",
+                        flexWrap: screens.xs ? "wrap" : "nowrap",
                       }}>
                       <Form.Item
                         name={["paymentInfo", "name"]}
@@ -340,7 +332,7 @@ const SupplierUpdate = () => {
                     </Flex>
                     <Flex
                       gap={16}
-                      style={{ flexFlow: screens.xs ? "wrap" : "nowrap" }}>
+                      style={{ flexWrap: screens.xs ? "wrap" : "nowrap" }}>
                       <Form.Item
                         name={["paymentInfo", "branch"]}
                         noStyle
@@ -388,7 +380,7 @@ const SupplierUpdate = () => {
                       loading={loading}
                       block
                       style={{ borderRadius: "0px", padding: "10px 30px" }}>
-                      Update Supplier
+                      Add Customer
                     </Button>
                   </Form.Item>
                 </Col>
@@ -401,4 +393,4 @@ const SupplierUpdate = () => {
   );
 };
 
-export default SupplierUpdate;
+export default AddB2BCustomer;

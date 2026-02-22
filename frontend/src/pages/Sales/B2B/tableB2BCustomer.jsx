@@ -16,7 +16,7 @@ import { usePermission } from "../../../hooks/usePermission";
 import NotAuth from "../../notAuth";
 import Search from "antd/es/input/Search";
 
-const CustomerB2BInvoic = () => {
+const TableB2BCustomer = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const [search, setSearch] = useState("");
   const [queryData, setQueryData] = useState([]);
@@ -175,12 +175,16 @@ const CustomerB2BInvoic = () => {
     const payload = { scope };
     try {
       await axios
-        .post(`${import.meta.env.VITE_API_URL}/api/supplier/view`, payload, {
-          headers: {
-            Authorization: import.meta.env.VITE_SECURE_API_KEY,
-            token: user.token,
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/sales/SalesB2B/customer-view`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user.token,
+            },
           },
-        })
+        )
         .then((res) => {
           message.success(res.data.message);
           const tableArr = res?.data?.items?.map((item, index) => ({
@@ -226,7 +230,7 @@ const CustomerB2BInvoic = () => {
   const handleChange = async (id, field, data) => {
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/supplier/update/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/sales/SalesB2B/customer-update/${id}`,
         { [field]: data },
         {
           headers: {
@@ -252,6 +256,8 @@ const CustomerB2BInvoic = () => {
         <Button
           type="primary"
           className="borderBrand"
+          onClick={() => navigate("new")}
+          // disabled={!canDoOwn("supplier", "create")}
           style={{ borderRadius: "0px" }}>
           Add Customer
         </Button>
@@ -307,4 +313,4 @@ const CustomerB2BInvoic = () => {
   );
 };
 
-export default CustomerB2BInvoic;
+export default TableB2BCustomer;
