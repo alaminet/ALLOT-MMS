@@ -48,6 +48,14 @@ const LogActivites = () => {
       key: "actionBy",
       dataIndex: "actionBy",
       width: 200,
+      filters: [...new Set(queryData?.map((item) => item?.actionBy))].map(
+        (item) => ({
+          text: item,
+          value: item,
+        }),
+      ),
+      onFilter: (value, record) => record?.actionBy === value,
+      filterSearch: true,
     },
   ];
   const getLogs = async () => {
@@ -64,7 +72,7 @@ const LogActivites = () => {
             Authorization: import.meta.env.VITE_SECURE_API_KEY,
             token: user.token,
           },
-        }
+        },
       );
       // message.success(res.data.message);
       const tableArr = res?.data?.logs?.map((item, index) => ({
