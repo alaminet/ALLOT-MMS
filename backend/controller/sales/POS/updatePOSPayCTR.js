@@ -31,7 +31,7 @@ async function updatePOSPayCTR(req, res, next) {
       orgId: req.orgId,
       id: req.actionBy,
       refModel: "Sales_POS",
-      action: `"${changedData.code}" payment updated`,
+      action: `Invoice "${changedData.code}" payment received - Amount: ${updatedData.amount} via ${updatedData.payBy}`,
     };
     req.log = logData;
     next();

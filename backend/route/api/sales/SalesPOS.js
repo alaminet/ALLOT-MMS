@@ -3,12 +3,14 @@ const createPOSCTR = require("../../../controller/sales/POS/createPOSCTR");
 const viewAllPOSCTR = require("../../../controller/sales/POS/viewAllPOSCTR");
 const updatePOSCTR = require("../../../controller/sales/POS/updatePOSCTR");
 const updatePOSPayCTR = require("../../../controller/sales/POS/updatePOSPayCTR");
+const updateBulkPOSPayCTR = require("../../../controller/sales/POS/updateBulkPOSPayCTR");
 const route = express.Router();
 
 route.post("/new", createPOSCTR);
 route.post("/update/:id", updatePOSCTR);
 route.post("/update-payment/:id", updatePOSPayCTR);
 route.post("/view", viewAllPOSCTR);
+route.post("/bulk-payment", updateBulkPOSPayCTR);
 // route.post("/MO-Issue", moveOrderIssueCTR);
 // route.get("/view/:id", viewMemberController);
 

@@ -17,6 +17,10 @@ import {
   Grid,
   Typography,
   Table,
+  Modal,
+  Row,
+  Col,
+  InputNumber,
 } from "antd";
 import {
   FileExcelOutlined,
@@ -38,12 +42,14 @@ const POSOrderDetails = () => {
   const user = useSelector((user) => user.loginSlice.login);
   const screens = useBreakpoint();
   const [form] = Form.useForm();
+  const [formPay] = Form.useForm();
   const [queryData, setQueryData] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [formFind, setFormFind] = useState();
   const [itemList, setItemList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isBulkPayModalOpen, setIsBulkPayModalOpen] = useState(false);
 
   const paymentDone =
     queryData?.reduce(
@@ -306,6 +312,105 @@ const POSOrderDetails = () => {
     },
   });
 
+  const handleBulkPay = () => {
+    if (selectedRows.length === 0) {
+      message.warning("Please select at least one transaction to take payment");
+      return;
+    }
+    setIsBulkPayModalOpen(true);
+
+    // Pass selectedInvoices and totalDue to payment page open a modal including invoice list and total due amount with pre-filled input filed based on due amount, and distribute seriallay then make a confirm button to submit payload for backend
+    // Example payload: { invoices: [invoice1, invoice2], payments: [{invoice: invoice1, amount: 100}, {invoice: invoice2, amount: 150}] }
+  };
+
+  const handleBulPaySubmit = async (values) => {
+    let remainingAmount = values.amount;
+
+    try {
+      // Calculate due amounts for each invoice
+      const invoicesWithDue = selectedRows.map((row) => {
+        const paymentDone =
+          row?.action?.payments?.payment?.reduce(
+            (sum, p) => sum + (p?.amount || 0),
+            0,
+          ) || 0;
+        const totalBill =
+          row?.action?.payments?.totalBill +
+          row?.action?.payments?.vat -
+          row?.action?.payments?.discount -
+          row?.action?.payments?.adjustment;
+        const dueAmount = Number(totalBill - paymentDone).toFixed(2);
+        return {
+          invoice: row.invoice,
+          actionId: row.action._id,
+          dueAmount: Math.max(0, dueAmount), // Ensure no negative due amounts
+        };
+      });
+      const filterDueInv = invoicesWithDue
+        .filter((f) => f.dueAmount > 0)
+        .sort((a, b) => a.invoice - b.invoice); // Sort by due amount desc
+
+      // Calculate total due amount across all invoices
+      const totalDueAmount = filterDueInv.reduce(
+        (sum, inv) => sum + inv.dueAmount,
+        0,
+      );
+
+      if (totalDueAmount < remainingAmount) {
+        message.warning(
+          `Excess ${remainingAmount - totalDueAmount} amount received`,
+        );
+        return;
+      }
+
+      // Distribute the payment amount sequentially based on due amounts
+
+      const payments = filterDueInv.map((inv) => {
+        if (remainingAmount <= 0) {
+          return {
+            actionId: inv.actionId,
+            amount: 0,
+            payBy: values.payBy,
+            payRef: values.payRef || "",
+          };
+        }
+
+        const distributedAmount = Math.min(remainingAmount, inv.dueAmount);
+        remainingAmount -= distributedAmount;
+
+        return {
+          actionId: inv.actionId,
+          amount: Math.round(distributedAmount * 100) / 100, // Round to 2 decimal places
+          payBy: values.payBy,
+          payRef: values.payRef || "",
+        };
+      });
+      const payload = payments.filter((p) => p.amount > 0);
+
+      await axios
+        .post(
+          `${import.meta.env.VITE_API_URL}/api/sales/SalesPOS/bulk-payment`,
+          payload,
+          {
+            headers: {
+              Authorization: import.meta.env.VITE_SECURE_API_KEY,
+              token: user?.token,
+            },
+          },
+        )
+        .then((res) => {
+          message.success(res.data.message);
+          formPay.resetFields();
+          setIsBulkPayModalOpen(false);
+          // Refresh data after payment
+          onFinish(formFind);
+        });
+    } catch (error) {
+      message.error(
+        error.response?.data?.error || "Error submitting bulk payment",
+      );
+    }
+  };
   useEffect(() => {
     getItems();
   }, []);
@@ -673,6 +778,16 @@ const POSOrderDetails = () => {
                 </span>
               </Button>
               <Button
+                danger
+                disabled={queryData?.length > 0 ? false : true}
+                type="primary"
+                className="borderBrand"
+                style={{ borderRadius: "0px" }}
+                onClick={handleBulkPay}>
+                <FileExcelOutlined />
+                Take Pay
+              </Button>
+              <Button
                 disabled={queryData?.length > 0 ? false : true}
                 type="primary"
                 className="borderBrand"
@@ -721,6 +836,49 @@ const POSOrderDetails = () => {
           </>
         ) : null}
       </div>
+      {/* Bulk pay modal */}
+      <Modal
+        title="Bulk Payment"
+        closable={{ "aria-label": "Custom Close Button" }}
+        open={isBulkPayModalOpen}
+        // onOk={handleOk}
+        footer={null}
+        onCancel={() => setIsBulkPayModalOpen(false)}>
+        <div>
+          <Form
+            form={formPay}
+            name="formPay"
+            layout="vertical"
+            onFinish={handleBulPaySubmit}>
+            <Form.Item
+              name="amount"
+              label="Amount"
+              initialValue={totalBill - paymentDone}
+              rules={[{ required: true, message: "Amount is required" }]}>
+              <InputNumber
+                placeholder="Amount"
+                min={0}
+                // max={totalBill - paymentDone}
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item name="payBy" label="Pay By" initialValue={"Cash"}>
+              <Input placeholder="Cash, Card, Bank" style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item name="payRef" label="Payment Ref.">
+              <Input
+                placeholder="Reference (Optional)"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button type="primary" htmlType="submit" block danger>
+                Confirm Payment
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
     </>
   );
 };

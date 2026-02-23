@@ -297,6 +297,12 @@ const PosSalesView = ({ data }) => {
   // update Payment
   const handlePaySubmit = async (values) => {
     setLoading(true);
+
+    if (Number(duePay) < Number(values.amount)) {
+      message.warning("Receiving more than dues.");
+      setLoading(false);
+      return;
+    }
     try {
       await axios
         .post(
@@ -327,11 +333,11 @@ const PosSalesView = ({ data }) => {
           message.success(res.data.message);
           formPay.resetFields();
           setIsPayModalOpen(false);
-          setLoading(true);
+          setLoading(false);
         });
     } catch (error) {
       message.error(error.response?.data?.error || "Error submitting payment");
-      setLoading(true);
+      setLoading(false);
     }
   };
   return (
@@ -358,6 +364,7 @@ const PosSalesView = ({ data }) => {
           <Button
             className="no-print"
             type="primary"
+            disabled={duePay <= 0 ? true : false || loading}
             icon={<DiffOutlined />}
             onClick={showPayModal}>
             Take Pay
@@ -532,7 +539,11 @@ const PosSalesView = ({ data }) => {
             form={formPay}
             name="formPay"
             onFinish={handlePaySubmit}
-            initialValues={{ amount: duePay, payBy: "Cash", payRef: "" }}>
+            initialValues={{
+              amount: duePay,
+              payBy: "Cash",
+              payRef: "",
+            }}>
             <Form.Item
               name="amount"
               label="Amount"
@@ -540,7 +551,7 @@ const PosSalesView = ({ data }) => {
               <InputNumber
                 placeholder="Amount"
                 min={0}
-                max={duePay}
+                // max={duePay}
                 style={{ width: "100%" }}
               />
             </Form.Item>
@@ -554,7 +565,12 @@ const PosSalesView = ({ data }) => {
               />
             </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
-              <Button type="primary" htmlType="submit" block danger>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                danger
+                disabled={loading}>
                 Confirm Payment
               </Button>
             </Form.Item>

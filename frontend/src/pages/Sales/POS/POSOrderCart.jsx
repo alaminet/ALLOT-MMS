@@ -255,8 +255,11 @@ const POSOrderCart = () => {
             VAT: item?.vat || 0,
             label: item?.name + "-" + item?.SKU,
             stock: item?.stock?.reduce((acc, curr) => acc + curr.onHandQty, 0),
-            salePrice: item?.salePrice || item?.avgPrice,
-            avgPrice: item?.avgPrice,
+            salePrice:
+              Number(item?.salePrice).toFixed(2) ||
+              Number(item?.avgPrice).toFixed(2) ||
+              0,
+            avgPrice: Number(item?.avgPrice).toFixed(2),
           }));
           setQueryData(tableArr);
         });
@@ -331,7 +334,7 @@ const POSOrderCart = () => {
         setLoading(false);
         return; // stop execution
       }
-      if (normalNumber?.length < 14) {
+      if (dueAmount > 0 && normalNumber?.length < 14) {
         message.warning("Incorrect Phone number");
         setLoading(false);
         return; // stop execution
@@ -341,8 +344,8 @@ const POSOrderCart = () => {
         products: cartData,
         billing: {
           number: normalNumber,
-          name: billingAdd.name,
-          address: billingAdd.address,
+          name: billingAdd?.name,
+          address: billingAdd?.address,
         },
         payments: {
           totalBill: Number(billAmount),
