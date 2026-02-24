@@ -27,13 +27,15 @@ const Hero = () => {
               সংরক্ষণ করুন, এবং কর্মী ব্যয় কমিয়ে আনুন।
             </Text>
             <Flex gap={16} style={{ marginTop: "10px" }}>
-              <Button
-                size="large"
-                type="primary"
-                style={{ borderRadius: "1px", fontSize: "18px" }}
-              >
-                ডেমো বুক করুন
-              </Button>
+              <Link href="contact">
+                <Button
+                  size="large"
+                  type="primary"
+                  style={{ borderRadius: "1px", fontSize: "18px" }}
+                >
+                  ডেমো বুক করুন
+                </Button>
+              </Link>
               <Link href="https://wa.me/+8801339933034">
                 <Button
                   size="large"
