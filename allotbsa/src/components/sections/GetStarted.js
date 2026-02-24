@@ -109,7 +109,9 @@ const GetStarted = () => {
                     </FormItem>
                   </Compact>
                 </FormItem>
-
+                <FormItem name="note">
+                  <TextArea placeholder="Write your note" rows={2} />
+                </FormItem>
                 <FormItem>
                   <Button
                     size="large"

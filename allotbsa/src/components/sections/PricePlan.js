@@ -5,6 +5,7 @@ import Title from "antd/es/typography/Title";
 import Text from "antd/es/typography/Text";
 import { Meta } from "antd/es/list/Item";
 import { CheckSquareTwoTone } from "@ant-design/icons";
+import Link from "next/link";
 
 const PricePlan = () => {
   const planItem = [
@@ -165,16 +166,18 @@ const PricePlan = () => {
                 title={item?.cardTitle}
                 className="price-plan-card"
                 actions={[
-                  <Text
-                    style={{
-                      display: "block",
-                      fontSize: "18px",
-                      color: "#247f93",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Get Started
-                  </Text>,
+                  <Link href="contact">
+                    <Text
+                      style={{
+                        display: "block",
+                        fontSize: "18px",
+                        color: "#247f93",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Get Started
+                    </Text>
+                  </Link>,
                 ]}
               >
                 <Meta
